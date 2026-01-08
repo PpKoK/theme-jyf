@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html
+  xmlns:th="https://www.thymeleaf.org"
+  th:replace="~{modules/layout :: html(title = '友情链接 - ' + ${site.title}, content = ~{::content})}"
+>
+  <th:block th:fragment="content">
+    <div class="links-page">
+      <h1 class="page-title">友情链接</h1>
+      
+      <!-- 友链分组列表 -->
+      <th:block th:if="${not #lists.isEmpty(groups)}">
+        <div th:each="group : ${groups}" class="link-group">
+          <h2 class="group-title" th:text="${group.spec.displayName}">分组名称</h2>
+          <div class="links-list">
+            <div th:each="link : ${group.links}" class="link-item">
+              <a th:href="${link.spec.url}" target="_blank" rel="noopener noreferrer">
+                <div class="link-logo" th:if="${link.spec.logo}">
+                  <img th:src="${link.spec.logo}" th:alt="${link.spec.displayName}" />
+                </div>
+                <div class="link-info">
+                  <h3 class="link-name" th:text="${link.spec.displayName}">友链名称</h3>
+                  <p class="link-description" th:if="${link.spec.description}" th:text="${link.spec.description}">友链描述</p>
+                </div>
+              </a>
+            </div>
+          </div>
+        </div>
+      </th:block>
+      
+      <div th:if="${#lists.isEmpty(groups)}" class="no-content">
+        <p>暂无友情链接</p>
+      </div>
+    </div>
+  </th:block>
+</html>

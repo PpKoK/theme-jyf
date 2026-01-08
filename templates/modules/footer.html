@@ -1,0 +1,63 @@
+<footer th:fragment="footer" class="footer">
+  <div class="container">
+    <div class="footer-content">
+      <!-- 友情链接（每5秒随机切换5个） -->
+      <th:block th:if="${pluginFinder.available('PluginLinks')}">
+        <th:block th:with="allGroups = ${linkFinder.groupBy()}">
+          <div th:if="${not #lists.isEmpty(allGroups)}" class="friend-links">
+            <span th:text="#{common.friendLinks}">友情链接：</span>
+            <span id="friend-links-container"></span>
+            
+            <!-- 所有友链数据（隐藏） -->
+            <script th:inline="javascript">
+              window.allFriendLinks = [
+                /*[# th:each="group : ${allGroups}"]*/
+                  /*[# th:each="link : ${group.links}"]*/
+                  {
+                    name: /*[[${link.spec.displayName}]]*/ '',
+                    url: /*[[${link.spec.url}]]*/ ''
+                  },
+                  /*[/]*/
+                /*[/]*/
+              ];
+            </script>
+          </div>
+        </th:block>
+      </th:block>
+      
+      <!-- 页脚信息 -->
+      <div class="footer-info">
+        <p>
+          <span>© </span>
+          <th:block th:if="${theme.config.footer.copyright_start_year != null && !#strings.isEmpty(theme.config.footer.copyright_start_year)}">
+            <span th:text="${theme.config.footer.copyright_start_year}">2024</span>
+            <span>-</span>
+          </th:block>
+          <span th:text="${#temporals.year(#temporals.createNow())}">2024</span>
+          <span> </span>
+          <span th:text="${theme.config.footer.copyright_owner ?: 'Your Name'}">Your Name</span>
+          <span> All Rights Reserved.</span>
+          <th:block th:if="${theme.config.footer.show_powered == null || theme.config.footer.show_powered}">
+          <br>
+            <span th:text="#{footer.poweredBy}">由 Halo 强力驱动</span>
+            <span> · </span>
+            <span th:text="#{footer.theme}">主题</span>
+            <a th:href="${theme.spec.homepage}" target="_blank" rel="noopener" th:text="${theme.spec.displayName}">Jyf</a>
+            <span th:text="#{footer.version}">版本</span>
+            <span th:text="${theme.spec.version}"></span>
+          </th:block>
+        </p>
+        
+        <!-- 备案信息 -->
+        <p th:if="${theme.config.footer.icp_text != null && !#strings.isEmpty(theme.config.footer.icp_text)}">
+          <a 
+            th:href="${theme.config.footer.icp_link ?: 'https://beian.miit.gov.cn/'}" 
+            target="_blank" 
+            rel="noopener"
+            th:text="${theme.config.footer.icp_text}"
+          ></a>
+        </p>
+      </div>
+    </div>
+  </div>
+</footer>

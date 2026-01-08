@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html
+  xmlns:th="https://www.thymeleaf.org"
+  th:replace="~{modules/layout :: html(title = '关于 - ' + ${site.title}, content = ~{::content})}"
+>
+  <th:block th:fragment="content">
+    <div class="about-sticker-wall">
+      <!-- 大标题 - 中心焦点 -->
+      <div class="sticker banner-large">
+        <span class="banner-text" th:text="${theme.config.about.about_banner_text ?: site.title}">Jyf</span>
+      </div>
+      
+      <!-- 标签群 - 像砖块一样堆叠 -->
+      <div class="sticker mini-tag tag-1" th:text="${theme.config.about.about_tag_1}">Blogger</div>
+      <div class="sticker mini-tag tag-2" th:text="${theme.config.about.about_tag_2}">Creator</div>
+      <div class="sticker mini-tag tag-3" th:text="${theme.config.about.about_tag_3}">Developer</div>
+      <div class="sticker mini-tag tag-4" th:text="${theme.config.about.about_tag_4}">Writer</div>
+      <div class="sticker mini-tag tag-5" th:text="${theme.config.about.about_tag_5}">Designer</div>
+      <div class="sticker mini-tag tag-6" th:text="${theme.config.about.about_tag_6}">Coder</div>
+      <div class="sticker mini-tag tag-7" th:text="${theme.config.about.about_tag_7}">Maker</div>
+      <div class="sticker mini-tag tag-8" th:text="${theme.config.about.about_tag_8}">Thinker</div>
+      
+      <!-- 装饰图片 - 大小不一 -->
+      <div class="sticker deco-img img-large img-1">
+        <img th:src="@{/assets/img/tz.png}" alt="兔子" />
+      </div>
+      
+      <div class="sticker deco-img img-medium img-2">
+        <img th:src="@{/assets/img/qw.png}" alt="青蛙" />
+      </div>
+      
+      <div class="sticker deco-img img-small img-3">
+        <img th:src="@{/assets/img/ovo.png}" alt="ovo" />
+      </div>
+      
+      <div class="sticker deco-img img-large img-4">
+        <img th:src="@{/assets/img/jqr.png}" alt="机器人" />
+      </div>
+      
+      <div class="sticker deco-img img-medium img-5">
+        <img th:src="@{/assets/img/hua.png}" alt="花" />
+      </div>
+      
+      <div class="sticker deco-img img-small img-6">
+        <img th:src="@{/assets/img/che.png}" alt="车" />
+      </div>
+      
+      <div class="sticker deco-img img-medium img-7">
+        <img th:src="@{/assets/img/cjl.png}" alt="长颈鹿" />
+      </div>
+      
+      <!-- 信息卡片 -->
+      <div class="sticker info-card card-contact">
+        <h3 th:text="${theme.config.about.about_contact_title}">联系方式</h3>
+        <p th:utext="${theme.config.about.about_contact_content}">
+          Email: your@email.com<br>
+          GitHub: @yourname<br>
+          Twitter: @yourname
+        </p>
+      </div>
+      
+      <div class="sticker info-card card-intro">
+        <h3 th:text="${theme.config.about.about_intro_title}">👋 关于我</h3>
+        <p th:utext="${theme.config.about.about_intro_content}">欢迎来到我的个人博客！<br>这里记录着我的想法、学习和生活。</p>
+      </div>
+      
+      <div class="sticker info-card card-tech">
+        <h3 th:text="${theme.config.about.about_tech_title}">技术栈</h3>
+        <p th:text="${theme.config.about.about_tech_content}">Halo · Vue.js · TypeScript · Node.js · Docker · Linux</p>
+      </div>
+    </div>
+    
+    <!-- 评论区 -->
+    <div class="post-comments">
+      <h3 th:text="${theme.config.about.about_comment_title}">留言板</h3>
+      <halo:comment
+        group="content.halo.run"
+        kind="SinglePage"
+        th:attr="name=${singlePage.metadata.name}"
+      />
+    </div>
+  </th:block>
+</html>

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html th:lang="${#locale.toLanguageTag}" th:fragment="html (title,content)" th:attr="data-theme=${theme.config.style.color_scheme ?: 'light'}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title th:text="${title}"></title>
+  <meta name="description" th:content="${site.subtitle}">
+  <link rel="stylesheet" th:href="@{/assets/style.css?v={version}(version=${theme.spec.version})}">
+  
+  <!-- 自定义颜色 -->
+  <style>
+    :root {
+      --link-color: [[${theme.config.style.primary_color ?: '#42b983'}]] !important;
+      --link-hover: [[${theme.config.style.primary_color ?: '#42b983'}]] !important;
+      --text-color: [[${theme.config.style.text_color ?: '#34495e'}]];
+      --bg-color: [[${theme.config.style.background_color ?: '#ffffff'}]];
+    }
+    
+    /* 暗夜模式优先级更高 */
+    [data-theme="dark"] {
+      --bg-color: #292a2d !important;
+      --text-color: #a9a9b3 !important;
+      --text-secondary: #87888f !important;
+      --border-color: #3b3d42 !important;
+      --code-bg: #2d2d2d !important;
+    }
+  </style>
+  
+  <!-- lightGallery 灯箱 -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery@2.7.2/css/lightgallery-bundle.min.css">
+</head>
+<body data-color-scheme="auto">
+  <div>
+    <th:block th:replace="~{modules/header}" />
+    <main class="container">
+      <th:block th:replace="${content}" />
+    </main>
+    <th:block th:replace="~{modules/footer}" />
+  </div>
+  
+  <!-- 返回顶部按钮 -->
+  <button class="back-to-top" aria-label="返回顶部">
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="18 15 12 9 6 15"></polyline>
+    </svg>
+  </button>
+  
+  <!-- lightGallery 灯箱 -->
+  <script src="https://cdn.jsdelivr.net/npm/lightgallery@2.7.2/lightgallery.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lightgallery@2.7.2/plugins/zoom/lg-zoom.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lightgallery@2.7.2/plugins/thumbnail/lg-thumbnail.min.js"></script>
+  
+  <script th:src="@{/assets/main.js?v={version}(version=${theme.spec.version})}"></script>
+</body>
+</html>

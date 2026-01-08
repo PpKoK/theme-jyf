@@ -1,0 +1,122 @@
+<header th:fragment="header" class="header">
+  <div class="container">
+    <nav class="nav">
+      <div class="nav-left">
+        <a th:href="@{/}" class="logo" th:text="${theme.config.basic.logo_text ?: site.title}"></a>
+      </div>
+      
+      <!-- 汉堡菜单按钮（仅移动端显示） -->
+      <button class="mobile-menu-toggle" id="mobile-menu-toggle" aria-label="菜单">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+      
+      <div class="nav-center" th:with="menu = ${menuFinder.getPrimary()}">
+        <th:block th:if="${menu != null && not #lists.isEmpty(menu.menuItems)}">
+          <th:block th:each="menuItem : ${menu.menuItems}">
+            <!-- 判断是否有子菜单 -->
+            <div th:if="${menuItem.children != null && not #lists.isEmpty(menuItem.children)}"
+                 class="nav-item has-dropdown">
+              <a th:href="@{${menuItem.status.href}}"
+                 th:text="${menuItem.status.displayName}"
+                 th:target="${menuItem.spec.target?.value}"
+                 class="nav-link">
+              </a>
+              <svg class="dropdown-icon" xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+              <div class="dropdown-menu">
+                <a th:each="child : ${menuItem.children}"
+                   th:href="@{${child.status.href}}"
+                   th:text="${child.status.displayName}"
+                   th:target="${child.spec.target?.value}"
+                   class="dropdown-item">
+                </a>
+              </div>
+            </div>
+            <!-- 没有子菜单的普通链接 -->
+            <a th:unless="${menuItem.children != null && not #lists.isEmpty(menuItem.children)}"
+               th:href="@{${menuItem.status.href}}"
+               th:text="${menuItem.status.displayName}"
+               th:target="${menuItem.spec.target?.value}"
+               class="nav-link">
+            </a>
+          </th:block>
+        </th:block>
+      </div>
+      
+      <div class="nav-right">
+        <!-- 搜索按钮 -->
+        <a
+          href="javascript:void(0)"
+          onclick="if(typeof SearchWidget !== 'undefined') SearchWidget.open();"
+          class="icon-btn search-btn"
+          title="搜索"
+          aria-label="搜索"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"></circle>
+            <path d="m21 21-4.35-4.35"></path>
+          </svg>
+        </a>
+        
+        <!-- 暗夜模式切换 -->
+        <button 
+          class="icon-btn theme-toggle"
+          id="theme-toggle"
+          title="切换主题"
+          aria-label="切换主题"
+        >
+          <svg class="sun-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+          </svg>
+          <svg class="moon-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+          </svg>
+        </button>
+        
+        <!-- 登录/用户按钮 -->
+        <!-- 未登录时显示图标 -->
+        <a
+          th:if="${theme.config.basic.show_login}"
+          sec:authorize="isAnonymous()"
+          href="/console"
+          class="icon-btn login-btn"
+          title="登录"
+          aria-label="登录"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+            <circle cx="12" cy="7" r="4"></circle>
+          </svg>
+        </a>
+        
+        <!-- 已登录时显示头像 -->
+        <a
+          th:if="${theme.config.basic.show_login}"
+          sec:authorize="isAuthenticated()"
+          th:with="currentUser = ${contributorFinder.getContributor(#authentication.name)}"
+          href="/uc"
+          class="user-avatar"
+          th:title="${currentUser.displayName}"
+          th:aria-label="${currentUser.displayName}"
+        >
+          <img
+            th:src="${currentUser.avatar}"
+            th:alt="${currentUser.displayName}"
+          />
+        </a>
+      </div>
+    </nav>
+    
+  </div>
+</header>

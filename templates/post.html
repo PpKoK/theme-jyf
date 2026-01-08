@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html 
+  xmlns:th="https://www.thymeleaf.org"
+  th:replace="~{modules/layout :: html(title = ${post.spec.title} + ' - ' + ${site.title}, content = ~{::content})}"
+>
+  <th:block th:fragment="content">
+    <article class="post-detail">
+      <!-- 文章头部 -->
+      <header class="post-header">
+        <h1 class="post-title" th:text="${post.spec.title}"></h1>
+        <div class="post-meta">
+          <time th:text="${#dates.format(post.spec.publishTime, 'yyyy-MM-dd HH:mm')}"></time>
+          <span class="separator">·</span>
+          <span th:text="#{common.visitCount(${post.stats?.visit ?: 0})}"></span>
+          <span class="separator" th:if="${post.categories != null && !#lists.isEmpty(post.categories)}">·</span>
+          <a 
+            th:if="${post.categories != null && !#lists.isEmpty(post.categories)}"
+            th:each="category, iterStat : ${post.categories}" 
+            th:href="@{${category.status.permalink}}" 
+            th:text="${category.spec.displayName}"
+            class="category"
+          ></a>
+        </div>
+        <div class="post-tags" th:if="${post.tags != null && !#lists.isEmpty(post.tags)}">
+          <a 
+            th:each="tag : ${post.tags}" 
+            th:href="@{${tag.status.permalink}}" 
+            th:text="|#${tag.spec.displayName}|"
+            class="tag"
+          ></a>
+        </div>
+      </header>
+      
+      <!-- 文章内容 -->
+      <div class="post-content" th:utext="${post.content.content}"></div>
+      
+      <!-- 文章底部 -->
+      <footer class="post-footer">
+        <!-- 上一篇/下一篇 -->
+        <div class="post-nav" th:with="postCursor = ${postFinder.cursor(post.metadata.name)}">
+          <div class="post-nav-item">
+            <a 
+              th:if="${postCursor.hasPrevious()}"
+              th:href="@{${postCursor.previous.status.permalink}}"
+              th:title="${postCursor.previous.spec.title}"
+            >
+              <span class="nav-label" th:text="#{post.prevPost}">← 上一篇</span>
+              <span class="nav-title" th:text="${postCursor.previous.spec.title}"></span>
+            </a>
+          </div>
+          <div class="post-nav-item">
+            <a 
+              th:if="${postCursor.hasNext()}"
+              th:href="@{${postCursor.next.status.permalink}}"
+              th:title="${postCursor.next.spec.title}"
+            >
+              <span class="nav-label" th:text="#{post.nextPost}">下一篇 →</span>
+              <span class="nav-title" th:text="${postCursor.next.spec.title}"></span>
+            </a>
+          </div>
+        </div>
+        
+        <!-- 评论 -->
+        <div class="post-comments" th:if="${haloCommentEnabled}">
+          <h3 th:text="#{common.comment}">评论</h3>
+          <halo:comment 
+            group="content.halo.run" 
+            kind="Post" 
+            th:attr="name=${post.metadata.name}"
+          />
+        </div>
+      </footer>
+    </article>
+  </th:block>
+</html>

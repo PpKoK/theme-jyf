@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html 
+  xmlns:th="https://www.thymeleaf.org"
+  th:replace="~{modules/layout :: html(title = #{common.categories} + ' - ' + ${site.title}, content = ~{::content})}"
+>
+  <th:block th:fragment="content">
+    <div class="categories">
+      <h1 class="page-title" th:text="#{common.categories}">分类</h1>
+      
+      <div class="category-list" th:if="${categories != null && !#lists.isEmpty(categories)}">
+        <div th:each="category : ${categories}" class="category-item">
+          <a th:href="@{${category.status.permalink}}" th:text="${category.spec.displayName}"></a>
+          <span class="count" th:text="|（${category.status.postCount ?: 0}）|"></span>
+        </div>
+      </div>
+      
+      <div th:if="${categories == null || #lists.isEmpty(categories)}" class="no-content">
+        <p>暂无分类</p>
+      </div>
+    </div>
+  </th:block>
+</html>

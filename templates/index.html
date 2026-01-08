@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html 
+  xmlns:th="https://www.thymeleaf.org"
+  th:replace="~{modules/layout :: html(title = ${site.title}, content = ~{::content})}"
+>
+  <th:block th:fragment="content">
+    <!-- 文章数据（仅在显示热力图时加载） -->
+    <script th:if="${theme.config.basic.show_heatmap}" th:inline="javascript">
+      window.postHeatmapData = {
+        allPosts: [
+          /*[# th:each="post : ${postFinder.list(1, 1000).items}"]*/
+          {
+            date: /*[[${post.spec.publishTime}]]*/ '',
+            title: /*[[${post.spec.title}]]*/ ''
+          },
+          /*[/]*/
+        ]
+      };
+    </script>
+    
+    <!-- 站点描述 -->
+    <div class="site-intro">
+      <h1 th:text="${theme.config.basic.site_title ?: site.title}">站点标题</h1>
+      <div class="site-description" th:utext="${theme.config.basic.site_description ?: site.subtitle}">
+        站点描述
+      </div>
+    </div>
+    
+    <!-- 热力图 -->
+    <div th:if="${theme.config.basic.show_heatmap}" class="heatmap" id="post-heatmap">
+      <div class="heatmap-header">
+        <div class="heatmap-title">文章发布热力图</div>
+        <span class="heatmap-year"></span>
+      </div>
+      <div class="heatmap-wrapper">
+        <!-- 月份标签 -->
+        <div class="heatmap-months"></div>
+        
+        <!-- 热力图网格 -->
+        <div class="heatmap-grid">
+          <!-- 星期标签 -->
+          <div class="heatmap-weekdays">
+            <span>一</span>
+            <span>三</span>
+            <span>五</span>
+          </div>
+          
+          <!-- 日期网格 -->
+          <div class="heatmap-days"></div>
+        </div>
+        
+        <!-- 图例 -->
+        <div class="heatmap-legend">
+          <span>少</span>
+          <div class="heatmap-legend-item" data-level="0"></div>
+          <div class="heatmap-legend-item" data-level="1"></div>
+          <div class="heatmap-legend-item" data-level="2"></div>
+          <div class="heatmap-legend-item" data-level="3"></div>
+          <div class="heatmap-legend-item" data-level="4"></div>
+          <span>多</span>
+        </div>
+      </div>
+      
+      <!-- Tooltip -->
+      <div id="heatmap-tooltip" class="heatmap-tooltip"></div>
+    </div>
+    
+    <!-- 文章列表 -->
+    <div class="post-list">
+      <th:block th:if="${posts.total gt 0}">
+        <article th:each="post : ${posts.items}" class="post-item">
+          <div class="post-header-line">
+            <div class="post-meta">
+              <time th:text="${#dates.format(post.spec.publishTime, 'yyyy-MM-dd')}"></time>
+            </div>
+            <h2 class="post-title">
+              <a th:href="@{${post.status.permalink}}" th:text="${post.spec.title}"></a>
+            </h2>
+          </div>
+          <div class="post-excerpt" th:if="${post.status.excerpt}" th:text="${post.status.excerpt}"></div>
+        </article>
+      </th:block>
+      
+      <div th:if="${posts.total == 0}" class="no-posts">
+        <p th:text="#{common.noPosts}">暂无文章</p>
+      </div>
+    </div>
+    
+    <!-- 分页 -->
+    <div th:if="${posts.total gt 0}" class="pagination">
+      <a 
+        th:if="${posts.hasPrevious()}" 
+        th:href="@{${posts.prevUrl}}" 
+        class="pagination-btn"
+        th:text="#{pagination.prev}"
+      >上一页</a>
+      <span class="pagination-info">
+        <span th:text="${posts.page}"></span> / <span th:text="${posts.totalPages}"></span>
+      </span>
+      <a 
+        th:if="${posts.hasNext()}" 
+        th:href="@{${posts.nextUrl}}" 
+        class="pagination-btn"
+        th:text="#{pagination.next}"
+      >下一页</a>
+    </div>
+  </th:block>
+</html>

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html 
+  xmlns:th="https://www.thymeleaf.org"
+  th:replace="~{modules/layout :: html(title = #{common.tags} + ' - ' + ${site.title}, content = ~{::content})}"
+>
+  <th:block th:fragment="content">
+    <div class="tags">
+      <h1 class="page-title" th:text="#{common.tags}">标签</h1>
+      
+      <div class="tag-list" th:if="${tags != null && !#lists.isEmpty(tags)}">
+        <a 
+          th:each="tag : ${tags}" 
+          th:href="@{${tag.status.permalink}}" 
+          th:text="|#${tag.spec.displayName}（${tag.status.postCount ?: 0}）|"
+          class="tag-item"
+        ></a>
+      </div>
+      
+      <div th:if="${tags == null || #lists.isEmpty(tags)}" class="no-content">
+        <p>暂无标签</p>
+      </div>
+    </div>
+  </th:block>
+</html>

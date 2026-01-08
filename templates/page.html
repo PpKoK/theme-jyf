@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html 
+  xmlns:th="https://www.thymeleaf.org"
+  th:replace="~{modules/layout :: html(title = ${singlePage.spec.title} + ' - ' + ${site.title}, content = ~{::content})}"
+>
+  <th:block th:fragment="content">
+    <article class="post-detail">
+      <!-- 页面头部 -->
+      <header class="post-header">
+        <h1 class="post-title" th:text="${singlePage.spec.title}"></h1>
+        <div class="post-meta">
+          <time th:text="${#dates.format(singlePage.spec.publishTime, 'yyyy-MM-dd')}"></time>
+          <span class="separator">·</span>
+          <span th:text="#{common.visitCount(${singlePage.stats?.visit ?: 0})}"></span>
+        </div>
+      </header>
+      
+      <!-- 页面内容 -->
+      <div class="post-content" th:utext="${singlePage.content.content}"></div>
+      
+      <!-- 评论区 -->
+      <div class="post-comments" th:if="${haloCommentEnabled}">
+        <h3 th:text="#{common.comment}">评论</h3>
+        <halo:comment 
+          group="content.halo.run" 
+          kind="SinglePage" 
+          th:attr="name=${singlePage.metadata.name}"
+        />
+      </div>
+    </article>
+  </th:block>
+</html>

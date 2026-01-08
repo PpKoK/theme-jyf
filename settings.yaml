@@ -1,0 +1,191 @@
+apiVersion: v1alpha1
+kind: Setting
+metadata:
+  name: theme-jyf-setting
+spec:
+  forms:
+    - group: basic
+      label: 基础设置
+      formSchema:
+        - $formkit: text
+          name: logo_text
+          label: Logo文字
+          value: "Jyf"
+          help: 顶部导航栏显示的Logo文字
+        
+        - $formkit: text
+          name: site_title
+          label: 站点标题
+          value: ""
+          help: 首页显示的标题，留空则使用系统设置的站点标题
+        
+        - $formkit: textarea
+          name: site_description
+          label: 站点描述
+          value: "欢迎来到我的个人博客！这里记录着我的想法、学习和生活。"
+          help: 显示在首页的站点描述，支持HTML，可以使用<br>换行
+          rows: 3
+        
+        - $formkit: checkbox
+          name: show_heatmap
+          label: 显示文章发布热力图
+          value: true
+          help: 在首页显示 GitHub 风格的文章发布热力图
+        
+        - $formkit: checkbox
+          name: show_login
+          label: 显示登录按钮
+          value: true
+
+    - group: footer
+      label: 页脚设置
+      formSchema:
+        - $formkit: text
+          name: copyright_owner
+          label: 版权所有者
+          value: "Jyf"
+          help: 显示在版权信息中的名称
+        
+        - $formkit: text
+          name: copyright_start_year
+          label: 版权起始年份
+          value: "2024"
+          help: 版权起始年份，留空则只显示当前年份
+        
+        - $formkit: checkbox
+          name: show_powered
+          label: 显示底部版权
+          value: true
+          help: 是否在页脚显示 Halo 和主题版本信息
+        
+        - $formkit: text
+          name: icp_text
+          label: ICP备案号
+          value: ""
+          help: 留空则不显示
+        
+        - $formkit: text
+          name: icp_link
+          label: ICP备案链接
+          value: "https://beian.miit.gov.cn/"
+        
+        
+    - group: style
+      label: 样式设置
+      formSchema:
+        - $formkit: radio
+          name: color_scheme
+          label: 默认配色
+          value: light
+          options:
+            - label: 浅色
+              value: light
+            - label: 深色
+              value: dark
+          help: 用户可通过右上角按钮切换
+        
+        - $formkit: color
+          name: primary_color
+          label: 主色调
+          value: "#50E3C2"
+          help: 推荐：50E3C2、F5A623、4A90E2、8B572A
+        
+        - $formkit: color
+          name: text_color
+          label: 文字颜色
+          value: "#34495e"
+          help: 主要文字颜色（浅色模式）
+        
+        - $formkit: color
+          name: background_color
+          label: 背景色
+          value: "#FAFAFA"
+          help: 页面背景颜色（浅色模式）
+    
+    - group: about
+      label: 关于页面设置
+      formSchema:
+        - $formkit: text
+          name: about_banner_text
+          label: 大标题文字
+          value: ""
+          help: 中心大标题，留空则使用站点标题
+        
+        - $formkit: text
+          name: about_tag_1
+          label: 标签1
+          value: "Blogger"
+        
+        - $formkit: text
+          name: about_tag_2
+          label: 标签2
+          value: "Creator"
+        
+        - $formkit: text
+          name: about_tag_3
+          label: 标签3
+          value: "Developer"
+        
+        - $formkit: text
+          name: about_tag_4
+          label: 标签4
+          value: "Writer"
+        
+        - $formkit: text
+          name: about_tag_5
+          label: 标签5
+          value: "Designer"
+        
+        - $formkit: text
+          name: about_tag_6
+          label: 标签6
+          value: "Coder"
+        
+        - $formkit: text
+          name: about_tag_7
+          label: 标签7
+          value: "Maker"
+        
+        - $formkit: text
+          name: about_tag_8
+          label: 标签8
+          value: "Thinker"
+        
+        - $formkit: text
+          name: about_contact_title
+          label: 联系方式标题
+          value: "联系方式"
+        
+        - $formkit: textarea
+          name: about_contact_content
+          label: 联系方式内容
+          value: "Email: ppkok2@icloud.com<br>GitHub: @ppkok"
+          help: 支持HTML，可以使用<br>换行
+          rows: 3
+        
+        - $formkit: text
+          name: about_intro_title
+          label: 关于我标题
+          value: "👋 关于我"
+        
+        - $formkit: textarea
+          name: about_intro_content
+          label: 关于我内容
+          value: "欢迎来到我的个人博客！<br>这里记录着我的想法、学习和生活。"
+          help: 支持HTML，可以使用<br>换行
+          rows: 3
+        
+        - $formkit: text
+          name: about_tech_title
+          label: 技术栈标题
+          value: "技术栈"
+        
+        - $formkit: text
+          name: about_tech_content
+          label: 技术栈内容
+          value: "Halo · Vue.js · TypeScript · Node.js · Docker · Linux"
+        
+        - $formkit: text
+          name: about_comment_title
+          label: 留言板标题
+          value: "留言板"

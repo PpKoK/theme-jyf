@@ -1,0 +1,30 @@
+apiVersion: theme.halo.run/v1alpha1
+kind: Theme
+metadata:
+  name: theme-jyf
+spec:
+  displayName: Jyf
+  author:
+    name: Jyf
+    website: https://jyf.run
+  description: 一个极简的纯文字博客主题 - Jyf
+  logo: https://www.ppkok.com/upload/icon.png
+  homepage: https://www.ppkok.com
+  repo: https://github.com/PpKoK/theme-jyf
+  settingName: "theme-jyf-setting"
+  configMapName: "theme-jyf-configMap"
+  version: 1.0.2
+  requires: ">=2.20.0"
+  license:
+    - name: "自定义许可证 (仅供个人非商业使用)"
+      url: "https://github.com/PpKoK/theme-jyf/blob/main/LICENSE"
+  customTemplates:
+    page:
+      - name: 关于
+        description: 布贴风格的关于页面
+        screenshot:
+        file: about.html
+      - name: 友链
+        description: 友情链接页面
+        screenshot:
+        file: links.html
