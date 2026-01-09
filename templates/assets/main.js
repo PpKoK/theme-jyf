@@ -14,13 +14,53 @@
     const themeToggle = document.querySelector('.theme-toggle');
     if (!themeToggle) return;
 
-    themeToggle.addEventListener('click', () => {
+    themeToggle.addEventListener('click', (e) => {
       const currentTheme = document.documentElement.getAttribute('data-theme');
       const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-      document.documentElement.setAttribute('data-theme', newTheme);
-      document.body.setAttribute('data-color-scheme', newTheme);
-      localStorage.setItem('theme', newTheme);
+      
+      // 创建扩散动画
+      createThemeTransition(e, newTheme);
     });
+  }
+
+  // 创建主题切换的扩散动画（使用 clip-path）
+  function createThemeTransition(event, newTheme) {
+    // 获取点击位置
+    const button = event.currentTarget;
+    const rect = button.getBoundingClientRect();
+    const x = rect.left + rect.width / 2;
+    const y = rect.top + rect.height / 2;
+    
+    // 计算需要的圆形半径（覆盖整个屏幕）
+    const maxDistance = Math.hypot(
+      Math.max(x, window.innerWidth - x),
+      Math.max(y, window.innerHeight - y)
+    );
+    
+    // 创建遮罩层
+    const mask = document.createElement('div');
+    mask.className = `theme-transition-mask to-${newTheme}`;
+    
+    // 设置初始 clip-path（从点击位置开始的小圆）
+    mask.style.clipPath = `circle(0px at ${x}px ${y}px)`;
+    
+    document.body.appendChild(mask);
+    
+    // 立即切换主题（与动画同时进行）
+    document.documentElement.setAttribute('data-theme', newTheme);
+    document.body.setAttribute('data-color-scheme', newTheme);
+    localStorage.setItem('theme', newTheme);
+    
+    // 使用 RAF 触发动画
+    requestAnimationFrame(() => {
+      // 扩散到覆盖整个屏幕
+      mask.style.clipPath = `circle(${maxDistance * 1.5}px at ${x}px ${y}px)`;
+    });
+    
+    // 动画完成后移除遮罩
+    setTimeout(() => {
+      mask.remove();
+    }, 1100);
   }
 
   // ==================== 热力图 ====================
@@ -507,6 +547,235 @@
     // 搜索功能由插件提供，这里只是占位
   }
 
+  // ==================== 文章目录 ====================
+  function initPostTOC() {
+    const tocContainer = document.getElementById('post-toc');
+    const postContent = document.querySelector('.post-content');
+    
+    console.log('[TOC] 初始化文章目录');
+    console.log('[TOC] tocContainer:', tocContainer);
+    console.log('[TOC] postContent:', postContent);
+    
+    if (!tocContainer || !postContent) {
+      console.log('[TOC] 目录容器或文章内容不存在，跳过初始化');
+      return;
+    }
+    
+    // 获取所有标题
+    const headings = postContent.querySelectorAll('h1, h2, h3, h4, h5, h6');
+    console.log('[TOC] 找到标题数量:', headings.length);
+    
+    if (headings.length === 0) {
+      console.log('[TOC] 文章没有标题，隐藏目录');
+      // 如果没有标题，隐藏目录
+      const tocWrapper = document.querySelector('.post-toc');
+      if (tocWrapper) {
+        tocWrapper.style.display = 'none';
+      }
+      return;
+    }
+    
+    // 为每个标题添加 ID
+    headings.forEach((heading, index) => {
+      if (!heading.id) {
+        heading.id = `heading-${index}`;
+      }
+    });
+    
+    // 生成目录结构
+    function generateTOC() {
+      const toc = [];
+      let currentLevel = 0;
+      let currentParent = toc;
+      const stack = [{ level: 0, children: toc }];
+      
+      headings.forEach((heading) => {
+        const level = parseInt(heading.tagName.substring(1));
+        const item = {
+          id: heading.id,
+          text: heading.textContent,
+          level: level,
+          children: []
+        };
+        
+        // 找到合适的父级
+        while (stack.length > 0 && stack[stack.length - 1].level >= level) {
+          stack.pop();
+        }
+        
+        const parent = stack[stack.length - 1];
+        parent.children.push(item);
+        stack.push(item);
+      });
+      
+      return toc;
+    }
+    
+    // 渲染目录
+    function renderTOC(items, container) {
+      if (items.length === 0) return;
+      
+      const ul = document.createElement('ul');
+      
+      items.forEach(item => {
+        const li = document.createElement('li');
+        const a = document.createElement('a');
+        a.href = `#${item.id}`;
+        a.textContent = item.text;
+        a.dataset.id = item.id;
+        
+        // 点击平滑滚动
+        a.addEventListener('click', (e) => {
+          e.preventDefault();
+          const target = document.getElementById(item.id);
+          if (target) {
+            const offset = 80; // 顶部偏移量
+            const targetPosition = target.getBoundingClientRect().top + window.scrollY - offset;
+            window.scrollTo({
+              top: targetPosition,
+              behavior: 'smooth'
+            });
+            
+            // 更新 URL hash
+            history.pushState(null, null, `#${item.id}`);
+          }
+        });
+        
+        li.appendChild(a);
+        
+        // 递归渲染子项
+        if (item.children && item.children.length > 0) {
+          renderTOC(item.children, li);
+        }
+        
+        ul.appendChild(li);
+      });
+      
+      container.appendChild(ul);
+    }
+    
+    // 滚动高亮
+    function highlightTOC() {
+      const scrollTop = window.scrollY;
+      const offset = 100;
+      
+      let activeHeading = null;
+      
+      // 找到当前可见的标题
+      headings.forEach(heading => {
+        const rect = heading.getBoundingClientRect();
+        if (rect.top <= offset) {
+          activeHeading = heading;
+        }
+      });
+      
+      // 移除所有 active 类
+      const tocLinks = tocContainer.querySelectorAll('a');
+      tocLinks.forEach(link => link.classList.remove('active'));
+      
+      // 添加 active 类到当前标题
+      if (activeHeading) {
+        const activeLink = tocContainer.querySelector(`a[data-id="${activeHeading.id}"]`);
+        if (activeLink) {
+          activeLink.classList.add('active');
+        }
+      }
+    }
+    
+    // 生成并渲染目录
+    const tocData = generateTOC();
+    console.log('[TOC] 生成的目录数据:', tocData);
+    renderTOC(tocData, tocContainer);
+    console.log('[TOC] 目录渲染完成');
+    
+    // 监听滚动事件
+    let ticking = false;
+    window.addEventListener('scroll', () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          highlightTOC();
+          ticking = false;
+        });
+        ticking = true;
+      }
+    });
+    
+    // 初始高亮
+    highlightTOC();
+  }
+
+  // ==================== 文章点赞功能 ====================
+  function initPostUpvote() {
+    const upvoteBtn = document.querySelector('.post-upvote-btn');
+    if (!upvoteBtn) return;
+    
+    const postName = upvoteBtn.dataset.name;
+    const countSpan = upvoteBtn.querySelector('.upvote-count');
+    
+    if (!postName) {
+      console.error('[Upvote] 文章名称未找到');
+      return;
+    }
+    
+    // 检查是否已点赞
+    const upvotedPosts = JSON.parse(localStorage.getItem('upvoted_posts') || '[]');
+    if (upvotedPosts.includes(postName)) {
+      upvoteBtn.classList.add('upvoted');
+    }
+    
+    upvoteBtn.addEventListener('click', async () => {
+      try {
+        const isUpvoted = upvoteBtn.classList.contains('upvoted');
+        
+        // 调用 Halo API - 使用正确的端点
+        const response = await fetch(`/apis/api.halo.run/v1alpha1/trackers/upvote`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            group: 'content.halo.run',
+            plural: 'posts',
+            name: postName
+          })
+        });
+        
+        if (response.ok) {
+          // 切换状态
+          upvoteBtn.classList.toggle('upvoted');
+          
+          // 更新本地存储
+          if (isUpvoted) {
+            const index = upvotedPosts.indexOf(postName);
+            if (index > -1) {
+              upvotedPosts.splice(index, 1);
+            }
+            // 减少计数
+            const currentCount = parseInt(countSpan.textContent) || 0;
+            countSpan.textContent = Math.max(0, currentCount - 1);
+          } else {
+            upvotedPosts.push(postName);
+            // 增加计数
+            const currentCount = parseInt(countSpan.textContent) || 0;
+            countSpan.textContent = currentCount + 1;
+          }
+          
+          localStorage.setItem('upvoted_posts', JSON.stringify(upvotedPosts));
+          
+          console.log('[Upvote] 点赞成功:', isUpvoted ? '取消' : '点赞');
+        } else {
+          console.error('[Upvote] API 响应错误:', response.status, response.statusText);
+          const errorText = await response.text();
+          console.error('[Upvote] 错误详情:', errorText);
+        }
+      } catch (error) {
+        console.error('[Upvote] 点赞失败:', error);
+      }
+    });
+    
+    console.log('[Upvote] 点赞功能已初始化，文章:', postName);
+  }
+
   // ==================== 初始化 ====================
   function init() {
     initTheme();
@@ -519,6 +788,8 @@
     initLightGallery();
     initHighlight();
     initFriendLinks();
+    initPostTOC();
+    initPostUpvote();
   }
 
   // 页面加载完成后初始化

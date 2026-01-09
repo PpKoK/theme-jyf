@@ -33,6 +33,7 @@
 [x] 友情链接（/links）：<https://halo.run/store/apps/app-hfbQg>
 ## ⌚️ todo
 [] 图库（/photos）：<https://halo.run/store/apps/app-BmQJW>
+
 [] 瞬间（/moments）：<https://halo.run/store/apps/app-SnwWD>
 
 ## 📸 预览
@@ -148,6 +149,18 @@ git clone https://github.com/PpKoK/theme-jyf.git
 - Thymeleaf 模板引擎
 
 ## 📝 更新日志
+
+
+
+### v1.0.4
+- 增加暗亮icon的动画
+- 增加首页图文列表
+- 增加页面点赞功能
+
+
+### v1.0.3
+- 增加鼠标设置
+- 增加文章目录
 
 ### v1.0.2
 - 优化主题配置项

@@ -67,7 +67,6 @@ a:hover {
 /* Header */
 .header {
   padding: 60px 0 40px;
-  border-bottom: 1px solid var(--border-color);
   margin-bottom: 60px;
 }
 
@@ -663,6 +662,121 @@ a:hover {
   color: var(--link-hover);
 }
 
+/* Post TOC - 文章目录 */
+.post-container {
+  position: relative;
+}
+
+.post-detail {
+  max-width: 100%;
+}
+
+.post-toc {
+  position: fixed;
+  right: max(20px, calc((100vw - 1000px) / 2 - 280px));
+  top: 140px;
+  width: 240px;
+  max-height: calc(100vh - 240px);
+  z-index: 10;
+}
+
+/* 当屏幕宽度小于1600px时，隐藏目录 */
+@media (max-width: 1600px) {
+  .post-toc {
+    display: none;
+  }
+}
+
+.post-toc-wrapper {
+  border: 1px solid var(--border-color);
+  background: var(--bg-color);
+  padding: 16px;
+  border-radius: 4px;
+  max-height: calc(100vh - 240px);
+  overflow-y: auto;
+}
+
+.post-toc-header {
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.post-toc-header h3 {
+  font-size: 0.9rem;
+  font-weight: 700;
+  margin: 0;
+  color: var(--text-color);
+  font-family: "Menlo", "Meslo LG", "Microsoft YaHei", "微软雅黑", monospace, sans-serif;
+}
+
+#post-toc {
+  font-size: 0.85rem;
+  line-height: 1.6;
+}
+
+#post-toc ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+#post-toc li {
+  margin: 0;
+  padding: 0;
+}
+
+#post-toc a {
+  display: block;
+  padding: 4px 0;
+  color: var(--text-secondary);
+  text-decoration: none;
+  transition: color 0.2s;
+  font-family: "Menlo", "Meslo LG", "Microsoft YaHei", "微软雅黑", monospace, sans-serif;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+#post-toc a:hover {
+  color: var(--link-color);
+  text-decoration: none;
+}
+
+#post-toc a.active {
+  color: var(--link-color);
+  font-weight: 700;
+}
+
+/* 目录层级缩进 */
+#post-toc ul ul {
+  padding-left: 15px;
+  margin-top: 2px;
+}
+
+#post-toc ul ul a {
+  font-size: 0.8rem;
+}
+
+/* 滚动条样式 */
+.post-toc-wrapper::-webkit-scrollbar {
+  width: 4px;
+}
+
+.post-toc-wrapper::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.post-toc-wrapper::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 2px;
+}
+
+.post-toc-wrapper::-webkit-scrollbar-thumb:hover {
+  background: var(--text-secondary);
+}
+
 /* Post Navigation - Cactus style */
 .post-nav {
   display: flex;
@@ -1142,12 +1256,14 @@ a:hover {
     margin-top: 10px;
     padding: 0;
     background: transparent;
-    display: none;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
     width: 100%;
   }
   
   .nav-item.active .dropdown-menu {
-    display: block;
+    max-height: 500px;
   }
   
   .dropdown-item {
@@ -1190,6 +1306,15 @@ a:hover {
   
   .site-intro h1 {
     font-size: 1.8rem;
+  }
+  
+  /* 文章目录 - 移动端隐藏 */
+  .post-toc {
+    display: none;
+  }
+  
+  .post-container {
+    flex-direction: column;
   }
   
   .post-title {
@@ -1673,4 +1798,263 @@ a:hover {
   --halo-cw-avatar-size: 40px;
   --halo-cw-base-font-size: 14px;
   --halo-cw-base-font-family: "Menlo", "Meslo LG", "Microsoft YaHei", "微软雅黑", monospace, sans-serif;
+}
+
+
+/* ==================== 主题切换动画 ==================== */
+body {
+  position: relative;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: -1;
+  background: var(--bg-color);
+  transition: background 0.3s ease;
+}
+
+.theme-transition-mask {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: -1;
+  transition: clip-path 1.1s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.theme-transition-mask.to-dark {
+  background: #292a2d;
+}
+
+.theme-transition-mask.to-light {
+  background: #ffffff;
+}
+
+
+/* ==================== 图文列表样式 ==================== */
+.post-list-card {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.post-card {
+  display: flex;
+  gap: 20px;
+  padding: 0;
+  background: transparent;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  transition: border-color 0.2s;
+  overflow: hidden;
+}
+
+.post-card:hover {
+  border-color: var(--link-color);
+}
+
+.post-card-cover {
+  flex-shrink: 0;
+  width: 280px;
+  height: 200px;
+  overflow: hidden;
+  background: var(--code-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px 0 0 8px;
+}
+
+.post-card-cover a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+.post-card-cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  transition: transform 0.3s ease;
+}
+
+.post-card:hover .post-card-cover img {
+  transform: scale(1.05);
+}
+
+.post-card-content {
+  flex: 1;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+}
+
+.post-card-title {
+  font-size: 1.3rem;
+  margin: 0;
+  line-height: 1.4;
+  font-weight: 700;
+  font-family: "Menlo", "Meslo LG", "Microsoft YaHei", "微软雅黑", monospace, sans-serif;
+}
+
+.post-card-title a {
+  color: var(--text-color);
+  text-decoration: none;
+}
+
+.post-card-title a:hover {
+  color: var(--link-color);
+}
+
+.post-card-excerpt {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  line-height: 1.6;
+  font-family: "Menlo", "Meslo LG", "Microsoft YaHei", "微软雅黑", monospace, sans-serif;
+  font-weight: 600;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.post-card-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin-top: auto;
+}
+
+.post-card-meta-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  font-family: "Menlo", "Meslo LG", "Microsoft YaHei", "微软雅黑", monospace, sans-serif;
+  font-weight: 600;
+}
+
+.post-card-meta-item svg {
+  flex-shrink: 0;
+}
+
+.post-card-meta-item a {
+  color: var(--text-secondary);
+  text-decoration: none;
+}
+
+.post-card-meta-item a:hover {
+  color: var(--link-color);
+}
+
+/* 图文列表响应式 */
+@media (max-width: 768px) {
+  .post-card {
+    flex-direction: column;
+  }
+  
+  .post-card-cover {
+    width: 100%;
+    height: 180px;
+  }
+  
+  .post-card-content {
+    padding: 15px;
+  }
+  
+  .post-card-title {
+    font-size: 1.1rem;
+  }
+  
+  .post-card-meta {
+    gap: 10px;
+  }
+  
+  .post-card-meta-item {
+    font-size: 0.8rem;
+  }
+}
+
+
+/* ==================== 文章点赞按钮 ==================== */
+.post-content-wrapper {
+  position: relative;
+}
+
+.post-upvote-float {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 10;
+}
+
+.post-upvote-btn {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  background: var(--bg-color);
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  font-family: "Menlo", "Meslo LG", "Microsoft YaHei", "微软雅黑", monospace, sans-serif;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 10px 14px;
+  border-radius: 8px;
+  transition: all 0.3s;
+  box-shadow: var(--shadow);
+}
+
+.post-upvote-btn:hover {
+  color: var(--link-color);
+  border-color: var(--link-color);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.post-upvote-btn.upvoted {
+  color: #e74c3c;
+  border-color: #e74c3c;
+  background: rgba(231, 76, 60, 0.05);
+}
+
+.post-upvote-btn.upvoted svg {
+  fill: #e74c3c;
+}
+
+.post-upvote-btn:active {
+  transform: translateY(0) scale(0.95);
+}
+
+.post-upvote-btn svg {
+  transition: fill 0.2s;
+  flex-shrink: 0;
+}
+
+.upvote-count {
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+/* 响应式：移动端隐藏浮动点赞按钮 */
+@media (max-width: 768px) {
+  .post-upvote-float {
+    display: none;
+  }
 }

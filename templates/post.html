@@ -4,27 +4,28 @@
   th:replace="~{modules/layout :: html(title = ${post.spec.title} + ' - ' + ${site.title}, content = ~{::content})}"
 >
   <th:block th:fragment="content">
-    <article class="post-detail">
-      <!-- 文章头部 -->
-      <header class="post-header">
+    <div class="post-container">
+      <article class="post-detail">
+        <!-- 文章头部 -->
+        <header class="post-header">
         <h1 class="post-title" th:text="${post.spec.title}"></h1>
         <div class="post-meta">
           <time th:text="${#dates.format(post.spec.publishTime, 'yyyy-MM-dd HH:mm')}"></time>
           <span class="separator">·</span>
           <span th:text="#{common.visitCount(${post.stats?.visit ?: 0})}"></span>
           <span class="separator" th:if="${post.categories != null && !#lists.isEmpty(post.categories)}">·</span>
-          <a 
+          <a
             th:if="${post.categories != null && !#lists.isEmpty(post.categories)}"
-            th:each="category, iterStat : ${post.categories}" 
-            th:href="@{${category.status.permalink}}" 
+            th:each="category, iterStat : ${post.categories}"
+            th:href="@{${category.status.permalink}}"
             th:text="${category.spec.displayName}"
             class="category"
           ></a>
         </div>
         <div class="post-tags" th:if="${post.tags != null && !#lists.isEmpty(post.tags)}">
-          <a 
-            th:each="tag : ${post.tags}" 
-            th:href="@{${tag.status.permalink}}" 
+          <a
+            th:each="tag : ${post.tags}"
+            th:href="@{${tag.status.permalink}}"
             th:text="|#${tag.spec.displayName}|"
             class="tag"
           ></a>
@@ -32,7 +33,19 @@
       </header>
       
       <!-- 文章内容 -->
-      <div class="post-content" th:utext="${post.content.content}"></div>
+      <div class="post-content-wrapper">
+        <!-- 点赞按钮 - 浮动在右上角 -->
+        <div class="post-upvote-float">
+          <button class="post-upvote-btn" th:attr="data-name=${post.metadata.name}" title="点赞">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+            </svg>
+            <span class="upvote-count" th:text="${post.stats?.upvote ?: 0}">0</span>
+          </button>
+        </div>
+        
+        <div class="post-content" th:utext="${post.content.content}"></div>
+      </div>
       
       <!-- 文章底部 -->
       <footer class="post-footer">
@@ -69,7 +82,18 @@
             th:attr="name=${post.metadata.name}"
           />
         </div>
-      </footer>
-    </article>
+        </footer>
+      </article>
+      
+      <!-- 文章目录 -->
+      <aside th:if="${theme.config.basic.show_post_toc}" class="post-toc">
+        <div class="post-toc-wrapper">
+          <div class="post-toc-header">
+            <h3>目录</h3>
+          </div>
+          <nav class="post-toc-content" id="post-toc"></nav>
+        </div>
+      </aside>
+    </div>
   </th:block>
 </html>

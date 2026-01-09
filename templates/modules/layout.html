@@ -7,6 +7,9 @@
   <meta name="description" th:content="${site.subtitle}">
   <link rel="stylesheet" th:href="@{/assets/style.css?v={version}(version=${theme.spec.version})}">
   
+  <!-- 自定义鼠标指针样式 -->
+  <link th:if="${theme.config.cursor != null and theme.config.cursor.cursor_enabled != null and theme.config.cursor.cursor_enabled}" rel="stylesheet" th:href="@{/assets/cursors.css?v={version}(version=${theme.spec.version})}">
+  
   <!-- 自定义颜色 -->
   <style>
     :root {
@@ -29,7 +32,7 @@
   <!-- lightGallery 灯箱 -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery@2.7.2/css/lightgallery-bundle.min.css">
 </head>
-<body data-color-scheme="auto">
+<body data-color-scheme="auto" th:attr="data-cursor-style=${theme.config.cursor != null and theme.config.cursor.cursor_enabled != null and theme.config.cursor.cursor_enabled ? (theme.config.cursor.cursor_style ?: 'default') : 'default'}">
   <div>
     <th:block th:replace="~{modules/header}" />
     <main class="container">

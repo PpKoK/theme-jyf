@@ -36,6 +36,23 @@ spec:
           name: show_login
           label: 显示登录按钮
           value: true
+        
+        - $formkit: checkbox
+          name: show_post_toc
+          label: 显示文章目录
+          value: true
+          help: 在文章页面右侧显示目录导航
+        
+        - $formkit: radio
+          name: post_list_style
+          label: 文章列表样式
+          value: text
+          options:
+            - label: 文字列表
+              value: text
+            - label: 图文列表
+              value: card
+          help: 首页文章列表的显示样式
 
     - group: footer
       label: 页脚设置
@@ -101,6 +118,32 @@ spec:
           label: 背景色
           value: "#FAFAFA"
           help: 页面背景颜色（浅色模式）
+    
+    - group: cursor
+      label: 鼠标指针设置
+      formSchema:
+        - $formkit: radio
+          name: cursor_style
+          label: 鼠标指针样式
+          value: default
+          options:
+            - label: 系统默认
+              value: default
+            - label: Concept 概念光标 (深色)
+              value: concept-dark
+            - label: Concept 概念光标 (浅色)
+              value: concept-light
+            - label: PandO (深色)
+              value: pando-dark
+            - label: PandO (浅色)
+              value: pando-light
+          help: 选择自定义鼠标指针样式，或使用系统默认
+        
+        - $formkit: checkbox
+          name: cursor_enabled
+          label: 启用自定义鼠标指针
+          value: true
+          help: 关闭后将使用系统默认鼠标指针
     
     - group: about
       label: 关于页面设置

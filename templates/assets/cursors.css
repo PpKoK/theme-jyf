@@ -1,0 +1,122 @@
+/* 自定义鼠标指针样式 */
+
+/* Concept 概念光标 - 深色 */
+body[data-cursor-style="concept-dark"] {
+  cursor: url('/themes/theme-jyf/assets/cursors/concept-dark/arrow.cur'), auto;
+}
+
+body[data-cursor-style="concept-dark"] a,
+body[data-cursor-style="concept-dark"] button,
+body[data-cursor-style="concept-dark"] .nav-link,
+body[data-cursor-style="concept-dark"] .post-title a {
+  cursor: url('/themes/theme-jyf/assets/cursors/concept-dark/hand.cur'), pointer;
+}
+
+body[data-cursor-style="concept-dark"] input[type="text"],
+body[data-cursor-style="concept-dark"] input[type="email"],
+body[data-cursor-style="concept-dark"] input[type="password"],
+body[data-cursor-style="concept-dark"] textarea {
+  cursor: url('/themes/theme-jyf/assets/cursors/concept-dark/ibeam.cur'), text;
+}
+
+body[data-cursor-style="concept-dark"] .loading,
+body[data-cursor-style="concept-dark"] [data-loading] {
+  cursor: url('/themes/theme-jyf/assets/cursors/concept-dark/wait.ani'), wait;
+}
+
+/* Concept 概念光标 - 浅色 */
+body[data-cursor-style="concept-light"] {
+  cursor: url('/themes/theme-jyf/assets/cursors/concept-light/arrow.cur'), auto;
+}
+
+body[data-cursor-style="concept-light"] a,
+body[data-cursor-style="concept-light"] button,
+body[data-cursor-style="concept-light"] .nav-link,
+body[data-cursor-style="concept-light"] .post-title a {
+  cursor: url('/themes/theme-jyf/assets/cursors/concept-light/hand.cur'), pointer;
+}
+
+body[data-cursor-style="concept-light"] input[type="text"],
+body[data-cursor-style="concept-light"] input[type="email"],
+body[data-cursor-style="concept-light"] input[type="password"],
+body[data-cursor-style="concept-light"] textarea {
+  cursor: url('/themes/theme-jyf/assets/cursors/concept-light/ibeam.cur'), text;
+}
+
+body[data-cursor-style="concept-light"] .loading,
+body[data-cursor-style="concept-light"] [data-loading] {
+  cursor: url('/themes/theme-jyf/assets/cursors/concept-light/wait.ani'), wait;
+}
+
+/* PandO - 深色 */
+body[data-cursor-style="pando-dark"] {
+  cursor: url('/themes/theme-jyf/assets/cursors/pando-dark/Normal.cur'), auto;
+}
+
+body[data-cursor-style="pando-dark"] a,
+body[data-cursor-style="pando-dark"] button,
+body[data-cursor-style="pando-dark"] .nav-link,
+body[data-cursor-style="pando-dark"] .post-title a {
+  cursor: url('/themes/theme-jyf/assets/cursors/pando-dark/Link.cur'), pointer;
+}
+
+body[data-cursor-style="pando-dark"] input[type="text"],
+body[data-cursor-style="pando-dark"] input[type="email"],
+body[data-cursor-style="pando-dark"] input[type="password"],
+body[data-cursor-style="pando-dark"] textarea {
+  cursor: url('/themes/theme-jyf/assets/cursors/pando-dark/Text.cur'), text;
+}
+
+body[data-cursor-style="pando-dark"] .loading,
+body[data-cursor-style="pando-dark"] [data-loading] {
+  cursor: url('/themes/theme-jyf/assets/cursors/pando-dark/Working.ani'), wait;
+}
+
+body[data-cursor-style="pando-dark"] [disabled],
+body[data-cursor-style="pando-dark"] .disabled {
+  cursor: url('/themes/theme-jyf/assets/cursors/pando-dark/Unavailable.cur'), not-allowed;
+}
+
+/* PandO - 浅色 */
+body[data-cursor-style="pando-light"] {
+  cursor: url('/themes/theme-jyf/assets/cursors/pando-light/Normal.cur'), auto;
+}
+
+body[data-cursor-style="pando-light"] a,
+body[data-cursor-style="pando-light"] button,
+body[data-cursor-style="pando-light"] .nav-link,
+body[data-cursor-style="pando-light"] .post-title a {
+  cursor: url('/themes/theme-jyf/assets/cursors/pando-light/Link.cur'), pointer;
+}
+
+body[data-cursor-style="pando-light"] input[type="text"],
+body[data-cursor-style="pando-light"] input[type="email"],
+body[data-cursor-style="pando-light"] input[type="password"],
+body[data-cursor-style="pando-light"] textarea {
+  cursor: url('/themes/theme-jyf/assets/cursors/pando-light/Text.cur'), text;
+}
+
+body[data-cursor-style="pando-light"] .loading,
+body[data-cursor-style="pando-light"] [data-loading] {
+  cursor: url('/themes/theme-jyf/assets/cursors/pando-light/Working.ani'), wait;
+}
+
+body[data-cursor-style="pando-light"] [disabled],
+body[data-cursor-style="pando-light"] .disabled {
+  cursor: url('/themes/theme-jyf/assets/cursors/pando-light/Unavailable.cur'), not-allowed;
+}
+
+/* 系统默认 - 不应用任何自定义样式 */
+body[data-cursor-style="default"] {
+  cursor: auto;
+}
+
+body[data-cursor-style="default"] a,
+body[data-cursor-style="default"] button {
+  cursor: pointer;
+}
+
+body[data-cursor-style="default"] input[type="text"],
+body[data-cursor-style="default"] textarea {
+  cursor: text;
+}
