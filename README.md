@@ -150,7 +150,9 @@ git clone https://github.com/PpKoK/theme-jyf.git
 
 ## 📝 更新日志
 
-
+### v1.0.5
+- 修复暗亮icon的动画 【更加平滑】
+- 删除所有的1px线条
 
 ### v1.0.4
 - 增加暗亮icon的动画
