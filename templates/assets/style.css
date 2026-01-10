@@ -564,7 +564,6 @@ a:hover {
 .post-header {
   margin-bottom: 40px;
   padding-bottom: 20px;
-  border-bottom: 1px solid var(--border-color);
 }
 
 .post-header .post-title {
@@ -699,7 +698,6 @@ a:hover {
 .post-toc-header {
   margin-bottom: 15px;
   padding-bottom: 10px;
-  border-bottom: 1px solid var(--border-color);
 }
 
 .post-toc-header h3 {
@@ -784,7 +782,6 @@ a:hover {
   gap: 30px;
   margin-bottom: 60px;
   padding: 30px 0;
-  border-top: 1px solid var(--border-color);
 }
 
 .post-nav-item {
@@ -834,7 +831,6 @@ a:hover {
   font-size: 2rem;
   margin-bottom: 40px;
   padding-bottom: 20px;
-  border-bottom: 1px solid var(--border-color);
   font-weight: 700;
   font-family: "Menlo", "Meslo LG", "Microsoft YaHei", "微软雅黑", monospace, sans-serif;
 }
@@ -946,7 +942,6 @@ a:hover {
 
 /* Footer - Cactus style */
 .footer {
-  border-top: 1px solid var(--border-color);
   padding: 40px 0 60px;
   margin-top: 80px;
   background: transparent;
@@ -1032,7 +1027,6 @@ a:hover {
 .post-comments {
   margin-top: 60px;
   padding-top: 40px;
-  border-top: 1px solid var(--border-color);
 }
 
 .post-comments h3 {
@@ -1056,7 +1050,6 @@ a:hover {
   font-weight: 700;
   margin-bottom: 30px;
   padding-bottom: 15px;
-  border-bottom: 1px solid var(--border-color);
   font-family: "Menlo", "Meslo LG", "Microsoft YaHei", "微软雅黑", monospace, sans-serif;
 }
 
@@ -1827,7 +1820,8 @@ body::before {
   height: 100%;
   pointer-events: none;
   z-index: -1;
-  transition: clip-path 1.1s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  transition: clip-path 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: clip-path;
 }
 
 .theme-transition-mask.to-dark {

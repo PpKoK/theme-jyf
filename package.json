@@ -1,0 +1,19 @@
+{
+  "name": "theme-jyf",
+  "version": "1.0.0",
+  "description": "A Halo theme inspired by hexo-theme-cactus",
+  "scripts": {
+    "build": "theme-package"
+  },
+  "keywords": [
+    "halo",
+    "halo-theme",
+    "cactus"
+  ],
+  "author": "",
+  "license": "GPL-3.0",
+  "packageManager": "pnpm@9.15.0",
+  "devDependencies": {
+    "@halo-dev/theme-package-cli": "^1.0.0"
+  }
+}

@@ -37,30 +37,53 @@
       Math.max(y, window.innerHeight - y)
     );
     
-    // 创建遮罩层
+    // 创建遮罩层 - 始终使用暗色
     const mask = document.createElement('div');
-    mask.className = `theme-transition-mask to-${newTheme}`;
-    
-    // 设置初始 clip-path（从点击位置开始的小圆）
-    mask.style.clipPath = `circle(0px at ${x}px ${y}px)`;
+    mask.className = 'theme-transition-mask to-dark';
     
     document.body.appendChild(mask);
     
-    // 立即切换主题（与动画同时进行）
-    document.documentElement.setAttribute('data-theme', newTheme);
-    document.body.setAttribute('data-color-scheme', newTheme);
-    localStorage.setItem('theme', newTheme);
-    
-    // 使用 RAF 触发动画
-    requestAnimationFrame(() => {
-      // 扩散到覆盖整个屏幕
+    if (newTheme === 'dark') {
+      // 切换到暗色：暗色圆形从点击位置扩散出去
+      mask.style.clipPath = `circle(0px at ${x}px ${y}px)`;
+      
+      // 使用双 RAF 确保初始状态已渲染
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          // 扩散到覆盖整个屏幕
+          mask.style.clipPath = `circle(${maxDistance * 1.5}px at ${x}px ${y}px)`;
+        });
+      });
+      
+      // 在动画中途切换主题
+      setTimeout(() => {
+        document.documentElement.setAttribute('data-theme', newTheme);
+        document.body.setAttribute('data-color-scheme', newTheme);
+        localStorage.setItem('theme', newTheme);
+      }, 400);
+      
+    } else {
+      // 切换到亮色：暗色圆形从整个屏幕缩小回来
       mask.style.clipPath = `circle(${maxDistance * 1.5}px at ${x}px ${y}px)`;
-    });
+      
+      // 立即切换主题
+      document.documentElement.setAttribute('data-theme', newTheme);
+      document.body.setAttribute('data-color-scheme', newTheme);
+      localStorage.setItem('theme', newTheme);
+      
+      // 使用双 RAF 确保主题切换已渲染
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          // 圆形缩小到点击位置
+          mask.style.clipPath = `circle(0px at ${x}px ${y}px)`;
+        });
+      });
+    }
     
     // 动画完成后移除遮罩
     setTimeout(() => {
       mask.remove();
-    }, 1100);
+    }, 800);
   }
 
   // ==================== 热力图 ====================
