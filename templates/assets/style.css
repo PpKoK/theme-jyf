@@ -1134,6 +1134,8 @@ a:hover {
   display: flex;
   flex-direction: column;
   gap: 8px;
+  min-width: 0;
+  overflow: hidden;
 }
 
 .link-name {
@@ -1145,6 +1147,7 @@ a:hover {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  word-break: break-all;
 }
 
 .link-item:hover .link-name {
@@ -1163,6 +1166,7 @@ a:hover {
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
+  word-break: break-all;
 }
 
 /* 汉堡菜单按钮 */
