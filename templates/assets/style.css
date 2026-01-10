@@ -533,6 +533,34 @@ a:hover {
   font-weight: 600;
 }
 
+/* 置顶标识 */
+.pinned-badge {
+  display: inline-block;
+  color: var(--link-color);
+  font-weight: 700;
+  margin-right: 8px;
+  font-size: 0.9em;
+}
+
+.pinned-post {
+  position: relative;
+}
+
+/* 隐藏已在置顶区显示的文章 */
+.post-item.hidden,
+.post-card.hidden {
+  display: none;
+}
+
+/* 置顶文章区域 */
+.pinned-posts {
+  margin-bottom: 40px;
+}
+
+.pinned-posts .post-list {
+  margin-bottom: 0;
+}
+
 .post-tags {
   display: flex;
   gap: 12px;
@@ -1066,6 +1094,7 @@ a:hover {
   border: 1px solid var(--border-color);
   border-radius: 0;
   transition: border-color 0.2s;
+  height: 120px;
 }
 
 .link-item:hover {
@@ -1079,6 +1108,7 @@ a:hover {
   padding: 20px;
   text-decoration: none;
   color: var(--text-color);
+  height: 100%;
 }
 
 .link-logo {
@@ -1112,6 +1142,9 @@ a:hover {
   color: var(--text-color);
   margin: 0;
   font-family: "Menlo", "Meslo LG", "Microsoft YaHei", "微软雅黑", monospace, sans-serif;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .link-item:hover .link-name {
@@ -1125,6 +1158,11 @@ a:hover {
   line-height: 1.6;
   font-family: "Menlo", "Meslo LG", "Microsoft YaHei", "微软雅黑", monospace, sans-serif;
   font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
 }
 
 /* 汉堡菜单按钮 */

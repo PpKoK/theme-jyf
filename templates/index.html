@@ -65,16 +65,83 @@
       <div id="heatmap-tooltip" class="heatmap-tooltip"></div>
     </div>
     
-    <!-- 文章列表 -->
+    <!-- 置顶文章列表 -->
+    <th:block th:if="${posts.page == 1}">
+      <th:block th:with="allPosts=${postFinder.list(1, 1000).items},pinnedCount=0">
+        <th:block th:each="post, iterStat : ${allPosts}">
+          <th:block th:if="${post.spec.pinned}" th:with="pinnedCount=${pinnedCount + 1}">
+            <div th:if="${pinnedCount == 1}" class="pinned-posts">
+              <div class="post-list" th:classappend="${theme.config.basic.post_list_style == 'card' ? 'post-list-card' : 'post-list-text'}">
+                <!-- 文字列表样式 - 置顶 -->
+                <article th:if="${theme.config.basic.post_list_style != 'card'}" class="post-item pinned-post">
+                  <div class="post-header-line">
+                    <div class="post-meta">
+                      <time th:text="${#dates.format(post.spec.publishTime, 'yyyy-MM-dd')}"></time>
+                    </div>
+                    <h2 class="post-title">
+                      <span class="pinned-badge">【置顶】</span>
+                      <a th:href="@{${post.status.permalink}}" th:text="${post.spec.title}"></a>
+                    </h2>
+                  </div>
+                  <div class="post-excerpt" th:if="${post.status.excerpt}" th:text="${post.status.excerpt}"></div>
+                </article>
+                
+                <!-- 图文列表样式 - 置顶 -->
+                <article th:if="${theme.config.basic.post_list_style == 'card'}" class="post-card pinned-post">
+                  <div class="post-card-cover">
+                    <a th:href="@{${post.status.permalink}}">
+                      <img th:if="${post.spec.cover}" th:src="${post.spec.cover}" th:alt="${post.spec.title}">
+                      <img th:unless="${post.spec.cover}" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='300'%3E%3Crect fill='%23f0f0f0' width='400' height='300'/%3E%3Ctext fill='%23999' font-family='sans-serif' font-size='24' dy='10.5' font-weight='bold' x='50%25' y='50%25' text-anchor='middle'%3E%E6%9A%82%E6%97%A0%E5%B0%81%E9%9D%A2%3C/text%3E%3C/svg%3E" alt="默认封面">
+                    </a>
+                  </div>
+                  <div class="post-card-content">
+                    <h2 class="post-card-title">
+                      <span class="pinned-badge">【置顶】</span>
+                      <a th:href="@{${post.status.permalink}}" th:text="${post.spec.title}"></a>
+                    </h2>
+                    <div class="post-card-excerpt" th:if="${post.status.excerpt}" th:text="${post.status.excerpt}"></div>
+                    <div class="post-card-meta">
+                      <span class="post-card-meta-item" th:if="${post.categories != null && !#lists.isEmpty(post.categories)}">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
+                        <a th:href="@{${post.categories[0].status.permalink}}" th:text="${post.categories[0].spec.displayName}"></a>
+                      </span>
+                      <span class="post-card-meta-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                        <span th:text="${post.stats?.visit ?: 0}"></span>
+                      </span>
+                      <span class="post-card-meta-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                        <span th:text="${post.stats?.comment ?: 0}"></span>
+                      </span>
+                      <span class="post-card-meta-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+                        <span th:text="${post.stats?.upvote ?: 0}"></span>
+                      </span>
+                      <span class="post-card-meta-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                        <time th:text="${#dates.format(post.spec.publishTime, 'yyyy-MM-dd')}"></time>
+                      </span>
+                    </div>
+                  </div>
+                </article>
+              </div>
+            </div>
+          </th:block>
+        </th:block>
+      </th:block>
+    </th:block>
+    
+    <!-- 普通文章列表 -->
     <div class="post-list" th:classappend="${theme.config.basic.post_list_style == 'card' ? 'post-list-card' : 'post-list-text'}">
       <th:block th:if="${posts.total gt 0}">
         <!-- 文字列表样式 -->
-        <article th:if="${theme.config.basic.post_list_style != 'card'}" th:each="post : ${posts.items}" class="post-item">
+        <article th:if="${theme.config.basic.post_list_style != 'card'}" th:each="post : ${posts.items}" class="post-item" th:classappend="${post.spec.pinned ? 'hidden' : ''}">
           <div class="post-header-line">
             <div class="post-meta">
               <time th:text="${#dates.format(post.spec.publishTime, 'yyyy-MM-dd')}"></time>
             </div>
             <h2 class="post-title">
+              <span th:if="${post.spec.pinned}" class="pinned-badge">【置顶】</span>
               <a th:href="@{${post.status.permalink}}" th:text="${post.spec.title}"></a>
             </h2>
           </div>
@@ -82,7 +149,7 @@
         </article>
         
         <!-- 图文列表样式 -->
-        <article th:if="${theme.config.basic.post_list_style == 'card'}" th:each="post : ${posts.items}" class="post-card">
+        <article th:if="${theme.config.basic.post_list_style == 'card'}" th:each="post : ${posts.items}" class="post-card" th:classappend="${post.spec.pinned ? 'hidden' : ''}">
           <div class="post-card-cover">
             <a th:href="@{${post.status.permalink}}">
               <img th:if="${post.spec.cover}" th:src="${post.spec.cover}" th:alt="${post.spec.title}">
@@ -91,6 +158,7 @@
           </div>
           <div class="post-card-content">
             <h2 class="post-card-title">
+              <span th:if="${post.spec.pinned}" class="pinned-badge">【置顶】</span>
               <a th:href="@{${post.status.permalink}}" th:text="${post.spec.title}"></a>
             </h2>
             <div class="post-card-excerpt" th:if="${post.status.excerpt}" th:text="${post.status.excerpt}"></div>
