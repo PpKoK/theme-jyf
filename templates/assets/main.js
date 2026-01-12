@@ -799,6 +799,213 @@
     console.log('[Upvote] 点赞功能已初始化，文章:', postName);
   }
 
+  // ==================== 图库功能 ====================
+  function initPhotoGallery() {
+    const waterfallContainer = document.getElementById('photo-waterfall');
+    if (!waterfallContainer) return;
+    
+    const filterBtns = document.querySelectorAll('.filter-btn');
+    const photoItems = document.querySelectorAll('.photo-item');
+    const noPhotos = document.querySelector('.no-photos');
+    
+    console.log('[Photos] 初始化图库功能');
+    console.log('[Photos] 图片数量:', photoItems.length);
+    
+    // 分类筛选
+    filterBtns.forEach(btn => {
+      btn.addEventListener('click', function() {
+        const targetGroup = this.dataset.group;
+        
+        // 更新按钮状态
+        filterBtns.forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+        
+        // 筛选图片
+        let visibleCount = 0;
+        photoItems.forEach(item => {
+          const itemGroup = item.getAttribute('data-group');
+          if (targetGroup === 'all' || itemGroup === targetGroup) {
+            item.style.display = 'block';
+            visibleCount++;
+          } else {
+            item.style.display = 'none';
+          }
+        });
+        
+        // 显示/隐藏空状态
+        if (visibleCount === 0) {
+          if (noPhotos) noPhotos.style.display = 'block';
+          waterfallContainer.style.display = 'none';
+        } else {
+          if (noPhotos) noPhotos.style.display = 'none';
+          waterfallContainer.style.display = 'block';
+        }
+        
+        console.log('[Photos] 筛选分类:', targetGroup, '可见图片:', visibleCount);
+      });
+    });
+    
+    // 初始化灯箱
+    if (typeof lightGallery !== 'undefined' && photoItems.length > 0) {
+      console.log('[Photos] lightGallery 已加载');
+      
+      // 为每个图片添加点击事件
+      photoItems.forEach((item) => {
+        item.addEventListener('click', function(e) {
+          e.preventDefault();
+          
+          // 获取当前可见的图片
+          const visibleItems = Array.from(photoItems).filter(photo => {
+            const display = window.getComputedStyle(photo).display;
+            return display !== 'none';
+          });
+          
+          console.log('[Photos] 可见图片数量:', visibleItems.length);
+          
+          // 创建临时容器
+          const galleryContainer = document.createElement('div');
+          galleryContainer.id = 'photo-lightgallery';
+          galleryContainer.style.display = 'none';
+          
+          // 添加可见图片到容器
+          visibleItems.forEach(photo => {
+            const a = document.createElement('a');
+            const imgSrc = photo.getAttribute('data-src');
+            const subHtml = photo.getAttribute('data-sub-html') || '';
+            
+            a.href = imgSrc;
+            a.setAttribute('data-src', imgSrc);
+            if (subHtml) {
+              a.setAttribute('data-sub-html', subHtml);
+            }
+            galleryContainer.appendChild(a);
+          });
+          
+          // 移除旧容器
+          const oldGallery = document.getElementById('photo-lightgallery');
+          if (oldGallery) {
+            oldGallery.remove();
+          }
+          
+          // 添加到 body
+          document.body.appendChild(galleryContainer);
+          
+          try {
+            // 初始化灯箱（禁用缩略图）
+            const gallery = lightGallery(galleryContainer, {
+              plugins: [lgZoom],
+              speed: 500,
+              thumbnail: false,
+              zoomFromOrigin: false,
+              allowMediaOverlap: true,
+              download: false,
+              counter: true,
+              loop: true,
+              slideDelay: 400
+            });
+            
+            // 找到当前图片在可见图片中的索引
+            const currentIndex = visibleItems.indexOf(item);
+            console.log('[Photos] 打开灯箱，索引:', currentIndex);
+            
+            // 监听关闭事件（在容器元素上监听）
+            galleryContainer.addEventListener('lgAfterClose', function() {
+              setTimeout(() => {
+                if (gallery && gallery.destroy) {
+                  gallery.destroy();
+                }
+                galleryContainer.remove();
+              }, 100);
+            });
+            
+            // 打开灯箱
+            setTimeout(() => {
+              gallery.openGallery(currentIndex);
+            }, 50);
+          } catch (error) {
+            console.error('[Photos] 灯箱初始化失败:', error);
+            galleryContainer.remove();
+          }
+        });
+      });
+      
+      console.log('[Photos] 灯箱功能已初始化');
+    } else {
+      console.warn('[Photos] lightGallery 未加载或无图片');
+    }
+  }
+
+  // ==================== 瞬间点赞功能 ====================
+  function initMomentUpvote() {
+    const upvoteBtns = document.querySelectorAll('.moment-upvote-btn');
+    if (upvoteBtns.length === 0) return;
+    
+    console.log('[Moment Upvote] 初始化瞬间点赞功能');
+    
+    // 检查本地存储的点赞状态
+    const upvotedMoments = JSON.parse(localStorage.getItem('upvoted_moments') || '[]');
+    
+    upvoteBtns.forEach(btn => {
+      const momentName = btn.dataset.name;
+      
+      // 恢复点赞状态
+      if (upvotedMoments.includes(momentName)) {
+        btn.classList.add('upvoted');
+      }
+      
+      btn.addEventListener('click', async function() {
+        const isUpvoted = this.classList.contains('upvoted');
+        const countSpan = this.querySelector('.upvote-count');
+        
+        try {
+          // 调用 Halo API
+          const response = await fetch(`/apis/api.halo.run/v1alpha1/trackers/upvote`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              group: 'moment.halo.run',
+              plural: 'moments',
+              name: momentName
+            })
+          });
+          
+          if (response.ok) {
+            // 切换状态
+            this.classList.toggle('upvoted');
+            
+            // 更新本地存储
+            if (isUpvoted) {
+              const index = upvotedMoments.indexOf(momentName);
+              if (index > -1) {
+                upvotedMoments.splice(index, 1);
+              }
+              // 减少计数
+              const currentCount = parseInt(countSpan.textContent) || 0;
+              countSpan.textContent = Math.max(0, currentCount - 1);
+            } else {
+              upvotedMoments.push(momentName);
+              // 增加计数
+              const currentCount = parseInt(countSpan.textContent) || 0;
+              countSpan.textContent = currentCount + 1;
+            }
+            
+            localStorage.setItem('upvoted_moments', JSON.stringify(upvotedMoments));
+            
+            console.log('[Moment Upvote] 点赞成功:', isUpvoted ? '取消' : '点赞');
+          } else {
+            console.error('[Moment Upvote] API 响应错误:', response.status);
+          }
+        } catch (error) {
+          console.error('[Moment Upvote] 点赞失败:', error);
+        }
+      });
+    });
+    
+    console.log('[Moment Upvote] 点赞功能已初始化，共', upvoteBtns.length, '个瞬间');
+  }
+
   // ==================== 初始化 ====================
   function init() {
     initTheme();
@@ -813,6 +1020,8 @@
     initFriendLinks();
     initPostTOC();
     initPostUpvote();
+    initPhotoGallery();
+    initMomentUpvote();
   }
 
   // 页面加载完成后初始化

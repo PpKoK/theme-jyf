@@ -6,14 +6,14 @@ spec:
   displayName: Jyf
   author:
     name: Jyf
-    website: https://jyf.run
+    website: https://jyf.app
   description: 一个极简的纯文字博客主题 - Jyf
-  logo: https://www.ppkok.com/upload/icon.png
-  homepage: https://www.ppkok.com
+  logo: https://www.jyf.app/upload/tz.png
+  homepage: https://www.jyf.app
   repo: https://github.com/PpKoK/theme-jyf
   settingName: "theme-jyf-setting"
   configMapName: "theme-jyf-configMap"
-  version: 1.0.7
+  version: 1.0.8
   requires: ">=2.20.0"
   license:
     - name: "自定义许可证 (仅供个人非商业使用)"

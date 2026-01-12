@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html 
+  xmlns:th="https://www.thymeleaf.org"
+  th:replace="~{modules/layout :: html(title = '图库 - ' + ${site.title}, content = ~{::content})}"
+>
+  <th:block th:fragment="content">
+    <div class="photos-page">
+      <!-- 页面标题 -->
+      <div class="page-header">
+        <h1 class="page-title">图库</h1>
+        <p class="page-description">记录生活中的美好瞬间</p>
+      </div>
+      
+      <!-- 分类筛选 -->
+      <div class="photo-filters">
+        <button class="filter-btn active" data-group="all">全部</button>
+        <th:block th:each="group : ${groups}">
+          <button 
+            class="filter-btn" 
+            th:data-group="${group.metadata.name}"
+            th:text="${group.spec.displayName}"
+          ></button>
+        </th:block>
+      </div>
+      
+      <!-- 瀑布流容器 -->
+      <div class="photo-waterfall" id="photo-waterfall">
+        <th:block th:each="group : ${groups}">
+          <th:block th:each="photo : ${group.photos}">
+            <div 
+              class="photo-item" 
+              th:data-group="${group.metadata.name}"
+              th:data-src="${photo.spec.url}"
+              th:data-sub-html="'<h4>' + ${photo.spec.displayName} + '</h4><p>' + (${photo.spec.description} ?: '') + '</p>'"
+            >
+              <img 
+                th:src="${photo.spec.cover ?: photo.spec.url}" 
+                th:alt="${photo.spec.displayName}"
+                loading="lazy"
+              >
+              <div class="photo-overlay">
+                <div class="photo-info">
+                  <h3 class="photo-title" th:text="${photo.spec.displayName}"></h3>
+                  <p class="photo-description" th:if="${photo.spec.description}" th:text="${photo.spec.description}"></p>
+                </div>
+              </div>
+            </div>
+          </th:block>
+        </th:block>
+      </div>
+      
+      <!-- 空状态 -->
+      <div class="no-photos" style="display: none;">
+        <p>该分类下暂无图片</p>
+      </div>
+    </div>
+  </th:block>
+</html>

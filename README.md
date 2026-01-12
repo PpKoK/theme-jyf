@@ -1,7 +1,7 @@
 # Jyf - Halo 极简纯文字博客主题
 
 <p align="center">
-  <img src="https://www.ppkok.com/upload/icon.png" alt="Jyf Logo" width="120" height="120">
+  <img src="https://www.jyf.app/upload/tz.png" alt="Jyf Logo" width="120" height="120">
 </p>
 
 <p align="center">
@@ -9,7 +9,7 @@
 </p>
 
 <p align="center">
-  <a href="https://www.ppkok.com">在线预览</a> •
+  <a href="https://www.jyf.app">在线预览</a> •
   <a href="https://github.com/PpKoK/theme-jyf">GitHub</a> •
   <a href="https://halo.run">Halo</a>
 </p>
@@ -30,15 +30,13 @@
 
 主题支持以下 Halo 插件：
 
-[x] 友情链接（/links）：<https://halo.run/store/apps/app-hfbQg>
-## ⌚️ todo
-[] 图库（/photos）：<https://halo.run/store/apps/app-BmQJW>
-
-[] 瞬间（/moments）：<https://halo.run/store/apps/app-SnwWD>
+- [x] 友情链接（/links）：<https://halo.run/store/apps/app-hfbQg>
+- [x] 图库（/photos）：<https://halo.run/store/apps/app-BmQJW>
+- [x] 瞬间（/moments）：<https://halo.run/store/apps/app-SnwWD>
 
 ## 📸 预览
 
-在线预览地址：**[www.ppkok.com](https://www.ppkok.com)**
+在线预览地址：**[www.jyf.app](https://www.jyf.app)**
 
 ## 🚀 快速开始
 
@@ -150,6 +148,26 @@ git clone https://github.com/PpKoK/theme-jyf.git
 
 ## 📝 更新日志
 
+### v1.0.8 (2026-01-12)
+- 新增图库页面支持
+  - 瀑布流布局展示图片
+  - 分类筛选功能
+  - lightGallery 灯箱查看
+  - 响应式设计，完美适配移动端
+- 新增瞬间页面支持
+  - 类似评论区的列表布局
+  - 支持图片、视频、音频展示
+  - 标签筛选功能
+  - 点赞功能
+  - 自动隐藏正文中的标签
+- 修复图库页面 initPhotoGallery 函数作用域错误
+- 修复 lightGallery 事件监听器问题
+- 优化移动端显示效果
+
+### v1.0.7 (2026-01-11)
+- 优化主题性能
+- 修复已知问题
+
 ### v1.0.6 (2026-01-10)
 - 新增首页置顶文章功能
   - 自动显示最新的一篇置顶文章
@@ -216,7 +234,7 @@ git clone https://github.com/PpKoK/theme-jyf.git
 ## 👨‍💻 作者
 
 - **Jyf**
-- 网站：[https://www.ppkok.com](https://www.ppkok.com)
+- 网站：[https://www.jyf.app](https://www.jyf.app)
 - GitHub：[@PpKoK](https://github.com/PpKoK)
 
 ## 💬 支持
@@ -231,5 +249,5 @@ git clone https://github.com/PpKoK/theme-jyf.git
 ---
 
 <p align="center">
-  Made with ❤️ by <a href="https://www.ppkok.com">Jyf</a>
+  Made with ❤️ by <a href="https://www.jyf.app">Jyf</a>
 </p>
