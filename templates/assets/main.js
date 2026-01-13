@@ -729,74 +729,85 @@
 
   // ==================== 文章点赞功能 ====================
   function initPostUpvote() {
-    const upvoteBtn = document.querySelector('.post-upvote-btn');
-    if (!upvoteBtn) return;
+    // 支持两种点赞按钮：浮动按钮和内联按钮
+    const upvoteBtns = document.querySelectorAll('.post-upvote-btn, .post-upvote-btn-inline');
+    if (upvoteBtns.length === 0) return;
     
-    const postName = upvoteBtn.dataset.name;
-    const countSpan = upvoteBtn.querySelector('.upvote-count');
-    
-    if (!postName) {
-      console.error('[Upvote] 文章名称未找到');
-      return;
-    }
-    
-    // 检查是否已点赞
-    const upvotedPosts = JSON.parse(localStorage.getItem('upvoted_posts') || '[]');
-    if (upvotedPosts.includes(postName)) {
-      upvoteBtn.classList.add('upvoted');
-    }
-    
-    upvoteBtn.addEventListener('click', async () => {
-      try {
-        const isUpvoted = upvoteBtn.classList.contains('upvoted');
-        
-        // 调用 Halo API - 使用正确的端点
-        const response = await fetch(`/apis/api.halo.run/v1alpha1/trackers/upvote`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            group: 'content.halo.run',
-            plural: 'posts',
-            name: postName
-          })
-        });
-        
-        if (response.ok) {
-          // 切换状态
-          upvoteBtn.classList.toggle('upvoted');
-          
-          // 更新本地存储
-          if (isUpvoted) {
-            const index = upvotedPosts.indexOf(postName);
-            if (index > -1) {
-              upvotedPosts.splice(index, 1);
-            }
-            // 减少计数
-            const currentCount = parseInt(countSpan.textContent) || 0;
-            countSpan.textContent = Math.max(0, currentCount - 1);
-          } else {
-            upvotedPosts.push(postName);
-            // 增加计数
-            const currentCount = parseInt(countSpan.textContent) || 0;
-            countSpan.textContent = currentCount + 1;
-          }
-          
-          localStorage.setItem('upvoted_posts', JSON.stringify(upvotedPosts));
-          
-          console.log('[Upvote] 点赞成功:', isUpvoted ? '取消' : '点赞');
-        } else {
-          console.error('[Upvote] API 响应错误:', response.status, response.statusText);
-          const errorText = await response.text();
-          console.error('[Upvote] 错误详情:', errorText);
-        }
-      } catch (error) {
-        console.error('[Upvote] 点赞失败:', error);
+    upvoteBtns.forEach(upvoteBtn => {
+      const postName = upvoteBtn.dataset.name;
+      const countSpan = upvoteBtn.querySelector('.upvote-count');
+      
+      if (!postName) {
+        console.error('[Upvote] 文章名称未找到');
+        return;
       }
+      
+      // 检查是否已点赞
+      const upvotedPosts = JSON.parse(localStorage.getItem('upvoted_posts') || '[]');
+      if (upvotedPosts.includes(postName)) {
+        upvoteBtn.classList.add('upvoted');
+      }
+      
+      upvoteBtn.addEventListener('click', async () => {
+        try {
+          const isUpvoted = upvoteBtn.classList.contains('upvoted');
+          
+          // 调用 Halo API - 使用正确的端点
+          const response = await fetch(`/apis/api.halo.run/v1alpha1/trackers/upvote`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              group: 'content.halo.run',
+              plural: 'posts',
+              name: postName
+            })
+          });
+          
+          if (response.ok) {
+            // 切换所有相同文章的点赞按钮状态
+            upvoteBtns.forEach(btn => {
+              if (btn.dataset.name === postName) {
+                btn.classList.toggle('upvoted');
+                const btnCountSpan = btn.querySelector('.upvote-count');
+                if (btnCountSpan) {
+                  if (isUpvoted) {
+                    const currentCount = parseInt(btnCountSpan.textContent) || 0;
+                    btnCountSpan.textContent = Math.max(0, currentCount - 1);
+                  } else {
+                    const currentCount = parseInt(btnCountSpan.textContent) || 0;
+                    btnCountSpan.textContent = currentCount + 1;
+                  }
+                }
+              }
+            });
+            
+            // 更新本地存储
+            if (isUpvoted) {
+              const index = upvotedPosts.indexOf(postName);
+              if (index > -1) {
+                upvotedPosts.splice(index, 1);
+              }
+            } else {
+              upvotedPosts.push(postName);
+            }
+            
+            localStorage.setItem('upvoted_posts', JSON.stringify(upvotedPosts));
+            
+            console.log('[Upvote] 点赞成功:', isUpvoted ? '取消' : '点赞');
+          } else {
+            console.error('[Upvote] API 响应错误:', response.status, response.statusText);
+            const errorText = await response.text();
+            console.error('[Upvote] 错误详情:', errorText);
+          }
+        } catch (error) {
+          console.error('[Upvote] 点赞失败:', error);
+        }
+      });
     });
     
-    console.log('[Upvote] 点赞功能已初始化，文章:', postName);
+    console.log('[Upvote] 点赞功能已初始化，按钮数量:', upvoteBtns.length);
   }
 
   // ==================== 图库功能 ====================
@@ -1006,6 +1017,44 @@
     console.log('[Moment Upvote] 点赞功能已初始化，共', upvoteBtns.length, '个瞬间');
   }
 
+  // ==================== 滚动进度条 ====================
+  function initScrollProgress() {
+    // 创建进度条元素
+    const progressBar = document.createElement('div');
+    progressBar.className = 'scroll-progress';
+    document.body.appendChild(progressBar);
+    
+    // 更新进度条
+    function updateProgress() {
+      const windowHeight = window.innerHeight;
+      const documentHeight = document.documentElement.scrollHeight;
+      const scrollTop = window.scrollY || document.documentElement.scrollTop;
+      
+      // 计算滚动百分比
+      const scrollPercent = (scrollTop / (documentHeight - windowHeight)) * 100;
+      
+      // 更新进度条宽度
+      progressBar.style.width = Math.min(scrollPercent, 100) + '%';
+    }
+    
+    // 监听滚动事件
+    let ticking = false;
+    window.addEventListener('scroll', () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          updateProgress();
+          ticking = false;
+        });
+        ticking = true;
+      }
+    });
+    
+    // 初始更新
+    updateProgress();
+    
+    console.log('[ScrollProgress] 滚动进度条已初始化');
+  }
+
   // ==================== 初始化 ====================
   function init() {
     initTheme();
@@ -1014,6 +1063,7 @@
     initMobileMenu();
     initDropdownMenu();
     initBackToTop();
+    initScrollProgress();
     initHeatmap();
     initLightGallery();
     initHighlight();

@@ -8,11 +8,27 @@
       <article class="post-detail">
         <!-- 文章头部 -->
         <header class="post-header">
-        <h1 class="post-title" th:text="${post.spec.title}"></h1>
+        <div class="post-title-wrapper">
+          <h1 class="post-title" th:text="${post.spec.title}"></h1>
+          <!-- 点赞按钮 - 在标题右边 -->
+          <button class="post-upvote-btn" th:attr="data-name=${post.metadata.name}" title="点赞">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+            </svg>
+            <span class="upvote-count" th:text="${post.stats?.upvote ?: 0}">0</span>
+          </button>
+        </div>
         <div class="post-meta">
           <time th:text="${#dates.format(post.spec.publishTime, 'yyyy-MM-dd HH:mm')}"></time>
           <span class="separator">·</span>
-          <span th:text="#{common.visitCount(${post.stats?.visit ?: 0})}"></span>
+          <!-- 访问量 -->
+          <span class="visit-count">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+              <circle cx="12" cy="12" r="3"></circle>
+            </svg>
+            <span th:text="${post.stats?.visit ?: 0}">0</span>
+          </span>
           <span class="separator" th:if="${post.categories != null && !#lists.isEmpty(post.categories)}">·</span>
           <span th:if="${post.categories != null && !#lists.isEmpty(post.categories)}">
             <th:block th:each="category, iterStat : ${post.categories}">
@@ -37,16 +53,6 @@
       
       <!-- 文章内容 -->
       <div class="post-content-wrapper">
-        <!-- 点赞按钮 - 浮动在右上角 -->
-        <div class="post-upvote-float">
-          <button class="post-upvote-btn" th:attr="data-name=${post.metadata.name}" title="点赞">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-            </svg>
-            <span class="upvote-count" th:text="${post.stats?.upvote ?: 0}">0</span>
-          </button>
-        </div>
-        
         <div class="post-content" th:utext="${post.content.content}"></div>
       </div>
       
