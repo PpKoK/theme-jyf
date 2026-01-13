@@ -14,13 +14,16 @@
           <span class="separator">·</span>
           <span th:text="#{common.visitCount(${post.stats?.visit ?: 0})}"></span>
           <span class="separator" th:if="${post.categories != null && !#lists.isEmpty(post.categories)}">·</span>
-          <a
-            th:if="${post.categories != null && !#lists.isEmpty(post.categories)}"
-            th:each="category, iterStat : ${post.categories}"
-            th:href="@{${category.status.permalink}}"
-            th:text="${category.spec.displayName}"
-            class="category"
-          ></a>
+          <span th:if="${post.categories != null && !#lists.isEmpty(post.categories)}">
+            <th:block th:each="category, iterStat : ${post.categories}">
+              <a
+                th:href="@{${category.status.permalink}}"
+                th:text="${category.spec.displayName}"
+                class="category"
+              ></a>
+              <span th:if="${!iterStat.last}"> / </span>
+            </th:block>
+          </span>
         </div>
         <div class="post-tags" th:if="${post.tags != null && !#lists.isEmpty(post.tags)}">
           <a
