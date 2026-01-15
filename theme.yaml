@@ -13,7 +13,7 @@ spec:
   repo: https://github.com/PpKoK/theme-jyf
   settingName: "theme-jyf-setting"
   configMapName: "theme-jyf-configMap"
-  version: 1.1.0
+  version: 1.1.1
   requires: ">=2.20.0"
   license:
     - name: "自定义许可证 (仅供个人非商业使用)"

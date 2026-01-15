@@ -26,21 +26,36 @@ spec:
           help: 显示在首页的站点描述，支持HTML，可以使用<br>换行
           rows: 3
         
-        - $formkit: toggle
+        - $formkit: radio
           name: show_heatmap
           label: 显示文章发布热力图
           value: true
+          options:
+            - label: 显示
+              value: true
+            - label: 隐藏
+              value: false
           help: 在首页显示 GitHub 风格的文章发布热力图
         
-        - $formkit: toggle
+        - $formkit: radio
           name: show_login
           label: 显示登录按钮
           value: true
+          options:
+            - label: 显示
+              value: true
+            - label: 隐藏
+              value: false
         
-        - $formkit: toggle
+        - $formkit: radio
           name: show_post_toc
           label: 显示文章目录
           value: true
+          options:
+            - label: 显示
+              value: true
+            - label: 隐藏
+              value: false
           help: 在文章页面右侧显示目录导航
         
         - $formkit: toggle
@@ -82,10 +97,15 @@ spec:
           value: "2024"
           help: 版权起始年份，留空则只显示当前年份
         
-        - $formkit: toggle
+        - $formkit: radio
           name: show_powered
           label: 显示底部版权
           value: true
+          options:
+            - label: 显示
+              value: true
+            - label: 隐藏
+              value: false
           help: 是否在页脚显示 Halo 和主题版本信息
         
         - $formkit: text
@@ -183,10 +203,15 @@ spec:
               value: pando-light
           help: 选择自定义鼠标指针样式，或使用系统默认
         
-        - $formkit: toggle
+        - $formkit: radio
           name: cursor_enabled
           label: 启用自定义鼠标指针
           value: true
+          options:
+            - label: 启用
+              value: true
+            - label: 禁用
+              value: false
           help: 关闭后将使用系统默认鼠标指针
     
     - group: about
