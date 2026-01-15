@@ -12,6 +12,192 @@
   transition: width 0.1s ease-out;
 }
 
+/* 页面加载进度条 */
+.page-loading-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 0%;
+  height: 3px;
+  background: var(--link-color);
+  z-index: 10000;
+  transition: width 0.3s ease-out, opacity 0.3s ease-out;
+  box-shadow: 0 0 10px var(--link-color), 0 0 5px var(--link-color);
+}
+
+.page-loading-bar.loading {
+  opacity: 1;
+}
+
+.page-loading-bar.complete {
+  width: 100% !important;
+  opacity: 0;
+  transition: width 0.3s ease-out, opacity 0.5s ease-out 0.3s;
+}
+
+/* 页面加载动画 */
+@keyframes loading-pulse {
+  0%, 100% {
+    box-shadow: 0 0 10px var(--link-color), 0 0 5px var(--link-color);
+  }
+  50% {
+    box-shadow: 0 0 20px var(--link-color), 0 0 10px var(--link-color);
+  }
+}
+
+.page-loading-bar.loading {
+  animation: loading-pulse 1.5s ease-in-out infinite;
+}
+
+/* 全屏加载动画 */
+.page-loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--bg-color);
+  z-index: 9998;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 1;
+  transition: opacity 0.5s ease-out;
+}
+
+.page-loading-overlay.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* 加载动画 - 圆环旋转 */
+.loading-spinner {
+  width: 50px;
+  height: 50px;
+  border: 3px solid var(--border-color);
+  border-top-color: var(--link-color);
+  border-radius: 50%;
+  animation: spinner-rotate 0.8s linear infinite;
+}
+
+@keyframes spinner-rotate {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* 居中进度条 */
+.page-loading-center {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--bg-color);
+  z-index: 9998;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  opacity: 1;
+  transition: opacity 0.5s ease-out;
+}
+
+.page-loading-center.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.loading-progress-bar {
+  width: 300px;
+  height: 4px;
+  background: var(--border-color);
+  border-radius: 2px;
+  overflow: hidden;
+  position: relative;
+}
+
+.loading-progress-fill {
+  height: 100%;
+  background: var(--link-color);
+  width: 0%;
+  transition: width 0.3s ease-out;
+  box-shadow: 0 0 10px var(--link-color);
+}
+
+.loading-progress-text {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  font-family: "Menlo", "Meslo LG", "Microsoft YaHei", "微软雅黑", monospace, sans-serif;
+  font-weight: 600;
+}
+
+/* 图片懒加载 */
+img[data-src] {
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+}
+
+img.lazy-loaded {
+  opacity: 1;
+}
+
+/* 图片加载动画 */
+.image-loading {
+  position: relative;
+  overflow: hidden;
+  background: var(--code-bg);
+}
+
+.image-loading::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(var(--link-color-rgb, 66, 185, 131), 0.2),
+    transparent
+  );
+  animation: image-loading-shimmer 1.5s infinite;
+}
+
+@keyframes image-loading-shimmer {
+  0% { left: -100%; }
+  100% { left: 100%; }
+}
+
+.image-loading::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 30px;
+  height: 30px;
+  border: 2px solid var(--border-color);
+  border-top-color: var(--link-color);
+  border-radius: 50%;
+  animation: spinner-rotate 0.8s linear infinite;
+}
+
+.image-loading img {
+  opacity: 0;
+  transition: opacity 0.3s ease-out;
+}
+
+.image-loading.loaded::before,
+.image-loading.loaded::after {
+  display: none;
+}
+
+.image-loading.loaded img {
+  opacity: 1;
+}
+
 /* Reset */
 * {
   margin: 0;
@@ -147,9 +333,11 @@ a:hover {
   top: 100%;
   left: 0;
   margin-top: 12px;
-  min-width: 160px;
+  min-width: max-content;
+  width: auto;
   background: var(--bg-color);
   border: 1px solid var(--border-color);
+  border-radius: 5px;
   box-shadow: var(--shadow);
   opacity: 0;
   visibility: hidden;
@@ -246,16 +434,37 @@ a:hover {
   object-fit: cover;
 }
 
+/* 主题切换图标动画 */
+.theme-toggle {
+  position: relative;
+  overflow: hidden;
+}
+
+.theme-toggle svg {
+  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
+}
+
+.theme-toggle .sun-icon {
+  transform: rotate(0deg);
+  opacity: 1;
+}
+
 .theme-toggle .moon-icon {
-  display: none;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(180deg);
+  opacity: 0;
 }
 
 [data-theme="dark"] .theme-toggle .sun-icon {
-  display: none;
+  transform: rotate(-180deg);
+  opacity: 0;
 }
 
 [data-theme="dark"] .theme-toggle .moon-icon {
-  display: block;
+  transform: translate(-50%, -50%) rotate(0deg);
+  opacity: 1;
 }
 
 /* Site Intro */
@@ -1047,6 +1256,21 @@ a:hover {
 
 .footer-info a {
   color: var(--link-color);
+}
+
+/* 页面加载速度 */
+.page-load-speed {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  margin-top: 8px;
+  font-size: 0.9em;
+  color: var(--text-secondary);
+}
+
+.page-load-speed svg {
+  flex-shrink: 0;
 }
 
 /* No Content */
@@ -2696,3 +2920,76 @@ body::before {
 }
 
 
+
+
+/* ==================== 背景萤火虫粒子效果 ==================== */
+.firefly-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.firefly {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: var(--link-color);
+  border-radius: 50%;
+  opacity: 0;
+  pointer-events: none;
+  box-shadow: 0 0 10px var(--link-color), 0 0 20px var(--link-color), 0 0 30px var(--link-color);
+  animation: firefly-float 15s infinite ease-in-out;
+}
+
+/* 浅色模式的萤火虫 - 使用 CSS 变量 */
+:root .firefly {
+  background: var(--firefly-color-light);
+  box-shadow: 0 0 8px var(--firefly-color-light), 0 0 15px var(--firefly-color-light), 0 0 25px var(--firefly-color-light);
+  opacity: 0.6;
+}
+
+/* 深色模式的萤火虫 - 使用 CSS 变量 */
+[data-theme="dark"] .firefly {
+  background: var(--firefly-color-dark);
+  box-shadow: 0 0 10px var(--firefly-color-dark), 0 0 20px var(--firefly-color-dark), 0 0 35px var(--firefly-color-dark);
+  opacity: 0.8;
+}
+
+@keyframes firefly-float {
+  0% {
+    opacity: 0;
+    transform: translateY(0) translateX(0) scale(1);
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-100vh) translateX(var(--firefly-x)) scale(0.5);
+  }
+}
+
+/* 不同的萤火虫有不同的动画延迟和持续时间 */
+.firefly:nth-child(1) { animation-delay: 0s; animation-duration: 12s; }
+.firefly:nth-child(2) { animation-delay: 2s; animation-duration: 15s; }
+.firefly:nth-child(3) { animation-delay: 4s; animation-duration: 18s; }
+.firefly:nth-child(4) { animation-delay: 1s; animation-duration: 14s; }
+.firefly:nth-child(5) { animation-delay: 3s; animation-duration: 16s; }
+.firefly:nth-child(6) { animation-delay: 5s; animation-duration: 13s; }
+.firefly:nth-child(7) { animation-delay: 2.5s; animation-duration: 17s; }
+.firefly:nth-child(8) { animation-delay: 4.5s; animation-duration: 15s; }
+.firefly:nth-child(9) { animation-delay: 1.5s; animation-duration: 19s; }
+.firefly:nth-child(10) { animation-delay: 3.5s; animation-duration: 14s; }
+.firefly:nth-child(11) { animation-delay: 0.5s; animation-duration: 16s; }
+.firefly:nth-child(12) { animation-delay: 2.8s; animation-duration: 13s; }
+.firefly:nth-child(13) { animation-delay: 4.2s; animation-duration: 18s; }
+.firefly:nth-child(14) { animation-delay: 1.8s; animation-duration: 15s; }
+.firefly:nth-child(15) { animation-delay: 3.2s; animation-duration: 17s; }

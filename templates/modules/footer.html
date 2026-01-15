@@ -48,11 +48,19 @@
           </th:block>
         </p>
         
+        <!-- 页面加载速度 -->
+        <p class="page-load-speed">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+          <span th:text="#{footer.loadSpeed}">加载速度:</span>
+          <span> </span>
+          <span id="page-load-time" th:text="#{footer.calculating}">计算中...</span>
+        </p>
+        
         <!-- 备案信息 -->
         <p th:if="${theme.config.footer.icp_text != null && !#strings.isEmpty(theme.config.footer.icp_text)}">
-          <a 
-            th:href="${theme.config.footer.icp_link ?: 'https://beian.miit.gov.cn/'}" 
-            target="_blank" 
+          <a
+            th:href="${theme.config.footer.icp_link ?: 'https://beian.miit.gov.cn/'}"
+            target="_blank"
             rel="noopener"
             th:text="${theme.config.footer.icp_text}"
           ></a>

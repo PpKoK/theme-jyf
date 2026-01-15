@@ -3,6 +3,263 @@
 (function() {
   'use strict';
 
+  // ==================== 页面加载进度条 ====================
+  function initPageLoadingBar() {
+    // 创建进度条元素
+    const loadingBar = document.createElement('div');
+    loadingBar.className = 'page-loading-bar loading';
+    document.body.appendChild(loadingBar);
+    
+    let progress = 0;
+    let interval;
+    
+    // 模拟加载进度
+    function updateProgress() {
+      if (progress < 90) {
+        // 前90%快速增长
+        const increment = Math.random() * 10;
+        progress = Math.min(progress + increment, 90);
+        loadingBar.style.width = progress + '%';
+      }
+    }
+    
+    // 开始模拟加载
+    interval = setInterval(updateProgress, 200);
+    
+    // 页面加载完成
+    function completeLoading() {
+      clearInterval(interval);
+      progress = 100;
+      loadingBar.style.width = '100%';
+      loadingBar.classList.remove('loading');
+      loadingBar.classList.add('complete');
+      
+      // 动画完成后移除元素
+      setTimeout(() => {
+        loadingBar.remove();
+      }, 800);
+    }
+    
+    // 监听页面加载完成
+    if (document.readyState === 'complete') {
+      completeLoading();
+    } else {
+      window.addEventListener('load', completeLoading);
+    }
+    
+    console.log('[PageLoading] 页面加载进度条已初始化');
+  }
+
+  // ==================== 全屏加载动画 ====================
+  function initPageLoadingOverlay() {
+    // 创建全屏加载遮罩
+    const overlay = document.createElement('div');
+    overlay.className = 'page-loading-overlay';
+    
+    const spinner = document.createElement('div');
+    spinner.className = 'loading-spinner';
+    
+    overlay.appendChild(spinner);
+    document.body.appendChild(overlay);
+    
+    // 页面加载完成后隐藏
+    function hideOverlay() {
+      overlay.classList.add('hidden');
+      setTimeout(() => {
+        overlay.remove();
+      }, 500);
+    }
+    
+    // 监听页面加载完成
+    if (document.readyState === 'complete') {
+      hideOverlay();
+    } else {
+      window.addEventListener('load', hideOverlay);
+    }
+    
+    console.log('[PageLoading] 全屏加载动画已初始化');
+  }
+
+  // ==================== 居中进度条 ====================
+  function initPageLoadingCenter() {
+    // 创建全屏容器
+    const container = document.createElement('div');
+    container.className = 'page-loading-center';
+    
+    // 创建进度条容器
+    const progressBar = document.createElement('div');
+    progressBar.className = 'loading-progress-bar';
+    
+    // 创建进度条填充
+    const progressFill = document.createElement('div');
+    progressFill.className = 'loading-progress-fill';
+    progressBar.appendChild(progressFill);
+    
+    // 创建进度文本
+    const progressText = document.createElement('div');
+    progressText.className = 'loading-progress-text';
+    progressText.textContent = '0%';
+    
+    container.appendChild(progressBar);
+    container.appendChild(progressText);
+    document.body.appendChild(container);
+    
+    let progress = 0;
+    let interval;
+    
+    // 模拟加载进度
+    function updateProgress() {
+      if (progress < 90) {
+        const increment = Math.random() * 10;
+        progress = Math.min(progress + increment, 90);
+        progressFill.style.width = progress + '%';
+        progressText.textContent = Math.floor(progress) + '%';
+      }
+    }
+    
+    // 开始模拟加载
+    interval = setInterval(updateProgress, 200);
+    
+    // 页面加载完成
+    function completeLoading() {
+      clearInterval(interval);
+      progress = 100;
+      progressFill.style.width = '100%';
+      progressText.textContent = '100%';
+      
+      // 延迟后隐藏
+      setTimeout(() => {
+        container.classList.add('hidden');
+        setTimeout(() => {
+          container.remove();
+        }, 500);
+      }, 300);
+    }
+    
+    // 监听页面加载完成
+    if (document.readyState === 'complete') {
+      completeLoading();
+    } else {
+      window.addEventListener('load', completeLoading);
+    }
+    
+    console.log('[PageLoading] 居中进度条已初始化');
+  }
+
+  // ==================== 图片懒加载 ====================
+  function initLazyLoad() {
+    // 使用 Intersection Observer API 实现懒加载
+    if ('IntersectionObserver' in window) {
+      const lazyImageObserver = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const img = entry.target;
+            const src = img.dataset.src;
+            
+            if (src) {
+              // 开始加载图片
+              img.src = src;
+              img.removeAttribute('data-src');
+              
+              // 图片加载完成后添加类
+              img.addEventListener('load', function() {
+                img.classList.add('lazy-loaded');
+              });
+              
+              // 停止观察该图片
+              observer.unobserve(img);
+            }
+          }
+        });
+      }, {
+        rootMargin: '50px 0px', // 提前 50px 开始加载
+        threshold: 0.01
+      });
+      
+      // 观察所有带 data-src 的图片
+      function observeLazyImages() {
+        const lazyImages = document.querySelectorAll('img[data-src]');
+        lazyImages.forEach(img => {
+          lazyImageObserver.observe(img);
+        });
+      }
+      
+      // 初始化
+      observeLazyImages();
+      
+      // 监听动态添加的图片
+      const mutationObserver = new MutationObserver(() => {
+        observeLazyImages();
+      });
+      
+      mutationObserver.observe(document.body, {
+        childList: true,
+        subtree: true
+      });
+      
+      console.log('[LazyLoad] 图片懒加载已初始化');
+    } else {
+      // 不支持 IntersectionObserver 的浏览器，直接加载所有图片
+      const lazyImages = document.querySelectorAll('img[data-src]');
+      lazyImages.forEach(img => {
+        img.src = img.dataset.src;
+        img.removeAttribute('data-src');
+        img.classList.add('lazy-loaded');
+      });
+      console.log('[LazyLoad] 浏览器不支持 IntersectionObserver，直接加载所有图片');
+    }
+  }
+
+  // ==================== 图片加载动画 ====================
+  function initImageLoading() {
+    // 为所有图片添加加载动画
+    function addLoadingToImages() {
+      // 选择需要添加加载动画的图片
+      const images = document.querySelectorAll('.post-card-cover img, .post-content img, .photo-item img, .moment-media-item img, .link-logo img');
+      
+      images.forEach(img => {
+        const parent = img.parentElement;
+        
+        // 如果图片还没加载完成
+        if (!img.complete) {
+          parent.classList.add('image-loading');
+          
+          // 图片加载完成
+          img.addEventListener('load', function() {
+            parent.classList.add('loaded');
+            setTimeout(() => {
+              parent.classList.remove('image-loading', 'loaded');
+            }, 300);
+          });
+          
+          // 图片加载失败
+          img.addEventListener('error', function() {
+            parent.classList.remove('image-loading');
+          });
+        }
+      });
+    }
+    
+    // 初始化
+    addLoadingToImages();
+    
+    // 监听动态添加的图片
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (mutation.addedNodes.length) {
+          addLoadingToImages();
+        }
+      });
+    });
+    
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true
+    });
+    
+    console.log('[ImageLoading] 图片加载动画已初始化');
+  }
+
   // ==================== 暗夜模式 ====================
   function initTheme() {
     const savedTheme = localStorage.getItem('theme') || 'light';
@@ -750,9 +1007,16 @@
       
       upvoteBtn.addEventListener('click', async () => {
         try {
+          // 检查是否已经点赞
           const isUpvoted = upvoteBtn.classList.contains('upvoted');
           
-          // 调用 Halo API - 使用正确的端点
+          // 如果已经点赞，直接返回，不允许取消
+          if (isUpvoted) {
+            console.log('[Upvote] 已经点赞过了，不能取消');
+            return;
+          }
+          
+          // 调用 Halo API - 点赞
           const response = await fetch(`/apis/api.halo.run/v1alpha1/trackers/upvote`, {
             method: 'POST',
             headers: {
@@ -766,36 +1030,64 @@
           });
           
           if (response.ok) {
-            // 切换所有相同文章的点赞按钮状态
-            upvoteBtns.forEach(btn => {
-              if (btn.dataset.name === postName) {
-                btn.classList.toggle('upvoted');
-                const btnCountSpan = btn.querySelector('.upvote-count');
-                if (btnCountSpan) {
-                  if (isUpvoted) {
-                    const currentCount = parseInt(btnCountSpan.textContent) || 0;
-                    btnCountSpan.textContent = Math.max(0, currentCount - 1);
-                  } else {
+            // 获取最新的文章统计信息
+            try {
+              const statsResponse = await fetch(`/apis/api.console.halo.run/v1alpha1/posts/${postName}`);
+              if (statsResponse.ok) {
+                const postData = await statsResponse.json();
+                const newUpvoteCount = postData.stats?.upvote || 0;
+                
+                // 更新所有相同文章的点赞按钮
+                upvoteBtns.forEach(btn => {
+                  if (btn.dataset.name === postName) {
+                    // 标记为已点赞
+                    btn.classList.add('upvoted');
+                    
+                    // 更新计数 - 使用最新的统计数据
+                    const btnCountSpan = btn.querySelector('.upvote-count');
+                    if (btnCountSpan) {
+                      btnCountSpan.textContent = newUpvoteCount;
+                    }
+                  }
+                });
+                
+                console.log('[Upvote] 点赞成功，最新点赞数:', newUpvoteCount);
+              } else {
+                // 如果获取统计信息失败，使用本地计算
+                console.warn('[Upvote] 无法获取最新统计信息，使用本地计算');
+                upvoteBtns.forEach(btn => {
+                  if (btn.dataset.name === postName) {
+                    btn.classList.add('upvoted');
+                    
+                    const btnCountSpan = btn.querySelector('.upvote-count');
+                    if (btnCountSpan) {
+                      const currentCount = parseInt(btnCountSpan.textContent) || 0;
+                      btnCountSpan.textContent = currentCount + 1;
+                    }
+                  }
+                });
+              }
+            } catch (statsError) {
+              console.error('[Upvote] 获取统计信息失败:', statsError);
+              // 使用本地计算作为后备方案
+              upvoteBtns.forEach(btn => {
+                if (btn.dataset.name === postName) {
+                  btn.classList.add('upvoted');
+                  
+                  const btnCountSpan = btn.querySelector('.upvote-count');
+                  if (btnCountSpan) {
                     const currentCount = parseInt(btnCountSpan.textContent) || 0;
                     btnCountSpan.textContent = currentCount + 1;
                   }
                 }
-              }
-            });
-            
-            // 更新本地存储
-            if (isUpvoted) {
-              const index = upvotedPosts.indexOf(postName);
-              if (index > -1) {
-                upvotedPosts.splice(index, 1);
-              }
-            } else {
-              upvotedPosts.push(postName);
+              });
             }
             
+            // 更新本地存储 - 添加到已点赞列表
+            if (!upvotedPosts.includes(postName)) {
+              upvotedPosts.push(postName);
+            }
             localStorage.setItem('upvoted_posts', JSON.stringify(upvotedPosts));
-            
-            console.log('[Upvote] 点赞成功:', isUpvoted ? '取消' : '点赞');
           } else {
             console.error('[Upvote] API 响应错误:', response.status, response.statusText);
             const errorText = await response.text();
@@ -1055,6 +1347,72 @@
     console.log('[ScrollProgress] 滚动进度条已初始化');
   }
 
+  // ==================== 页面加载速度统计 ====================
+  function initPageLoadTime() {
+    window.addEventListener('load', () => {
+      // 延迟一小段时间确保 loadEventEnd 已经有值
+      setTimeout(() => {
+        // 使用 Performance API 计算页面加载时间
+        if (window.performance && window.performance.timing) {
+          const timing = window.performance.timing;
+          const loadTime = timing.loadEventEnd - timing.navigationStart;
+          
+          // 确保时间是正数
+          if (loadTime > 0) {
+            const loadTimeSeconds = (loadTime / 1000).toFixed(2);
+            
+            // 更新页面加载时间显示
+            const loadTimeElement = document.getElementById('page-load-time');
+            if (loadTimeElement) {
+              loadTimeElement.textContent = loadTimeSeconds + 's';
+            }
+            
+            console.log('[PageLoadTime] 页面加载时间:', loadTimeSeconds + 's');
+          } else {
+            console.warn('[PageLoadTime] 加载时间计算异常:', loadTime);
+          }
+        }
+      }, 100);
+    });
+  }
+
+  // ==================== 背景萤火虫效果 ====================
+  function initFireflies() {
+    // 从配置中获取萤火虫数量，默认0（关闭）
+    const fireflyCount = parseInt(window.themeConfig?.fireflyCount) || 0;
+    
+    // 如果数量为0，则不启用萤火虫效果
+    if (fireflyCount === 0) {
+      console.log('[Fireflies] 萤火虫效果未启用');
+      return;
+    }
+    
+    // 创建萤火虫容器
+    const container = document.createElement('div');
+    container.className = 'firefly-container';
+    document.body.appendChild(container);
+    
+    for (let i = 0; i < fireflyCount; i++) {
+      const firefly = document.createElement('div');
+      firefly.className = 'firefly';
+      
+      // 随机起始位置
+      const startX = Math.random() * 100;
+      const startY = 100 + Math.random() * 20; // 从底部稍微下方开始
+      
+      // 随机水平移动距离（-200px 到 200px）
+      const moveX = (Math.random() - 0.5) * 400;
+      
+      firefly.style.left = startX + '%';
+      firefly.style.top = startY + '%';
+      firefly.style.setProperty('--firefly-x', moveX + 'px');
+      
+      container.appendChild(firefly);
+    }
+    
+    console.log('[Fireflies] 背景萤火虫效果已初始化，数量:', fireflyCount);
+  }
+
   // ==================== 初始化 ====================
   function init() {
     initTheme();
@@ -1072,12 +1430,35 @@
     initPostUpvote();
     initPhotoGallery();
     initMomentUpvote();
+    initPageLoadTime();
+    initFireflies();
   }
 
-  // 页面加载完成后初始化
+  // 立即初始化页面加载动画（在页面开始加载时）
+  // 根据配置选择加载动画类型
+  const loadingType = window.themeConfig?.loadingAnimationType || 'progressbar';
+  
+  if (loadingType === 'progressbar') {
+    // 顶部进度条
+    initPageLoadingBar();
+  } else if (loadingType === 'spinner') {
+    // 居中圆环
+    initPageLoadingOverlay();
+  } else if (loadingType === 'center-progress') {
+    // 居中进度条
+    initPageLoadingCenter();
+  }
+
+  // 页面加载完成后初始化其他功能
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
+    document.addEventListener('DOMContentLoaded', () => {
+      init();
+      initLazyLoad();
+      initImageLoading();
+    });
   } else {
     init();
+    initLazyLoad();
+    initImageLoading();
   }
 })();

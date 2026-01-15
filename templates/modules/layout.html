@@ -11,12 +11,14 @@
   <link th:if="${theme.config.cursor != null and theme.config.cursor.cursor_enabled != null and theme.config.cursor.cursor_enabled}" rel="stylesheet" th:href="@{/assets/cursors.css?v={version}(version=${theme.spec.version})}">
   
   <!-- 自定义颜色 -->
-  <style>
+  <style th:inline="text">
     :root {
-      --link-color: [[${theme.config.style.primary_color ?: '#42b983'}]] !important;
-      --link-hover: [[${theme.config.style.primary_color ?: '#42b983'}]] !important;
+      --link-color: [[${theme.config.style.primary_color ?: '#50E3C2'}]] !important;
+      --link-hover: [[${theme.config.style.primary_color ?: '#50E3C2'}]] !important;
       --text-color: [[${theme.config.style.text_color ?: '#34495e'}]];
       --bg-color: [[${theme.config.style.background_color ?: '#ffffff'}]];
+      --firefly-color-light: [[${theme.config.style.firefly_color_light ?: '#50E3C2'}]];
+      --firefly-color-dark: [[${theme.config.style.firefly_color_dark ?: '#50E3C2'}]];
     }
     
     /* 暗夜模式优先级更高 */
@@ -28,6 +30,16 @@
       --code-bg: #2d2d2d !important;
     }
   </style>
+  
+  <!-- 主题配置 -->
+  <script th:inline="javascript">
+    window.themeConfig = {
+      loadingAnimationType: /*[[${theme.config.basic.loading_animation_type ?: 'progressbar'}]]*/ 'progressbar',
+      fireflyCount: /*[[${theme.config.style.firefly_count ?: 10}]]*/ 10,
+      fireflyColorLight: /*[[${theme.config.style.firefly_color_light ?: '#50E3C2'}]]*/ '#50E3C2',
+      fireflyColorDark: /*[[${theme.config.style.firefly_color_dark ?: '#50E3C2'}]]*/ '#50E3C2'
+    };
+  </script>
   
   <!-- lightGallery 灯箱 -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery@2.7.2/css/lightgallery-bundle.min.css">

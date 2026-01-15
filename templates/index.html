@@ -90,7 +90,7 @@
                 <article th:if="${theme.config.basic.post_list_style == 'card'}" class="post-card pinned-post">
                   <div class="post-card-cover">
                     <a th:href="@{${post.status.permalink}}">
-                      <img th:if="${post.spec.cover}" th:src="${post.spec.cover}" th:alt="${post.spec.title}">
+                      <img th:if="${post.spec.cover}" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='300'%3E%3Crect fill='%23f0f0f0' width='400' height='300'/%3E%3C/svg%3E" th:attr="data-src=${post.spec.cover}" th:alt="${post.spec.title}">
                       <img th:unless="${post.spec.cover}" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='300'%3E%3Crect fill='%23f0f0f0' width='400' height='300'/%3E%3Ctext fill='%23999' font-family='sans-serif' font-size='24' dy='10.5' font-weight='bold' x='50%25' y='50%25' text-anchor='middle'%3E%E6%9A%82%E6%97%A0%E5%B0%81%E9%9D%A2%3C/text%3E%3C/svg%3E" alt="默认封面">
                     </a>
                   </div>
@@ -152,7 +152,7 @@
         <article th:if="${theme.config.basic.post_list_style == 'card'}" th:each="post : ${posts.items}" class="post-card" th:classappend="${post.spec.pinned ? 'hidden' : ''}">
           <div class="post-card-cover">
             <a th:href="@{${post.status.permalink}}">
-              <img th:if="${post.spec.cover}" th:src="${post.spec.cover}" th:alt="${post.spec.title}">
+              <img th:if="${post.spec.cover}" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='300'%3E%3Crect fill='%23f0f0f0' width='400' height='300'/%3E%3C/svg%3E" th:attr="data-src=${post.spec.cover}" th:alt="${post.spec.title}">
               <img th:unless="${post.spec.cover}" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='300'%3E%3Crect fill='%23f0f0f0' width='400' height='300'/%3E%3Ctext fill='%23999' font-family='sans-serif' font-size='24' dy='10.5' font-weight='bold' x='50%25' y='50%25' text-anchor='middle'%3E%E6%9A%82%E6%97%A0%E5%B0%81%E9%9D%A2%3C/text%3E%3C/svg%3E" alt="默认封面">
             </a>
           </div>
