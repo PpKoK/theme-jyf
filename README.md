@@ -1,11 +1,11 @@
-# Jyf - Halo 极简纯文字博客主题
+# Jyf - Halo 极简、高级、设计博客主题
 
 <p align="center">
   <img src="https://www.jyf.app/upload/tz.png" alt="Jyf Logo" width="120" height="120">
 </p>
 
 <p align="center">
-  <strong>一个极简的纯文字博客主题</strong>
+  <strong>一个极简、高级、设计博客主题</strong>
 </p>
 
 <p align="center">
