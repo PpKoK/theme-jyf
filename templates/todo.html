@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html
+  xmlns:th="https://www.thymeleaf.org"
+  th:replace="~{modules/layout :: html(title = 'TODO - ' + ${site.title}, content = ~{::content})}"
+>
+  <th:block th:fragment="content">
+    <!-- 页面标题 -->
+    <div class="page-title">TODO 列表</div>
+    
+    <!-- 筛选按钮 -->
+    <div class="photo-filters" style="margin-bottom: 40px;">
+      <button class="filter-btn active" data-filter="all">全部</button>
+      <button class="filter-btn" data-filter="pending">未完成</button>
+      <button class="filter-btn" data-filter="completed">已完成</button>
+    </div>
+    
+    <!-- TODO 列表 -->
+    <div class="post-list">
+      <th:block th:if="${theme.config.todo?.todo_items != null and not #lists.isEmpty(theme.config.todo.todo_items)}">
+        <article th:each="item : ${theme.config.todo.todo_items}" class="post-item todo-item" th:attr="data-status=${item.status ?: 'pending'}">
+          <div class="post-header-line">
+            <div class="post-meta">预计完成日期：
+              <time th:text="${item.date}">2026-01-20</time>
+            </div>
+            <h2 class="post-title">
+              <span th:text="${item.text}">TODO 标题</span>
+              <span th:if="${(item.status ?: 'pending') == 'completed'}" style="color: var(--text-secondary); font-size: 0.85rem; margin-left: 10px;">✓ 已完成</span>
+              <span th:if="${(item.status ?: 'pending') != 'completed'}" style="color: var(--text-secondary); font-size: 0.85rem; margin-left: 10px;">✘ 未完成</span>
+            </h2>
+          </div>
+        </article>
+      </th:block>
+      
+      <div th:if="${theme.config.todo?.todo_items == null or #lists.isEmpty(theme.config.todo.todo_items)}" class="no-posts">
+        <p>暂无 TODO 项目</p>
+      </div>
+      
+      <!-- 筛选后的空状态 -->
+      <div class="no-posts" id="no-filtered-todos" style="display: none;">
+        <p>没有符合条件的 TODO 项目</p>
+      </div>
+    </div>
+    
+    <!-- 分页 -->
+    <div class="pagination" id="todo-pagination" style="display: none;">
+      <a href="javascript:void(0)" class="pagination-btn" id="prev-page">上一页</a>
+      <span class="pagination-info">
+        <span id="current-page">1</span> / <span id="total-pages">1</span>
+      </span>
+      <a href="javascript:void(0)" class="pagination-btn" id="next-page">下一页</a>
+    </div>
+    
+    <!-- TODO 筛选和分页脚本 -->
+    <script>
+      (function() {
+        'use strict';
+        
+        const ITEMS_PER_PAGE = 20;
+        let currentPage = 1;
+        let currentFilter = 'all';
+        let filteredItems = [];
+        
+        // 获取所有 TODO 项
+        function getAllItems() {
+          return Array.from(document.querySelectorAll('.todo-item'));
+        }
+        
+        // 筛选 TODO
+        function filterTodos(filter) {
+          currentFilter = filter;
+          currentPage = 1;
+          
+          const allItems = getAllItems();
+          const noFiltered = document.getElementById('no-filtered-todos');
+          
+          // 筛选项目
+          filteredItems = allItems.filter(function(item) {
+            const status = item.getAttribute('data-status') || 'pending';
+            return filter === 'all' || status === filter;
+          });
+          
+          // 显示/隐藏空状态
+          if (allItems.length > 0 && filteredItems.length === 0) {
+            noFiltered.style.display = 'block';
+          } else {
+            noFiltered.style.display = 'none';
+          }
+          
+          // 更新按钮状态
+          document.querySelectorAll('.filter-btn').forEach(function(btn) {
+            if (btn.getAttribute('data-filter') === filter) {
+              btn.classList.add('active');
+            } else {
+              btn.classList.remove('active');
+            }
+          });
+          
+          // 显示当前页
+          showPage(currentPage);
+        }
+        
+        // 显示指定页
+        function showPage(page) {
+          const allItems = getAllItems();
+          const startIndex = (page - 1) * ITEMS_PER_PAGE;
+          const endIndex = startIndex + ITEMS_PER_PAGE;
+          
+          // 隐藏所有项目
+          allItems.forEach(function(item) {
+            item.style.display = 'none';
+          });
+          
+          // 显示当前页的项目
+          filteredItems.forEach(function(item, index) {
+            if (index >= startIndex && index < endIndex) {
+              item.style.display = '';
+            }
+          });
+          
+          // 更新分页信息
+          updatePagination();
+        }
+        
+        // 更新分页信息
+        function updatePagination() {
+          const totalPages = Math.ceil(filteredItems.length / ITEMS_PER_PAGE);
+          const pagination = document.getElementById('todo-pagination');
+          const prevBtn = document.getElementById('prev-page');
+          const nextBtn = document.getElementById('next-page');
+          const currentPageSpan = document.getElementById('current-page');
+          const totalPagesSpan = document.getElementById('total-pages');
+          
+          // 显示/隐藏分页
+          if (totalPages > 1) {
+            pagination.style.display = 'flex';
+          } else {
+            pagination.style.display = 'none';
+          }
+          
+          // 更新页码
+          currentPageSpan.textContent = currentPage;
+          totalPagesSpan.textContent = totalPages;
+          
+          // 更新按钮状态
+          if (currentPage <= 1) {
+            prevBtn.style.opacity = '0.5';
+            prevBtn.style.pointerEvents = 'none';
+          } else {
+            prevBtn.style.opacity = '1';
+            prevBtn.style.pointerEvents = 'auto';
+          }
+          
+          if (currentPage >= totalPages) {
+            nextBtn.style.opacity = '0.5';
+            nextBtn.style.pointerEvents = 'none';
+          } else {
+            nextBtn.style.opacity = '1';
+            nextBtn.style.pointerEvents = 'auto';
+          }
+        }
+        
+        // 上一页
+        function prevPage() {
+          if (currentPage > 1) {
+            currentPage--;
+            showPage(currentPage);
+          }
+        }
+        
+        // 下一页
+        function nextPage() {
+          const totalPages = Math.ceil(filteredItems.length / ITEMS_PER_PAGE);
+          if (currentPage < totalPages) {
+            currentPage++;
+            showPage(currentPage);
+          }
+        }
+        
+        // 绑定筛选按钮
+        document.querySelectorAll('.filter-btn').forEach(function(btn) {
+          btn.addEventListener('click', function() {
+            const filter = this.getAttribute('data-filter');
+            filterTodos(filter);
+          });
+        });
+        
+        // 绑定分页按钮
+        document.getElementById('prev-page').addEventListener('click', prevPage);
+        document.getElementById('next-page').addEventListener('click', nextPage);
+        
+        // 初始化
+        filterTodos('all');
+      })();
+    </script>
+  </th:block>
+</html>

@@ -13,18 +13,19 @@
     let progress = 0;
     let interval;
     
-    // 模拟加载进度
+    // 模拟加载进度 - 使用更智能的增长算法
     function updateProgress() {
       if (progress < 90) {
-        // 前90%快速增长
-        const increment = Math.random() * 10;
+        // 根据当前进度调整增长速度：开始快，后面慢
+        const remaining = 90 - progress;
+        const increment = Math.random() * (remaining / 10) + 1;
         progress = Math.min(progress + increment, 90);
         loadingBar.style.width = progress + '%';
       }
     }
     
     // 开始模拟加载
-    interval = setInterval(updateProgress, 200);
+    interval = setInterval(updateProgress, 150);
     
     // 页面加载完成
     function completeLoading() {
@@ -47,7 +48,7 @@
       window.addEventListener('load', completeLoading);
     }
     
-    console.log('[PageLoading] 页面加载进度条已初始化');
+    console.log('[PageLoading] 顶部进度条已初始化');
   }
 
   // ==================== 全屏加载动画 ====================
@@ -98,7 +99,7 @@
     // 创建进度文本
     const progressText = document.createElement('div');
     progressText.className = 'loading-progress-text';
-    progressText.textContent = '0%';
+    progressText.textContent = 'Loading 0%';
     
     container.appendChild(progressBar);
     container.appendChild(progressText);
@@ -107,25 +108,27 @@
     let progress = 0;
     let interval;
     
-    // 模拟加载进度
+    // 模拟加载进度 - 使用更智能的增长算法
     function updateProgress() {
       if (progress < 90) {
-        const increment = Math.random() * 10;
+        // 根据当前进度调整增长速度
+        const remaining = 90 - progress;
+        const increment = Math.random() * (remaining / 10) + 1;
         progress = Math.min(progress + increment, 90);
         progressFill.style.width = progress + '%';
-        progressText.textContent = Math.floor(progress) + '%';
+        progressText.textContent = 'Loading ' + Math.floor(progress) + '%';
       }
     }
     
     // 开始模拟加载
-    interval = setInterval(updateProgress, 200);
+    interval = setInterval(updateProgress, 150);
     
     // 页面加载完成
     function completeLoading() {
       clearInterval(interval);
       progress = 100;
       progressFill.style.width = '100%';
-      progressText.textContent = '100%';
+      progressText.textContent = 'Loading 100%';
       
       // 延迟后隐藏
       setTimeout(() => {
@@ -275,6 +278,13 @@
       const currentTheme = document.documentElement.getAttribute('data-theme');
       const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
       
+      // 添加临时类来触发图标旋转
+      if (newTheme === 'dark') {
+        themeToggle.classList.add('switching-to-dark');
+      } else {
+        themeToggle.classList.add('switching-to-light');
+      }
+      
       // 创建扩散动画
       createThemeTransition(e, newTheme);
     });
@@ -300,6 +310,8 @@
     
     document.body.appendChild(mask);
     
+    const themeToggle = document.querySelector('.theme-toggle');
+    
     if (newTheme === 'dark') {
       // 切换到暗色：暗色圆形从点击位置扩散出去
       mask.style.clipPath = `circle(0px at ${x}px ${y}px)`;
@@ -317,6 +329,11 @@
         document.documentElement.setAttribute('data-theme', newTheme);
         document.body.setAttribute('data-color-scheme', newTheme);
         localStorage.setItem('theme', newTheme);
+        
+        // 移除临时类
+        if (themeToggle) {
+          themeToggle.classList.remove('switching-to-dark');
+        }
       }, 400);
       
     } else {
@@ -327,6 +344,11 @@
       document.documentElement.setAttribute('data-theme', newTheme);
       document.body.setAttribute('data-color-scheme', newTheme);
       localStorage.setItem('theme', newTheme);
+      
+      // 移除临时类
+      if (themeToggle) {
+        themeToggle.classList.remove('switching-to-light');
+      }
       
       // 使用双 RAF 确保主题切换已渲染
       requestAnimationFrame(() => {
@@ -688,15 +710,13 @@
           document.body.appendChild(galleryContainer);
         }
         
-        // 初始化灯箱并打开到当前图片
+        // 初始化灯箱并打开到当前图片（不显示缩略图）
         const gallery = lightGallery(galleryContainer, {
-          plugins: [lgZoom, lgThumbnail],
+          plugins: [lgZoom],
           speed: 500,
-          thumbnail: true,
-          animateThumb: true,
+          thumbnail: false,
           zoomFromOrigin: false,
-          allowMediaOverlap: true,
-          toggleThumb: true
+          allowMediaOverlap: true
         });
         
         // 找到当前图片的索引并打开
