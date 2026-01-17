@@ -7,11 +7,43 @@ spec:
     - group: basic
       label: 基础设置
       formSchema:
-        - $formkit: text
-          name: logo_text
-          label: Logo文字
-          value: "Jyf"
-          help: 顶部导航栏显示的Logo文字
+        - $formkit: group
+          name: logo
+          label: Logo 设置
+          children:
+            - $formkit: radio
+              name: logo_type
+              label: Logo类型
+              value: text
+              options:
+                - label: 仅文字
+                  value: text
+                - label: 仅图片
+                  value: image
+                - label: 图片+文字
+                  value: both
+              help: 选择Logo的显示方式
+            
+            - $formkit: text
+              name: logo_text
+              label: Logo文字
+              value: "Jyf"
+              help: 文字Logo的内容
+            
+            - $formkit: attachment
+              name: logo_image
+              label: Logo图片
+              help: 上传Logo图片，建议使用透明背景的PNG格式
+            
+            - $formkit: number
+              name: logo_image_height
+              label: Logo图片高度（百分比）
+              value: 100
+              min: 0
+              max: 100
+              step: 5
+              suffix: "%"
+              help: 输入百分比调整Logo图片大小，范围：0%-100%
         
         - $formkit: text
           name: site_title
@@ -85,6 +117,54 @@ spec:
     - group: footer
       label: 页脚设置
       formSchema:
+        - $formkit: checkbox
+          name: show_social_icons
+          label: 显示社交图标
+          value: true
+          help: 在页脚友情链接上方显示社交媒体图标
+        
+        - $formkit: array
+          name: social_media
+          label: 社交媒体
+          value:
+            - iconify: simple-icons:github
+              name: GitHub
+              url: https://github.com
+            - iconify: simple-icons:wechat
+              name: 微信
+              url: #
+            - iconify: simple-icons:bilibili
+              name: 哔哩哔哩
+              url: https://bilibili.com
+            - iconify: simple-icons:tiktok
+              name: 抖音
+              url: https://douyin.com
+          help: 配置社交媒体图标和链接
+          itemLabels:
+            - type: "iconify"
+              label: "$value.iconify"
+            - type: "text"
+              label: "$value.name"
+          children:
+            - $formkit: iconify
+              name: iconify
+              label: 图标
+              format: svg
+              validation: required
+              help: 选择社交媒体图标
+            
+            - $formkit: text
+              name: name
+              label: 名称
+              validation: required
+              help: 社交媒体名称
+            
+            - $formkit: text
+              name: url
+              label: 链接
+              validation: required
+              help: 社交媒体链接地址
+        
         - $formkit: text
           name: copyright_owner
           label: 版权所有者

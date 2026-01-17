@@ -308,10 +308,46 @@ a:hover {
 }
 
 .nav-left .logo {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+  gap: 10px;
+}
+
+.nav-left .logo-text {
   font-size: 1.5rem;
   font-weight: 700;
   color: var(--text-color);
   font-family: "Menlo", "Meslo LG", "Microsoft YaHei", "微软雅黑", monospace, sans-serif;
+}
+
+.nav-left .logo-image {
+  display: inline-flex;
+  align-items: center;
+}
+
+.nav-left .logo-both {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.nav-left .logo-img {
+  height: 40px;
+  width: auto;
+  object-fit: contain;
+  transition: opacity 0.2s;
+}
+
+.nav-left .logo-image:hover .logo-img,
+.nav-left .logo-both:hover .logo-img {
+  opacity: 0.8;
+}
+
+.nav-left .logo-both .logo-text {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-color);
 }
 
 .nav-center {
@@ -1278,6 +1314,38 @@ a:hover {
   text-align: center;
 }
 
+/* 社交图标 */
+.social-icons {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 30px;
+  padding: 20px 0;
+}
+
+.social-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  color: var(--text-secondary);
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.social-icon svg {
+  width: 24px;
+  height: 24px;
+  fill: currentColor;
+}
+
+.social-icon:hover {
+  color: var(--link-color);
+  transform: translateY(-3px);
+}
+
 .friend-links {
   margin-bottom: 20px;
   font-size: 0.85rem;
@@ -1536,7 +1604,19 @@ a:hover {
     flex: 1;
   }
   
-  .nav-left .logo {
+  .nav-left .logo-text {
+    font-size: 1.2rem;
+  }
+  
+  .nav-left .logo-img {
+    height: 32px;
+  }
+  
+  .nav-left .logo-both {
+    gap: 8px;
+  }
+  
+  .nav-left .logo-both .logo-text {
     font-size: 1.2rem;
   }
   
