@@ -126,19 +126,7 @@ spec:
         - $formkit: array
           name: social_media
           label: 社交媒体
-          value:
-            - iconify: simple-icons:github
-              name: GitHub
-              url: https://github.com
-            - iconify: simple-icons:wechat
-              name: 微信
-              url: #
-            - iconify: simple-icons:bilibili
-              name: 哔哩哔哩
-              url: https://bilibili.com
-            - iconify: simple-icons:tiktok
-              name: 抖音
-              url: https://douyin.com
+          value: []
           help: 配置社交媒体图标和链接
           itemLabels:
             - type: "iconify"

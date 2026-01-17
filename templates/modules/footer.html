@@ -5,13 +5,14 @@
       <th:block th:if="${theme.config.footer.show_social_icons != null && theme.config.footer.show_social_icons}">
         <div th:if="${theme.config.footer.social_media != null && not #lists.isEmpty(theme.config.footer.social_media)}" class="social-icons">
           <a th:each="social : ${theme.config.footer.social_media}"
+             th:if="${social.iconify != null && !#strings.isEmpty(social.iconify)}"
              th:href="${social.url}"
              th:title="${social.name}"
              th:aria-label="${social.name}"
              target="_blank"
              rel="noopener noreferrer"
              class="social-icon">
-            <th:block th:utext="${social.iconify}"></th:block>
+            <th:block th:utext="${social.iconify.value}"></th:block>
           </a>
         </div>
       </th:block>
