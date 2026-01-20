@@ -120,7 +120,7 @@ spec:
         - $formkit: checkbox
           name: show_social_icons
           label: 显示社交图标
-          value: true
+          value: false
           help: 在页脚友情链接上方显示社交媒体图标
         
         - $formkit: array
