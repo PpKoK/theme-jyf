@@ -265,9 +265,45 @@
 
   // ==================== 暗夜模式 ====================
   function initTheme() {
-    const savedTheme = localStorage.getItem('theme') || 'light';
-    document.documentElement.setAttribute('data-theme', savedTheme);
-    document.body.setAttribute('data-color-scheme', savedTheme);
+    const savedTheme = localStorage.getItem('theme');
+    const configTheme = window.themeConfig?.colorScheme || 'light';
+    
+    // 如果用户没有手动设置过主题，使用配置的默认主题
+    let themeMode = savedTheme || configTheme;
+    let currentTheme = themeMode;
+    
+    // 如果是 auto 模式，检测系统主题
+    if (themeMode === 'auto') {
+      currentTheme = getSystemTheme();
+      
+      // 监听系统主题变化
+      if (window.matchMedia) {
+        const darkModeQuery = window.matchMedia('(prefers-color-scheme: dark)');
+        darkModeQuery.addEventListener('change', (e) => {
+          const theme = localStorage.getItem('theme');
+          const config = window.themeConfig?.colorScheme || 'light';
+          // 只有在 auto 模式下才自动切换（用户设置为auto 或 配置为auto且用户未设置）
+          if (theme === 'auto' || (!theme && config === 'auto')) {
+            const newTheme = e.matches ? 'dark' : 'light';
+            document.documentElement.setAttribute('data-theme', newTheme);
+            document.body.setAttribute('data-color-scheme', newTheme);
+            console.log('[Theme] 系统主题已变化:', newTheme);
+          }
+        });
+      }
+    }
+    
+    document.documentElement.setAttribute('data-theme', currentTheme);
+    document.body.setAttribute('data-color-scheme', currentTheme);
+    console.log('[Theme] 初始化主题模式:', themeMode, '显示为:', currentTheme);
+  }
+  
+  // 获取系统主题
+  function getSystemTheme() {
+    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      return 'dark';
+    }
+    return 'light';
   }
 
   function toggleTheme() {
@@ -275,23 +311,44 @@
     if (!themeToggle) return;
 
     themeToggle.addEventListener('click', (e) => {
+      const savedTheme = localStorage.getItem('theme');
       const currentTheme = document.documentElement.getAttribute('data-theme');
-      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      
+      // 循环切换：light -> dark -> auto -> light
+      let newTheme;
+      if (savedTheme === 'auto' || (!savedTheme && window.themeConfig?.colorScheme === 'auto')) {
+        newTheme = 'light';
+      } else if (currentTheme === 'light') {
+        newTheme = 'dark';
+      } else {
+        newTheme = 'auto';
+      }
+      
+      // 如果是 auto 模式，获取实际显示的主题
+      let displayTheme = newTheme;
+      if (newTheme === 'auto') {
+        displayTheme = getSystemTheme();
+      }
       
       // 添加临时类来触发图标旋转
-      if (newTheme === 'dark') {
+      if (displayTheme === 'dark') {
         themeToggle.classList.add('switching-to-dark');
       } else {
         themeToggle.classList.add('switching-to-light');
       }
       
+      // 保存用户选择
+      localStorage.setItem('theme', newTheme);
+      
       // 创建扩散动画
-      createThemeTransition(e, newTheme);
+      createThemeTransition(e, displayTheme, newTheme);
+      
+      console.log('[Theme] 切换主题:', newTheme, '显示为:', displayTheme);
     });
   }
 
   // 创建主题切换的扩散动画（使用 clip-path）
-  function createThemeTransition(event, newTheme) {
+  function createThemeTransition(event, displayTheme, savedTheme) {
     // 获取点击位置
     const button = event.currentTarget;
     const rect = button.getBoundingClientRect();
@@ -312,7 +369,7 @@
     
     const themeToggle = document.querySelector('.theme-toggle');
     
-    if (newTheme === 'dark') {
+    if (displayTheme === 'dark') {
       // 切换到暗色：暗色圆形从点击位置扩散出去
       mask.style.clipPath = `circle(0px at ${x}px ${y}px)`;
       
@@ -326,9 +383,8 @@
       
       // 在动画中途切换主题
       setTimeout(() => {
-        document.documentElement.setAttribute('data-theme', newTheme);
-        document.body.setAttribute('data-color-scheme', newTheme);
-        localStorage.setItem('theme', newTheme);
+        document.documentElement.setAttribute('data-theme', displayTheme);
+        document.body.setAttribute('data-color-scheme', displayTheme);
         
         // 移除临时类
         if (themeToggle) {
@@ -341,9 +397,8 @@
       mask.style.clipPath = `circle(${maxDistance * 1.5}px at ${x}px ${y}px)`;
       
       // 立即切换主题
-      document.documentElement.setAttribute('data-theme', newTheme);
-      document.body.setAttribute('data-color-scheme', newTheme);
-      localStorage.setItem('theme', newTheme);
+      document.documentElement.setAttribute('data-theme', displayTheme);
+      document.body.setAttribute('data-color-scheme', displayTheme);
       
       // 移除临时类
       if (themeToggle) {

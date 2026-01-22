@@ -1780,11 +1780,10 @@ a:hover {
     min-width: auto;
   }
   
-  /* 热力图移动端优化 */
+  /* 热力图移动端优化 - 完全自适应 */
   .heatmap {
     margin-bottom: 40px;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
+    overflow: visible;
     z-index: 1;
   }
   
@@ -1794,25 +1793,74 @@ a:hover {
   }
   
   .heatmap-wrapper {
-    min-width: 600px;
+    width: 100%;
   }
   
   .heatmap-grid {
-    grid-template-columns: 20px 1fr;
+    grid-template-columns: 18px 1fr;
+    gap: 1px;
   }
   
   .heatmap-months {
-    grid-template-columns: 20px repeat(53, 1fr);
-    padding-left: 20px;
+    display: grid;
+    grid-template-columns: 18px repeat(53, 1fr);
+    padding-left: 18px;
+    gap: 1px;
+    font-size: 0.6rem;
   }
   
   .heatmap-weekdays {
-    padding-right: 4px;
+    padding-right: 3px;
+    font-size: 0.6rem;
+    width: 18px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+  }
+  
+  .heatmap-weekdays span {
+    height: auto;
+    line-height: 1;
+    text-align: right;
+  }
+  
+  .heatmap-days {
+    display: grid;
+    grid-template-columns: repeat(53, 1fr);
+    grid-template-rows: repeat(7, 1fr);
+    grid-auto-flow: column;
+    gap: 1px;
+    width: 100%;
   }
   
   .heatmap-day {
-    width: 10px;
-    height: 10px;
+    width: 100%;
+    height: 0;
+    padding-bottom: 100%;
+    position: relative;
+    border-radius: 1px;
+  }
+  
+  .heatmap-day::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: inherit;
+    border-radius: inherit;
+  }
+  
+  .heatmap-legend {
+    font-size: 0.6rem;
+    gap: 2px;
+    margin-top: 8px;
+  }
+  
+  .heatmap-legend-item {
+    width: 8px;
+    height: 8px;
   }
   
   /* 归档页面 */
@@ -1836,12 +1884,19 @@ a:hover {
     text-align: left;
   }
   
-  /* 返回顶部按钮 */
+  /* 返回顶部按钮 - 移动端优化 */
   .back-to-top {
     bottom: 20px;
     right: 20px;
-    width: 36px;
-    height: 36px;
+    width: 44px;
+    height: 44px;
+    font-size: 20px;
+    z-index: 999;
+  }
+  
+  .back-to-top svg {
+    width: 22px;
+    height: 22px;
   }
   
   /* 页面标题 */

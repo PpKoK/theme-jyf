@@ -200,7 +200,9 @@ spec:
               value: light
             - label: 深色
               value: dark
-          help: 用户可通过右上角按钮切换
+            - label: 跟随系统
+              value: auto
+          help: 用户可通过右上角按钮切换，选择"跟随系统"将自动适配系统主题
         
         - $formkit: color
           name: primary_color
