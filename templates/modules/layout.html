@@ -43,7 +43,7 @@
   </script>
   
   <!-- lightGallery 灯箱 -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery@2.7.2/css/lightgallery-bundle.min.css">
+  <link rel="stylesheet" th:href="@{/assets/lib/lightgallery/css/lightgallery-bundle.min.css?v={version}(version=${theme.spec.version})}">
 </head>
 <body data-color-scheme="auto" th:attr="data-cursor-style=${theme.config.cursor != null and theme.config.cursor.cursor_enabled != null and theme.config.cursor.cursor_enabled ? (theme.config.cursor.cursor_style ?: 'default') : 'default'}">
   <div>
@@ -62,9 +62,9 @@
   </button>
   
   <!-- lightGallery 灯箱 -->
-  <script src="https://cdn.jsdelivr.net/npm/lightgallery@2.7.2/lightgallery.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/lightgallery@2.7.2/plugins/zoom/lg-zoom.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/lightgallery@2.7.2/plugins/thumbnail/lg-thumbnail.min.js"></script>
+  <script th:src="@{/assets/lib/lightgallery/js/lightgallery.min.js?v={version}(version=${theme.spec.version})}"></script>
+  <script th:src="@{/assets/lib/lightgallery/plugins/zoom/lg-zoom.min.js?v={version}(version=${theme.spec.version})}"></script>
+  <script th:src="@{/assets/lib/lightgallery/plugins/thumbnail/lg-thumbnail.min.js?v={version}(version=${theme.spec.version})}"></script>
   
   <script th:src="@{/assets/main.js?v={version}(version=${theme.spec.version})}"></script>
 </body>
