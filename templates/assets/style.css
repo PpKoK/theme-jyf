@@ -541,15 +541,27 @@ a:hover {
   opacity: 0;
 }
 
-/* 主题切换后的最终状态 */
-[data-theme="dark"] .theme-toggle .sun-icon {
+/* 主题切换后的最终状态 - 降低优先级，让临时类能覆盖 */
+/* 暗色主题：显示月亮图标 */
+[data-theme="dark"] .theme-toggle:not(.switching-to-light):not(.switching-to-dark) .sun-icon {
   transform: rotate(-180deg);
   opacity: 0;
 }
 
-[data-theme="dark"] .theme-toggle .moon-icon {
+[data-theme="dark"] .theme-toggle:not(.switching-to-light):not(.switching-to-dark) .moon-icon {
   transform: translate(-50%, -50%) rotate(0deg);
   opacity: 1;
+}
+
+/* 亮色主题：显示太阳图标 */
+[data-theme="light"] .theme-toggle:not(.switching-to-light):not(.switching-to-dark) .sun-icon {
+  transform: rotate(0deg);
+  opacity: 1;
+}
+
+[data-theme="light"] .theme-toggle:not(.switching-to-light):not(.switching-to-dark) .moon-icon {
+  transform: translate(-50%, -50%) rotate(180deg);
+  opacity: 0;
 }
 
 /* Site Intro */
@@ -1402,7 +1414,7 @@ a:hover {
 }
 
 /* Back to Top Button - Cactus style */
-.back-to-top {
+.jyf-fhdb {
   position: fixed;
   bottom: 40px;
   right: 40px;
@@ -1422,12 +1434,12 @@ a:hover {
   box-shadow: var(--shadow);
 }
 
-.back-to-top.visible {
+.jyf-fhdb.visible {
   opacity: 1;
   visibility: visible;
 }
 
-.back-to-top:hover {
+.jyf-fhdb:hover {
   color: var(--link-color);
   border-color: var(--link-color);
   transform: none;
@@ -1885,7 +1897,7 @@ a:hover {
   }
   
   /* 返回顶部按钮 - 移动端优化 */
-  .back-to-top {
+  .jyf-fhdb {
     bottom: 20px;
     right: 20px;
     width: 44px;
@@ -1894,7 +1906,7 @@ a:hover {
     z-index: 999;
   }
   
-  .back-to-top svg {
+  .jyf-fhdb svg {
     width: 22px;
     height: 22px;
   }

@@ -5,6 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title th:text="${title}"></title>
   <meta name="description" th:content="${site.subtitle}">
+  
+  <!-- 主题颜色 - 让浏览器 UI 跟随网站主题 -->
+  <meta name="theme-color" content="#FAFAFA" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#292a2d" media="(prefers-color-scheme: dark)">
+  
   <link rel="stylesheet" th:href="@{/assets/style.css?v={version}(version=${theme.spec.version})}">
   
   <!-- 自定义鼠标指针样式 -->
@@ -55,7 +60,7 @@
   </div>
   
   <!-- 返回顶部按钮 -->
-  <button class="back-to-top" aria-label="返回顶部">
+  <button class="jyf-fhdb" aria-label="返回顶部">
     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
       <polyline points="18 15 12 9 6 15"></polyline>
     </svg>
