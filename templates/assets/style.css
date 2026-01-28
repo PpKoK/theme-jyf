@@ -254,11 +254,26 @@ img.lazy-loaded {
   --shadow: 0 0 1px rgba(255,255,255,0.1);
 }
 
+/* 跟随系统模式 - 系统深色时应用深色主题 */
+@media (prefers-color-scheme: dark) {
+  [data-theme="auto"] {
+    --bg-color: #292a2d;
+    --text-color: #a9a9b3;
+    --text-secondary: #87888f;
+    --link-color: #42b983;
+    --link-hover: #33a06f;
+    --border-color: #3b3d42;
+    --code-bg: #2d2d2d;
+    --shadow: 0 0 1px rgba(255,255,255,0.1);
+  }
+}
+
 /* Base */
 html {
   font-size: 16px;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background: var(--bg-color);
 }
 
 body {
@@ -269,6 +284,11 @@ body {
   background: var(--bg-color);
   transition: background 0.3s, color 0.3s;
   font-weight: 600;
+}
+
+/* 内部容器 */
+body > div:first-child {
+  min-height: 100vh;
 }
 
 a {
@@ -496,71 +516,56 @@ a:hover {
   object-fit: cover;
 }
 
-/* 主题切换图标动画 */
+/* 主题切换按钮 - 三态循环切换 */
 .theme-toggle {
   position: relative;
-  overflow: hidden;
 }
 
-.theme-toggle svg {
-  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
-}
-
-.theme-toggle .sun-icon {
-  transform: rotate(0deg);
-  opacity: 1;
-}
-
-.theme-toggle .moon-icon {
+.theme-icon {
   position: absolute;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%) rotate(180deg);
+  transform: translate(-50%, -50%);
   opacity: 0;
+  transition: opacity 0.3s ease;
 }
 
-/* 点击时立即触发图标旋转 - 切换到暗色 */
-.theme-toggle.switching-to-dark .sun-icon {
-  transform: rotate(-180deg);
-  opacity: 0;
-}
-
-.theme-toggle.switching-to-dark .moon-icon {
-  transform: translate(-50%, -50%) rotate(0deg);
+.theme-icon.active {
   opacity: 1;
 }
 
-/* 点击时立即触发图标旋转 - 切换到亮色 */
-.theme-toggle.switching-to-light .sun-icon {
-  transform: rotate(0deg);
+/* 默认显示太阳图标（浅色模式） */
+.theme-toggle .sun-icon {
+  position: static;
+  transform: none;
   opacity: 1;
 }
 
-.theme-toggle.switching-to-light .moon-icon {
-  transform: translate(-50%, -50%) rotate(180deg);
+/* 根据当前模式显示对应图标 */
+[data-theme="light"] .theme-toggle .sun-icon {
+  opacity: 1;
+}
+
+[data-theme="light"] .theme-toggle .moon-icon,
+[data-theme="light"] .theme-toggle .circle-icon {
   opacity: 0;
 }
 
-/* 主题切换后的最终状态 - 降低优先级，让临时类能覆盖 */
-/* 暗色主题：显示月亮图标 */
-[data-theme="dark"] .theme-toggle:not(.switching-to-light):not(.switching-to-dark) .sun-icon {
-  transform: rotate(-180deg);
+[data-theme="dark"] .theme-toggle .moon-icon {
+  opacity: 1;
+}
+
+[data-theme="dark"] .theme-toggle .sun-icon,
+[data-theme="dark"] .theme-toggle .circle-icon {
   opacity: 0;
 }
 
-[data-theme="dark"] .theme-toggle:not(.switching-to-light):not(.switching-to-dark) .moon-icon {
-  transform: translate(-50%, -50%) rotate(0deg);
+[data-theme="auto"] .theme-toggle .circle-icon {
   opacity: 1;
 }
 
-/* 亮色主题：显示太阳图标 */
-[data-theme="light"] .theme-toggle:not(.switching-to-light):not(.switching-to-dark) .sun-icon {
-  transform: rotate(0deg);
-  opacity: 1;
-}
-
-[data-theme="light"] .theme-toggle:not(.switching-to-light):not(.switching-to-dark) .moon-icon {
-  transform: translate(-50%, -50%) rotate(180deg);
+[data-theme="auto"] .theme-toggle .sun-icon,
+[data-theme="auto"] .theme-toggle .moon-icon {
   opacity: 0;
 }
 
@@ -988,13 +993,21 @@ a:hover {
 }
 
 .post-content code {
-  background: var(--code-bg);
+  background: #f5f5f5;
   padding: 2px 6px;
   border-radius: 3px;
   font-size: 0.9rem;
   font-family: "Menlo", "Meslo LG", "Microsoft YaHei", "微软雅黑", monospace, sans-serif;
   font-weight: 600;
-  color: var(--text-color);
+  color: var(--inline-code-color);
+  border: 1px solid #e0e0e0;
+}
+
+/* 深色模式下的行内代码 */
+[data-theme="dark"] .post-content code {
+  background: #3a3a3a;
+  color: var(--inline-code-color);
+  border: 1px solid #4a4a4a;
 }
 
 .post-content pre {
@@ -1413,17 +1426,17 @@ a:hover {
   font-weight: 600;
 }
 
-/* Back to Top Button - Cactus style */
+/* Back to Top Button */
 .jyf-fhdb {
   position: fixed;
-  bottom: 40px;
-  right: 40px;
+  bottom: 30px;
+  right: 30px;
   width: 40px;
   height: 40px;
-  border: 1px solid var(--border-color);
-  border-radius: 0;
+  border-radius: 50%;
   background: var(--bg-color);
-  color: var(--text-secondary);
+  border: 1px solid var(--border-color);
+  color: var(--text-color);
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -1431,7 +1444,7 @@ a:hover {
   opacity: 0;
   visibility: hidden;
   transition: all 0.3s ease;
-  box-shadow: var(--shadow);
+  z-index: 1000;
 }
 
 .jyf-fhdb.visible {
@@ -2313,18 +2326,7 @@ body {
   position: relative;
 }
 
-body::before {
-  content: '';
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  z-index: -1;
-  background: var(--bg-color);
-  transition: background 0.3s ease;
-}
+/* body::before 已移除 - 阻止了iOS Safari毛玻璃效果 */
 
 .theme-transition-mask {
   position: fixed;
@@ -3119,6 +3121,7 @@ body::before {
 
 
 /* ==================== 背景萤火虫粒子效果 ==================== */
+/* 注意：iOS Safari 上会自动禁用萤火虫效果以保持毛玻璃效果 */
 .firefly-container {
   position: fixed;
   top: 0;
@@ -3126,7 +3129,7 @@ body::before {
   width: 100%;
   height: 100%;
   pointer-events: none;
-  z-index: 0;
+  z-index: 1;
   overflow: hidden;
 }
 

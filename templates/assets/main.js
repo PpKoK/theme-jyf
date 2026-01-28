@@ -263,81 +263,53 @@
     console.log('[ImageLoading] 图片加载动画已初始化');
   }
 
-  // ==================== 暗夜模式 ====================
+  // ==================== 主题模式（三态循环切换） ====================
   function initTheme() {
     const configTheme = window.themeConfig?.colorScheme || 'light';
     
-    // 如果配置是 auto，则始终跟随系统，忽略 localStorage
-    // 如果配置不是 auto，则使用 localStorage 或配置值
-    let themeMode, currentTheme;
+    // 读取用户保存的主题模式，如果没有则使用配置值
+    const savedMode = localStorage.getItem('themeMode');
+    const currentMode = savedMode || configTheme;
     
-    if (configTheme === 'auto') {
-      // 配置为 auto 时，始终跟随系统
-      themeMode = 'auto';
-      currentTheme = getSystemTheme();
-      // 清除可能存在的手动设置
-      localStorage.removeItem('theme');
-      
-      // 隐藏主题切换按钮
-      const themeToggle = document.querySelector('.theme-toggle');
-      if (themeToggle) {
-        themeToggle.style.display = 'none';
-      }
-    } else {
-      // 配置不是 auto 时，优先使用用户手动设置
-      const savedTheme = localStorage.getItem('theme');
-      themeMode = savedTheme || configTheme;
-      currentTheme = themeMode;
-      
-      // 显示主题切换按钮
-      const themeToggle = document.querySelector('.theme-toggle');
-      if (themeToggle) {
-        themeToggle.style.display = '';
-      }
-    }
+    // 应用主题
+    applyThemeMode(currentMode);
     
-    // 设置初始主题
-    document.documentElement.setAttribute('data-theme', currentTheme);
-    document.body.setAttribute('data-color-scheme', currentTheme);
-    updateThemeColor(currentTheme);
-    console.log('[Theme] 初始化 - 配置:', configTheme, '模式:', themeMode, '显示:', currentTheme);
-    
-    // 监听系统主题变化
+    // 监听系统主题变化（仅在 auto 模式下生效）
     if (window.matchMedia) {
       const darkModeQuery = window.matchMedia('(prefers-color-scheme: dark)');
       darkModeQuery.addEventListener('change', (e) => {
-        const config = window.themeConfig?.colorScheme || 'light';
-        
-        // 只有配置为 auto 时才自动切换
-        if (config === 'auto') {
-          const newTheme = e.matches ? 'dark' : 'light';
-          document.documentElement.setAttribute('data-theme', newTheme);
-          document.body.setAttribute('data-color-scheme', newTheme);
-          updateThemeColor(newTheme);
-          console.log('[Theme] 系统主题已变化，自动切换到:', newTheme);
+        const mode = localStorage.getItem('themeMode') || configTheme;
+        if (mode === 'auto') {
+          const systemTheme = e.matches ? 'dark' : 'light';
+          document.documentElement.setAttribute('data-theme', systemTheme);
+          document.body.setAttribute('data-color-scheme', systemTheme);
+          console.log('[Theme] 系统主题已变化，自动切换到:', systemTheme);
         }
       });
     }
+    
+    console.log('[Theme] 初始化 - 模式:', currentMode);
   }
   
-  // 更新浏览器主题颜色
-  function updateThemeColor(theme) {
-    // 获取或创建 theme-color meta 标签
-    let metaThemeColor = document.querySelector('meta[name="theme-color"]:not([media])');
-    if (!metaThemeColor) {
-      metaThemeColor = document.createElement('meta');
-      metaThemeColor.name = 'theme-color';
-      document.head.appendChild(metaThemeColor);
+  // 应用主题模式
+  function applyThemeMode(mode) {
+    let actualTheme;
+    
+    if (mode === 'auto') {
+      // 跟随系统
+      actualTheme = getSystemTheme();
+      // 设置 data-theme 为 auto，让 CSS 知道当前是 auto 模式
+      document.documentElement.setAttribute('data-theme', 'auto');
+    } else {
+      // 固定模式
+      actualTheme = mode;
+      document.documentElement.setAttribute('data-theme', actualTheme);
     }
     
-    // 根据主题设置颜色
-    const themeColors = {
-      light: '#FAFAFA',  // 浅色模式背景色
-      dark: '#292a2d'    // 深色模式背景色
-    };
+    document.body.setAttribute('data-color-scheme', actualTheme);
     
-    metaThemeColor.content = themeColors[theme] || themeColors.light;
-    console.log('[Theme] 更新浏览器主题颜色:', metaThemeColor.content);
+    // 保存模式到 localStorage
+    localStorage.setItem('themeMode', mode);
   }
   
   // 获取系统主题
@@ -347,118 +319,31 @@
     }
     return 'light';
   }
+  
+  // 获取下一个主题模式（循环：light → dark → auto → light）
+  function getNextThemeMode(currentMode) {
+    const modes = ['light', 'dark', 'auto'];
+    const currentIndex = modes.indexOf(currentMode);
+    const nextIndex = (currentIndex + 1) % modes.length;
+    return modes[nextIndex];
+  }
 
   function toggleTheme() {
     const themeToggle = document.querySelector('.theme-toggle');
     if (!themeToggle) return;
 
-    themeToggle.addEventListener('click', (e) => {
-      const configTheme = window.themeConfig?.colorScheme || 'light';
+    themeToggle.addEventListener('click', () => {
+      // 获取当前模式
+      const currentMode = localStorage.getItem('themeMode') || window.themeConfig?.colorScheme || 'light';
       
-      // 如果配置是 auto，不允许手动切换（因为会自动跟随系统）
-      if (configTheme === 'auto') {
-        console.log('[Theme] 当前配置为跟随系统，无法手动切换');
-        return;
-      }
+      // 获取下一个模式
+      const nextMode = getNextThemeMode(currentMode);
       
-      const currentTheme = document.documentElement.getAttribute('data-theme');
+      // 应用新主题
+      applyThemeMode(nextMode);
       
-      // 简单双态切换：light <-> dark
-      const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-      
-      // 添加临时类来触发图标旋转
-      if (newTheme === 'dark') {
-        themeToggle.classList.add('switching-to-dark');
-      } else {
-        themeToggle.classList.add('switching-to-light');
-      }
-      
-      // 保存用户选择
-      localStorage.setItem('theme', newTheme);
-      
-      // 创建扩散动画 - 传入当前主题和目标主题
-      createThemeTransition(e, currentTheme, newTheme);
-      
-      console.log('[Theme] 切换主题: 从', currentTheme, '到', newTheme);
+      console.log('[Theme] 循环切换: 从', currentMode, '到', nextMode);
     });
-  }
-
-  // 创建主题切换的扩散动画（使用 clip-path）
-  function createThemeTransition(event, fromTheme, toTheme) {
-    // 获取点击位置
-    const button = event.currentTarget;
-    const rect = button.getBoundingClientRect();
-    const x = rect.left + rect.width / 2;
-    const y = rect.top + rect.height / 2;
-    
-    // 计算需要的圆形半径（覆盖整个屏幕）
-    const maxDistance = Math.hypot(
-      Math.max(x, window.innerWidth - x),
-      Math.max(y, window.innerHeight - y)
-    );
-    
-    // 创建遮罩层 - 始终使用暗色
-    const mask = document.createElement('div');
-    mask.className = 'theme-transition-mask to-dark';
-    
-    document.body.appendChild(mask);
-    
-    const themeToggle = document.querySelector('.theme-toggle');
-    
-    // 判断是切换到暗色还是亮色
-    const switchingToDark = toTheme === 'dark';
-    
-    if (switchingToDark) {
-      // 切换到暗色：暗色圆形从点击位置扩散出去
-      mask.style.clipPath = `circle(0px at ${x}px ${y}px)`;
-      
-      // 使用双 RAF 确保初始状态已渲染
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          // 扩散到覆盖整个屏幕
-          mask.style.clipPath = `circle(${maxDistance * 1.5}px at ${x}px ${y}px)`;
-        });
-      });
-      
-      // 在动画中途切换主题
-      setTimeout(() => {
-        document.documentElement.setAttribute('data-theme', toTheme);
-        document.body.setAttribute('data-color-scheme', toTheme);
-        updateThemeColor(toTheme);
-        
-        // 移除临时类
-        if (themeToggle) {
-          themeToggle.classList.remove('switching-to-dark');
-        }
-      }, 400);
-      
-    } else {
-      // 切换到亮色：暗色圆形从整个屏幕缩小回来
-      mask.style.clipPath = `circle(${maxDistance * 1.5}px at ${x}px ${y}px)`;
-      
-      // 立即切换主题
-      document.documentElement.setAttribute('data-theme', toTheme);
-      document.body.setAttribute('data-color-scheme', toTheme);
-      updateThemeColor(toTheme);
-      
-      // 移除临时类
-      if (themeToggle) {
-        themeToggle.classList.remove('switching-to-light');
-      }
-      
-      // 使用双 RAF 确保主题切换已渲染
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          // 圆形缩小到点击位置
-          mask.style.clipPath = `circle(0px at ${x}px ${y}px)`;
-        });
-      });
-    }
-    
-    // 动画完成后移除遮罩
-    setTimeout(() => {
-      mask.remove();
-    }, 800);
   }
 
   // ==================== 热力图 ====================
@@ -1494,15 +1379,26 @@
 
   // ==================== 背景萤火虫效果 ====================
   function initFireflies() {
+    // 检测 iOS Safari（会影响毛玻璃效果）
+    const isIOSSafari = /iPad|iPhone|iPod/.test(navigator.userAgent) &&
+                        !window.MSStream &&
+                        /Safari/.test(navigator.userAgent) &&
+                        !/CriOS|FxiOS|OPiOS|EdgiOS/.test(navigator.userAgent);
+
+    if (isIOSSafari) {
+      console.log('[Fireflies] iOS Safari 检测到，禁用萤火虫效果以保持毛玻璃效果');
+      return;
+    }
+
     // 从配置中获取萤火虫数量，默认0（关闭）
     const fireflyCount = parseInt(window.themeConfig?.fireflyCount) || 0;
-    
+
     // 如果数量为0，则不启用萤火虫效果
     if (fireflyCount === 0) {
       console.log('[Fireflies] 萤火虫效果未启用');
       return;
     }
-    
+
     // 创建萤火虫容器
     const container = document.createElement('div');
     container.className = 'firefly-container';
