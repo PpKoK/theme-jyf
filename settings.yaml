@@ -210,18 +210,6 @@ spec:
           value: "#50E3C2"
           help: 选择主题的主色调
         
-        - $formkit: color
-          name: text_color
-          label: 文字颜色
-          value: "#34495e"
-          help: 主要文字颜色（浅色模式）
-        
-        - $formkit: color
-          name: background_color
-          label: 背景色
-          value: "#FAFAFA"
-          help: 页面背景颜色（浅色模式）
-        
         - $formkit: radio
           name: firefly_count
           label: 背景萤火虫数量 - 极力推荐10.

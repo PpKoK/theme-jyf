@@ -789,6 +789,27 @@ a:hover {
   color: black;
 }
 
+/* 热力等级 - 跟随系统深色模式 */
+@media (prefers-color-scheme: dark) {
+  [data-theme="auto"] .heatmap-day { background-color: rgba(255, 255, 255, 0.08); }
+  [data-theme="auto"] .heatmap-day[data-level="0"] { background-color: rgba(255, 255, 255, 0.08); }
+  [data-theme="auto"] .heatmap-day[data-level="1"] { background-color: #0e4429; }
+  [data-theme="auto"] .heatmap-day[data-level="2"] { background-color: #006d32; }
+  [data-theme="auto"] .heatmap-day[data-level="3"] { background-color: #26a641; }
+  [data-theme="auto"] .heatmap-day[data-level="4"] { background-color: #39d353; }
+
+  [data-theme="auto"] .heatmap-legend-item[data-level="0"] { background-color: rgba(255, 255, 255, 0.08); }
+  [data-theme="auto"] .heatmap-legend-item[data-level="1"] { background-color: #0e4429; }
+  [data-theme="auto"] .heatmap-legend-item[data-level="2"] { background-color: #006d32; }
+  [data-theme="auto"] .heatmap-legend-item[data-level="3"] { background-color: #26a641; }
+  [data-theme="auto"] .heatmap-legend-item[data-level="4"] { background-color: #39d353; }
+
+  [data-theme="auto"] .heatmap-tooltip {
+    background-color: rgba(255, 255, 255, 0.95);
+    color: black;
+  }
+}
+
 /* Post List - Cactus style */
 .post-list {
   margin-bottom: 60px;
