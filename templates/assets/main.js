@@ -263,53 +263,94 @@
     console.log('[ImageLoading] 图片加载动画已初始化');
   }
 
-  // ==================== 主题模式（三态循环切换） ====================
+  // ==================== 暗夜模式 ====================
   function initTheme() {
     const configTheme = window.themeConfig?.colorScheme || 'light';
     
-    // 读取用户保存的主题模式，如果没有则使用配置值
-    const savedMode = localStorage.getItem('themeMode');
-    const currentMode = savedMode || configTheme;
+    // 如果配置是 auto，则始终跟随系统，忽略 localStorage
+    // 如果配置不是 auto，则使用 localStorage 或配置值
+    let themeMode, currentTheme;
     
-    // 应用主题
-    applyThemeMode(currentMode);
+    if (configTheme === 'auto') {
+      // 配置为 auto 时，始终跟随系统
+      themeMode = 'auto';
+      currentTheme = getSystemTheme();
+      // 清除可能存在的手动设置
+      localStorage.removeItem('theme');
+      
+      // 隐藏主题切换按钮
+      const themeToggle = document.querySelector('.theme-toggle');
+      if (themeToggle) {
+        themeToggle.style.display = 'none';
+      }
+    } else {
+      // 配置不是 auto 时，优先使用用户手动设置
+      const savedTheme = localStorage.getItem('theme');
+      themeMode = savedTheme || configTheme;
+      currentTheme = themeMode;
+      
+      // 显示主题切换按钮
+      const themeToggle = document.querySelector('.theme-toggle');
+      if (themeToggle) {
+        themeToggle.style.display = '';
+      }
+    }
     
-    // 监听系统主题变化（仅在 auto 模式下生效）
+    // 设置初始主题
+    document.documentElement.setAttribute('data-theme', currentTheme);
+    document.body.setAttribute('data-color-scheme', currentTheme);
+    updateThemeColor(currentTheme);
+    console.log('[Theme] 初始化 - 配置:', configTheme, '模式:', themeMode, '显示:', currentTheme);
+    
+    // 监听系统主题变化
     if (window.matchMedia) {
       const darkModeQuery = window.matchMedia('(prefers-color-scheme: dark)');
       darkModeQuery.addEventListener('change', (e) => {
-        const mode = localStorage.getItem('themeMode') || configTheme;
-        if (mode === 'auto') {
-          const systemTheme = e.matches ? 'dark' : 'light';
-          document.documentElement.setAttribute('data-theme', systemTheme);
-          document.body.setAttribute('data-color-scheme', systemTheme);
-          console.log('[Theme] 系统主题已变化，自动切换到:', systemTheme);
+        const config = window.themeConfig?.colorScheme || 'light';
+        
+        // 只有配置为 auto 时才自动切换
+        if (config === 'auto') {
+          const newTheme = e.matches ? 'dark' : 'light';
+          document.documentElement.setAttribute('data-theme', newTheme);
+          document.body.setAttribute('data-color-scheme', newTheme);
+          updateThemeColor(newTheme);
+          console.log('[Theme] 系统主题已变化，自动切换到:', newTheme);
         }
       });
     }
-    
-    console.log('[Theme] 初始化 - 模式:', currentMode);
   }
   
-  // 应用主题模式
-  function applyThemeMode(mode) {
-    let actualTheme;
+  // 更新浏览器主题颜色
+  function updateThemeColor(theme) {
+    // 从 CSS 变量中获取背景色
+    const rootStyles = getComputedStyle(document.documentElement);
+    const lightBgColor = rootStyles.getPropertyValue('--bg-color').trim() || '#FAFAFA';
     
-    if (mode === 'auto') {
-      // 跟随系统
-      actualTheme = getSystemTheme();
-      // 设置 data-theme 为 auto，让 CSS 知道当前是 auto 模式
-      document.documentElement.setAttribute('data-theme', 'auto');
+    // 根据主题设置颜色
+    const themeColors = {
+      light: lightBgColor,  // 浅色模式背景色（从配置读取）
+      dark: '#292a2d'       // 深色模式背景色
+    };
+    
+    const color = themeColors[theme] || themeColors.light;
+    
+    // 更新所有 theme-color meta 标签
+    const metaTags = document.querySelectorAll('meta[name="theme-color"]');
+    
+    if (metaTags.length > 0) {
+      // 如果存在 meta 标签，更新它们
+      metaTags.forEach(meta => {
+        meta.content = color;
+      });
     } else {
-      // 固定模式
-      actualTheme = mode;
-      document.documentElement.setAttribute('data-theme', actualTheme);
+      // 如果不存在，创建一个新的
+      const metaThemeColor = document.createElement('meta');
+      metaThemeColor.name = 'theme-color';
+      metaThemeColor.content = color;
+      document.head.appendChild(metaThemeColor);
     }
     
-    document.body.setAttribute('data-color-scheme', actualTheme);
-    
-    // 保存模式到 localStorage
-    localStorage.setItem('themeMode', mode);
+    console.log('[Theme] 更新浏览器主题颜色:', color);
   }
   
   // 获取系统主题
@@ -319,31 +360,122 @@
     }
     return 'light';
   }
-  
-  // 获取下一个主题模式（循环：light → dark → auto → light）
-  function getNextThemeMode(currentMode) {
-    const modes = ['light', 'dark', 'auto'];
-    const currentIndex = modes.indexOf(currentMode);
-    const nextIndex = (currentIndex + 1) % modes.length;
-    return modes[nextIndex];
-  }
 
   function toggleTheme() {
     const themeToggle = document.querySelector('.theme-toggle');
     if (!themeToggle) return;
 
-    themeToggle.addEventListener('click', () => {
-      // 获取当前模式
-      const currentMode = localStorage.getItem('themeMode') || window.themeConfig?.colorScheme || 'light';
+    themeToggle.addEventListener('click', (e) => {
+      const configTheme = window.themeConfig?.colorScheme || 'light';
       
-      // 获取下一个模式
-      const nextMode = getNextThemeMode(currentMode);
+      // 如果配置是 auto，不允许手动切换（因为会自动跟随系统）
+      if (configTheme === 'auto') {
+        console.log('[Theme] 当前配置为跟随系统，无法手动切换');
+        return;
+      }
       
-      // 应用新主题
-      applyThemeMode(nextMode);
+      const currentTheme = document.documentElement.getAttribute('data-theme');
       
-      console.log('[Theme] 循环切换: 从', currentMode, '到', nextMode);
+      // 简单双态切换：light <-> dark
+      const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+
+      // 添加临时类来触发图标旋转
+      if (newTheme === 'dark') {
+        themeToggle.classList.add('switching-to-dark');
+      } else {
+        themeToggle.classList.add('switching-to-light');
+      }
+
+      // 保存用户选择
+      localStorage.setItem('theme', newTheme);
+
+      // 创建扩散动画 - 传入当前主题和目标主题
+      createThemeTransition(e, currentTheme, newTheme);
+
+      console.log('[Theme] 切换主题: 从', currentTheme, '到', newTheme);
     });
+  }
+
+  // 创建主题切换的扩散动画（使用 clip-path）
+  function createThemeTransition(event, fromTheme, toTheme) {
+    // 获取点击位置
+    const button = event.currentTarget;
+    const rect = button.getBoundingClientRect();
+    const x = rect.left + rect.width / 2;
+    const y = rect.top + rect.height / 2;
+
+    // 计算需要的圆形半径（覆盖整个屏幕）
+    const maxDistance = Math.hypot(
+      Math.max(x, window.innerWidth - x),
+      Math.max(y, window.innerHeight - y)
+    );
+
+    // 创建遮罩层 - 始终使用暗色
+    const mask = document.createElement('div');
+    mask.className = 'theme-transition-mask to-dark';
+
+    document.body.appendChild(mask);
+
+    // 添加过渡类，防止 TOC 和链接胶囊频闪
+    document.body.classList.add('theme-transitioning');
+
+    const themeToggle = document.querySelector('.theme-toggle');
+
+    // 判断是切换到暗色还是亮色
+    const switchingToDark = toTheme === 'dark';
+
+    if (switchingToDark) {
+      // 切换到暗色：暗色圆形从点击位置扩散出去
+      mask.style.clipPath = `circle(0px at ${x}px ${y}px)`;
+
+      // 使用双 RAF 确保初始状态已渲染
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          // 扩散到覆盖整个屏幕
+          mask.style.clipPath = `circle(${maxDistance * 1.5}px at ${x}px ${y}px)`;
+        });
+      });
+
+      // 在动画中途切换主题
+      setTimeout(() => {
+        document.documentElement.setAttribute('data-theme', toTheme);
+        document.body.setAttribute('data-color-scheme', toTheme);
+        updateThemeColor(toTheme);
+
+        // 移除临时类
+        if (themeToggle) {
+          themeToggle.classList.remove('switching-to-dark');
+        }
+      }, 400);
+
+    } else {
+      // 切换到亮色：暗色圆形从整个屏幕缩小回来
+      mask.style.clipPath = `circle(${maxDistance * 1.5}px at ${x}px ${y}px)`;
+
+      // 立即切换主题
+      document.documentElement.setAttribute('data-theme', toTheme);
+      document.body.setAttribute('data-color-scheme', toTheme);
+      updateThemeColor(toTheme);
+
+      // 移除临时类
+      if (themeToggle) {
+        themeToggle.classList.remove('switching-to-light');
+      }
+
+      // 使用双 RAF 确保主题切换已渲染
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          // 圆形缩小到点击位置
+          mask.style.clipPath = `circle(0px at ${x}px ${y}px)`;
+        });
+      });
+    }
+
+    // 动画完成后移除遮罩和过渡类
+    setTimeout(() => {
+      mask.remove();
+      document.body.classList.remove('theme-transitioning');
+    }, 800);
   }
 
   // ==================== 热力图 ====================
@@ -680,24 +812,37 @@
           const a = document.createElement('a');
           a.href = image.src;
           a.dataset.src = image.src;
-          if (image.alt) {
-            a.dataset.subHtml = `<h4>${image.alt}</h4>`;
-          }
+          // 移除标题显示
           galleryContainer.appendChild(a);
         });
-        
+
         // 添加到body
         if (!document.getElementById('lightgallery')) {
           document.body.appendChild(galleryContainer);
         }
-        
-        // 初始化灯箱并打开到当前图片（不显示缩略图）
+
+        // 初始化灯箱（极简配置）
         const gallery = lightGallery(galleryContainer, {
           plugins: [lgZoom],
           speed: 500,
-          thumbnail: false,
+          thumbnail: false,      // 不显示缩略图
+          download: false,       // 不显示下载按钮
+          counter: false,        // 不显示计数器
+          zoom: true,            // 保留缩放功能
+          actualSize: false,     // 不显示实际尺寸按钮
+          share: false,          // 不显示分享按钮
+          fullScreen: false,     // 不显示全屏按钮
+          autoplayControls: false, // 不显示自动播放控制
+          rotate: false,         // 不显示旋转按钮
+          flipHorizontal: false, // 不显示水平翻转
+          flipVertical: false,   // 不显示垂直翻转
           zoomFromOrigin: false,
-          allowMediaOverlap: true
+          allowMediaOverlap: true,
+          closable: true,        // 允许关闭
+          escKey: true,          // ESC键关闭
+          keyPress: true,        // 键盘导航
+          mousewheel: true,      // 鼠标滚轮缩放
+          swipeToClose: true     // 滑动关闭
         });
         
         // 找到当前图片的索引并打开
@@ -832,22 +977,15 @@
   function initPostTOC() {
     const tocContainer = document.getElementById('post-toc');
     const postContent = document.querySelector('.post-content');
-    
-    console.log('[TOC] 初始化文章目录');
-    console.log('[TOC] tocContainer:', tocContainer);
-    console.log('[TOC] postContent:', postContent);
-    
+
     if (!tocContainer || !postContent) {
-      console.log('[TOC] 目录容器或文章内容不存在，跳过初始化');
       return;
     }
-    
+
     // 获取所有标题
     const headings = postContent.querySelectorAll('h1, h2, h3, h4, h5, h6');
-    console.log('[TOC] 找到标题数量:', headings.length);
-    
+
     if (headings.length === 0) {
-      console.log('[TOC] 文章没有标题，隐藏目录');
       // 如果没有标题，隐藏目录
       const tocWrapper = document.querySelector('.post-toc');
       if (tocWrapper) {
@@ -855,134 +993,73 @@
       }
       return;
     }
-    
-    // 为每个标题添加 ID
+
+    // 清空之前的内容
+    tocContainer.innerHTML = '';
+
+    // 计算最小层级（用于缩进计算）
+    const minLevel = Math.min(...Array.from(headings).map(h => parseInt(h.tagName.substring(1))));
+
+    // 创建目录列表
+    const tocList = document.createElement('ul');
+
     headings.forEach((heading, index) => {
+      const level = parseInt(heading.tagName.substring(1));
+      const id = heading.id || `heading-${index}`;
+
+      // 为标题添加 ID（如果没有）
       if (!heading.id) {
-        heading.id = `heading-${index}`;
+        heading.id = id;
       }
+
+      // 创建目录项
+      const li = document.createElement('li');
+      li.style.paddingLeft = `${(level - minLevel) * 1}rem`;
+
+      const a = document.createElement('a');
+      a.href = `#${id}`;
+      a.textContent = heading.textContent;
+      a.className = 'toc-link';
+
+      // 点击平滑滚动
+      a.addEventListener('click', (e) => {
+        e.preventDefault();
+        const target = document.getElementById(id);
+        if (target) {
+          const offset = 80;
+          const targetPosition = target.getBoundingClientRect().top + window.scrollY - offset;
+          window.scrollTo({
+            top: targetPosition,
+            behavior: 'smooth'
+          });
+          history.pushState(null, null, `#${id}`);
+        }
+      });
+
+      li.appendChild(a);
+      tocList.appendChild(li);
     });
-    
-    // 生成目录结构
-    function generateTOC() {
-      const toc = [];
-      let currentLevel = 0;
-      let currentParent = toc;
-      const stack = [{ level: 0, children: toc }];
-      
-      headings.forEach((heading) => {
-        const level = parseInt(heading.tagName.substring(1));
-        const item = {
-          id: heading.id,
-          text: heading.textContent,
-          level: level,
-          children: []
-        };
-        
-        // 找到合适的父级
-        while (stack.length > 0 && stack[stack.length - 1].level >= level) {
-          stack.pop();
-        }
-        
-        const parent = stack[stack.length - 1];
-        parent.children.push(item);
-        stack.push(item);
-      });
-      
-      return toc;
-    }
-    
-    // 渲染目录
-    function renderTOC(items, container) {
-      if (items.length === 0) return;
-      
-      const ul = document.createElement('ul');
-      
-      items.forEach(item => {
-        const li = document.createElement('li');
-        const a = document.createElement('a');
-        a.href = `#${item.id}`;
-        a.textContent = item.text;
-        a.dataset.id = item.id;
-        
-        // 点击平滑滚动
-        a.addEventListener('click', (e) => {
-          e.preventDefault();
-          const target = document.getElementById(item.id);
-          if (target) {
-            const offset = 80; // 顶部偏移量
-            const targetPosition = target.getBoundingClientRect().top + window.scrollY - offset;
-            window.scrollTo({
-              top: targetPosition,
-              behavior: 'smooth'
-            });
-            
-            // 更新 URL hash
-            history.pushState(null, null, `#${item.id}`);
-          }
-        });
-        
-        li.appendChild(a);
-        
-        // 递归渲染子项
-        if (item.children && item.children.length > 0) {
-          renderTOC(item.children, li);
-        }
-        
-        ul.appendChild(li);
-      });
-      
-      container.appendChild(ul);
-    }
-    
-    // 滚动高亮
-    function highlightTOC() {
-      const scrollTop = window.scrollY;
-      const offset = 100;
-      
-      let activeHeading = null;
-      
-      // 找到当前可见的标题
-      headings.forEach(heading => {
-        const rect = heading.getBoundingClientRect();
-        if (rect.top <= offset) {
-          activeHeading = heading;
+
+    tocContainer.appendChild(tocList);
+
+    // 使用 IntersectionObserver 高亮当前标题
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        const id = entry.target.id;
+        const link = tocContainer.querySelector(`a[href="#${id}"]`);
+        if (entry.isIntersecting) {
+          // 移除所有 active 类
+          document.querySelectorAll('.toc-link').forEach(l => l.classList.remove('active'));
+          // 添加 active 类到当前标题
+          if (link) link.classList.add('active');
         }
       });
-      
-      // 移除所有 active 类
-      const tocLinks = tocContainer.querySelectorAll('a');
-      tocLinks.forEach(link => link.classList.remove('active'));
-      
-      // 添加 active 类到当前标题
-      if (activeHeading) {
-        const activeLink = tocContainer.querySelector(`a[data-id="${activeHeading.id}"]`);
-        if (activeLink) {
-          activeLink.classList.add('active');
-        }
-      }
-    }
-    
-    // 生成并渲染目录
-    const tocData = generateTOC();
-    console.log('[TOC] 生成的目录数据:', tocData);
-    renderTOC(tocData, tocContainer);
-    console.log('[TOC] 目录渲染完成');
-    
-    // 监听滚动事件
-    let ticking = false;
-    window.addEventListener('scroll', () => {
-      if (!ticking) {
-        window.requestAnimationFrame(() => {
-          highlightTOC();
-          ticking = false;
-        });
-        ticking = true;
-      }
+    }, {
+      rootMargin: '-100px 0px -80% 0px'
     });
-    
-    // 初始高亮
-    highlightTOC();
+
+    // 观察所有标题
+    headings.forEach(heading => observer.observe(heading));
   }
 
   // ==================== 文章点赞功能 ====================
@@ -1195,16 +1272,29 @@
           document.body.appendChild(galleryContainer);
           
           try {
-            // 初始化灯箱（禁用缩略图）
+            // 初始化灯箱（极简配置）
             const gallery = lightGallery(galleryContainer, {
               plugins: [lgZoom],
               speed: 500,
-              thumbnail: false,
+              thumbnail: false,      // 不显示缩略图
+              download: false,       // 不显示下载按钮
+              counter: false,        // 不显示计数器
+              zoom: true,            // 保留缩放功能
+              actualSize: false,     // 不显示实际尺寸按钮
+              share: false,          // 不显示分享按钮
+              fullScreen: false,     // 不显示全屏按钮
+              autoplayControls: false, // 不显示自动播放控制
+              rotate: false,         // 不显示旋转按钮
+              flipHorizontal: false, // 不显示水平翻转
+              flipVertical: false,   // 不显示垂直翻转
               zoomFromOrigin: false,
               allowMediaOverlap: true,
-              download: false,
-              counter: true,
-              loop: true,
+              closable: true,        // 允许关闭
+              escKey: true,          // ESC键关闭
+              keyPress: true,        // 键盘导航
+              mousewheel: true,      // 鼠标滚轮缩放
+              swipeToClose: true,    // 滑动关闭
+              loop: true,            // 循环播放
               slideDelay: 400
             });
             
@@ -1379,17 +1469,6 @@
 
   // ==================== 背景萤火虫效果 ====================
   function initFireflies() {
-    // 检测 iOS Safari（会影响毛玻璃效果）
-    const isIOSSafari = /iPad|iPhone|iPod/.test(navigator.userAgent) &&
-                        !window.MSStream &&
-                        /Safari/.test(navigator.userAgent) &&
-                        !/CriOS|FxiOS|OPiOS|EdgiOS/.test(navigator.userAgent);
-
-    if (isIOSSafari) {
-      console.log('[Fireflies] iOS Safari 检测到，禁用萤火虫效果以保持毛玻璃效果');
-      return;
-    }
-
     // 从配置中获取萤火虫数量，默认0（关闭）
     const fireflyCount = parseInt(window.themeConfig?.fireflyCount) || 0;
 
@@ -1403,25 +1482,25 @@
     const container = document.createElement('div');
     container.className = 'firefly-container';
     document.body.appendChild(container);
-    
+
     for (let i = 0; i < fireflyCount; i++) {
       const firefly = document.createElement('div');
       firefly.className = 'firefly';
-      
+
       // 随机起始位置
       const startX = Math.random() * 100;
       const startY = 100 + Math.random() * 20; // 从底部稍微下方开始
-      
+
       // 随机水平移动距离（-200px 到 200px）
       const moveX = (Math.random() - 0.5) * 400;
-      
+
       firefly.style.left = startX + '%';
       firefly.style.top = startY + '%';
       firefly.style.setProperty('--firefly-x', moveX + 'px');
-      
+
       container.appendChild(firefly);
     }
-    
+
     console.log('[Fireflies] 背景萤火虫效果已初始化，数量:', fireflyCount);
   }
 

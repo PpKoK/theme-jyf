@@ -5,22 +5,34 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title th:text="${title}"></title>
   <meta name="description" th:content="${site.subtitle}">
-  
-  <!-- 主题颜色已移除，让iOS Safari使用默认毛玻璃效果 -->
-  
+
+  <!-- 主题颜色 - 让浏览器 UI 跟随网站主题 -->
+  <meta name="theme-color" th:content="${theme.config.style.background_color ?: '#FAFAFA'}">
+
   <link rel="stylesheet" th:href="@{/assets/style.css?v={version}(version=${theme.spec.version})}">
   
   <!-- 自定义鼠标指针样式 -->
   <link th:if="${theme.config.cursor != null and theme.config.cursor.cursor_enabled != null and theme.config.cursor.cursor_enabled}" rel="stylesheet" th:href="@{/assets/cursors.css?v={version}(version=${theme.spec.version})}">
   
-  <!-- 自定义颜色（仅覆盖用户可配置项，--bg-color由CSS文件定义） -->
+  <!-- 自定义颜色 -->
   <style th:inline="text">
     :root {
       --link-color: [[${theme.config.style.primary_color ?: '#50E3C2'}]] !important;
       --link-hover: [[${theme.config.style.primary_color ?: '#50E3C2'}]] !important;
+      --text-color: [[${theme.config.style.text_color ?: '#34495e'}]];
+      --bg-color: [[${theme.config.style.background_color ?: '#ffffff'}]];
       --firefly-color-light: [[${theme.config.style.firefly_color_light ?: '#50E3C2'}]];
       --firefly-color-dark: [[${theme.config.style.firefly_color_dark ?: '#50E3C2'}]];
       --inline-code-color: [[${theme.config.style.inline_code_color ?: '#ff6b6b'}]];
+    }
+    
+    /* 暗夜模式优先级更高 */
+    [data-theme="dark"] {
+      --bg-color: #292a2d !important;
+      --text-color: #a9a9b3 !important;
+      --text-secondary: #87888f !important;
+      --border-color: #3b3d42 !important;
+      --code-bg: #2d2d2d !important;
     }
   </style>
   
@@ -34,7 +46,7 @@
       colorScheme: /*[[${theme.config.style.color_scheme ?: 'light'}]]*/ 'light'
     };
   </script>
-  
+
   <!-- lightGallery 灯箱 -->
   <link rel="stylesheet" th:href="@{/assets/lib/lightgallery/css/lightgallery-bundle.min.css?v={version}(version=${theme.spec.version})}">
 </head>

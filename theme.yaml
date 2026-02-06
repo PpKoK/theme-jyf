@@ -17,7 +17,7 @@ spec:
   repo: https://github.com/PpKoK/theme-jyf
   settingName: "theme-jyf-setting"
   configMapName: "theme-jyf-configMap"
-  version: 1.2.2
+  version: 2.0.0
   requires: ">=2.22.8"
   license:
     - name: "自定义许可证 (仅供个人非商业使用)"
@@ -36,3 +36,7 @@ spec:
         description: TODO 管理页面
         screenshot:
         file: todo.html
+      - name: 跳转等待
+        description: 外部链接跳转等待页面
+        screenshot:
+        file: redirect.html

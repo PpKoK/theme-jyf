@@ -210,6 +210,18 @@ spec:
           value: "#50E3C2"
           help: 选择主题的主色调
         
+        - $formkit: color
+          name: text_color
+          label: 文字颜色
+          value: "#34495e"
+          help: 主要文字颜色（浅色模式）
+        
+        - $formkit: color
+          name: background_color
+          label: 背景色
+          value: "#FAFAFA"
+          help: 页面背景颜色（浅色模式）
+        
         - $formkit: radio
           name: firefly_count
           label: 背景萤火虫数量 - 极力推荐10.
@@ -240,6 +252,12 @@ spec:
           value: "#F5A623"
           help: 深色模式下萤火虫的颜色「默认#F5A623」
           if: $get(firefly_count).value !== 0
+        
+        - $formkit: color
+          name: inline_code_color
+          label: 行内代码颜色
+          value: "#ff6b6b"
+          help: 行内代码的文字颜色，适用于浅色和深色模式
     
     - group: cursor
       label: 鼠标指针设置
@@ -374,13 +392,13 @@ spec:
               label: 标题
               validation: required
               help: TODO 项目的标题
-            
+
             - $formkit: date
               name: date
               label: 预期完成时间
               validation: required
               help: 预期完成的日期
-            
+
             - $formkit: radio
               name: status
               label: 完成状态
