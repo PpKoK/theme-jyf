@@ -1,13 +1,22 @@
 <!DOCTYPE html>
-<html th:lang="${#locale.toLanguageTag}" th:fragment="html (title,content)" th:attr="data-theme=${theme.config.style.color_scheme ?: 'light'}">
+<html th:lang="${#locale.toLanguageTag}" th:fragment="html (title,content)"
+      th:attr="data-theme=${theme.config.style.color_scheme ?: 'light'},
+               data-color-scheme=${theme.config.style.color_scheme ?: 'light'}">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light dark">
+
+  <!-- 主题颜色 - 根据配置的主题设置 -->
+  <meta name="theme-color"
+        th:content="${(theme.config.style.color_scheme ?: 'light') == 'dark' ? '#292a2d' : (theme.config.style.background_color ?: '#FAFAFA')}"
+        media="(prefers-color-scheme: light)">
+  <meta name="theme-color"
+        content="#292a2d"
+        media="(prefers-color-scheme: dark)">
+
   <title th:text="${title}"></title>
   <meta name="description" th:content="${site.subtitle}">
-
-  <!-- 主题颜色 - 让浏览器 UI 跟随网站主题 -->
-  <meta name="theme-color" th:content="${theme.config.style.background_color ?: '#FAFAFA'}">
 
   <link rel="stylesheet" th:href="@{/assets/style.css?v={version}(version=${theme.spec.version})}">
   
@@ -45,6 +54,25 @@
       fireflyColorDark: /*[[${theme.config.style.firefly_color_dark ?: '#50E3C2'}]]*/ '#50E3C2',
       colorScheme: /*[[${theme.config.style.color_scheme ?: 'light'}]]*/ 'light'
     };
+
+    // 立即设置主题，防止页面闪烁
+    (function() {
+      const configTheme = window.themeConfig?.colorScheme || 'light';
+      let currentTheme;
+
+      if (configTheme === 'auto') {
+        // 跟随系统
+        currentTheme = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      } else {
+        // 优先使用用户手动设置
+        const savedTheme = localStorage.getItem('theme');
+        currentTheme = savedTheme || configTheme;
+      }
+
+      // 立即设置主题属性
+      document.documentElement.setAttribute('data-theme', currentTheme);
+      document.documentElement.setAttribute('data-color-scheme', currentTheme);
+    })();
   </script>
 
   <!-- lightGallery 灯箱 -->

@@ -13,6 +13,13 @@
   box-shadow: 0 0 8px var(--link-color);
 }
 
+/* 移动端隐藏滚动进度条 */
+@media (max-width: 768px) {
+  .scroll-progress {
+    display: none;
+  }
+}
+
 /* 页面加载进度条 */
 .page-loading-bar {
   position: fixed;
@@ -261,6 +268,19 @@ html {
   -moz-osx-font-smoothing: grayscale;
   background: var(--bg-color);
   transition: background 0.3s;
+  min-height: 100vh;
+}
+
+html[data-color-scheme="light"] {
+  color-scheme: light;
+}
+
+html[data-color-scheme="dark"] {
+  color-scheme: dark;
+}
+
+html[data-color-scheme="auto"] {
+  color-scheme: light dark;
 }
 
 body {
@@ -271,6 +291,7 @@ body {
   background: var(--bg-color);
   transition: background 0.3s, color 0.3s;
   font-weight: 600;
+  min-height: 100vh;
 }
 
 a {
@@ -1756,7 +1777,6 @@ a:hover {
   .header {
     padding: 30px 0 20px;
     margin-bottom: 40px;
-    background: var(--bg-color);
     position: relative;
     z-index: 999;
   }
@@ -3266,7 +3286,7 @@ body::before {
   width: 100%;
   height: 100%;
   pointer-events: none;
-  z-index: -2;
+  z-index: -1;
   background: var(--bg-color);
   transition: background 0.3s ease;
 }

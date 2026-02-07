@@ -298,6 +298,7 @@
     
     // 设置初始主题
     document.documentElement.setAttribute('data-theme', currentTheme);
+    document.documentElement.setAttribute('data-color-scheme', currentTheme);
     document.body.setAttribute('data-color-scheme', currentTheme);
     updateThemeColor(currentTheme);
     console.log('[Theme] 初始化 - 配置:', configTheme, '模式:', themeMode, '显示:', currentTheme);
@@ -312,6 +313,7 @@
         if (config === 'auto') {
           const newTheme = e.matches ? 'dark' : 'light';
           document.documentElement.setAttribute('data-theme', newTheme);
+          document.documentElement.setAttribute('data-color-scheme', newTheme);
           document.body.setAttribute('data-color-scheme', newTheme);
           updateThemeColor(newTheme);
           console.log('[Theme] 系统主题已变化，自动切换到:', newTheme);
@@ -322,34 +324,29 @@
   
   // 更新浏览器主题颜色
   function updateThemeColor(theme) {
-    // 从 CSS 变量中获取背景色
-    const rootStyles = getComputedStyle(document.documentElement);
-    const lightBgColor = rootStyles.getPropertyValue('--bg-color').trim() || '#FAFAFA';
-    
     // 根据主题设置颜色
     const themeColors = {
-      light: lightBgColor,  // 浅色模式背景色（从配置读取）
-      dark: '#292a2d'       // 深色模式背景色
+      light: getComputedStyle(document.documentElement).getPropertyValue('--bg-color').trim() || '#FAFAFA',
+      dark: '#292a2d'
     };
-    
+
     const color = themeColors[theme] || themeColors.light;
-    
+
     // 更新所有 theme-color meta 标签
     const metaTags = document.querySelectorAll('meta[name="theme-color"]');
-    
-    if (metaTags.length > 0) {
-      // 如果存在 meta 标签，更新它们
-      metaTags.forEach(meta => {
+
+    metaTags.forEach(meta => {
+      const media = meta.getAttribute('media');
+      if (!media) {
+        // 没有 media 属性的，根据当前主题设置
         meta.content = color;
-      });
-    } else {
-      // 如果不存在，创建一个新的
-      const metaThemeColor = document.createElement('meta');
-      metaThemeColor.name = 'theme-color';
-      metaThemeColor.content = color;
-      document.head.appendChild(metaThemeColor);
-    }
-    
+      } else if (media.includes('prefers-color-scheme: light') && theme === 'light') {
+        meta.content = themeColors.light;
+      } else if (media.includes('prefers-color-scheme: dark') && theme === 'dark') {
+        meta.content = themeColors.dark;
+      }
+    });
+
     console.log('[Theme] 更新浏览器主题颜色:', color);
   }
   
@@ -398,6 +395,27 @@
 
   // 创建主题切换的扩散动画（使用 clip-path）
   function createThemeTransition(event, fromTheme, toTheme) {
+    // 移动端直接切换，不使用动画
+    if (window.innerWidth <= 768) {
+      document.documentElement.setAttribute('data-theme', toTheme);
+      document.documentElement.setAttribute('data-color-scheme', toTheme);
+      document.body.setAttribute('data-color-scheme', toTheme);
+      updateThemeColor(toTheme);
+
+      const themeToggle = document.querySelector('.theme-toggle');
+      if (themeToggle) {
+        if (toTheme === 'dark') {
+          themeToggle.classList.remove('switching-to-dark');
+        } else {
+          themeToggle.classList.remove('switching-to-light');
+        }
+      }
+
+      console.log('[Theme] 移动端直接切换主题:', toTheme);
+      return;
+    }
+
+    // 桌面端使用动画
     // 获取点击位置
     const button = event.currentTarget;
     const rect = button.getBoundingClientRect();
@@ -436,9 +454,10 @@
         });
       });
 
-      // 在动画中途切换主题
+      // 在动画中途切换主题和浏览器颜色
       setTimeout(() => {
         document.documentElement.setAttribute('data-theme', toTheme);
+        document.documentElement.setAttribute('data-color-scheme', toTheme);
         document.body.setAttribute('data-color-scheme', toTheme);
         updateThemeColor(toTheme);
 
@@ -452,8 +471,9 @@
       // 切换到亮色：暗色圆形从整个屏幕缩小回来
       mask.style.clipPath = `circle(${maxDistance * 1.5}px at ${x}px ${y}px)`;
 
-      // 立即切换主题
+      // 立即切换主题和浏览器颜色
       document.documentElement.setAttribute('data-theme', toTheme);
+      document.documentElement.setAttribute('data-color-scheme', toTheme);
       document.body.setAttribute('data-color-scheme', toTheme);
       updateThemeColor(toTheme);
 
@@ -1475,6 +1495,12 @@
     // 如果数量为0，则不启用萤火虫效果
     if (fireflyCount === 0) {
       console.log('[Fireflies] 萤火虫效果未启用');
+      return;
+    }
+
+    // 移动端不创建萤火虫容器
+    if (window.innerWidth <= 768) {
+      console.log('[Fireflies] 移动端不创建萤火虫效果');
       return;
     }
 
