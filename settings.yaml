@@ -377,7 +377,7 @@ spec:
           name: about_comment_title
           label: 留言板标题
           value: "留言板"
-    
+
     - group: todo
       label: TODO 管理
       formSchema:
@@ -409,3 +409,40 @@ spec:
                 - label: 已完成
                   value: completed
               help: 选择 TODO 项目的完成状态
+
+    - group: sponsor
+      label: 赞赏设置
+      formSchema:
+        - $formkit: attachment
+          name: alipay_qrcode
+          label: 支付宝收款码
+          help: 建议尺寸 500x500 像素
+
+        - $formkit: attachment
+          name: wechat_qrcode
+          label: 微信收款码
+          help: 建议尺寸 500x500 像素
+
+        - $formkit: repeater
+          name: sponsor_list
+          label: 赞赏列表
+          value: []
+          help: 添加和管理赞赏记录
+          children:
+            - $formkit: text
+              name: name
+              label: 赞赏者姓名
+              validation: required
+              help: 赞赏者的姓名或昵称
+
+            - $formkit: number
+              name: amount
+              label: 赞赏金额（元）
+              validation: required
+              help: 赞赏金额，单位：元
+
+            - $formkit: date
+              name: date
+              label: 赞赏日期
+              validation: required
+              help: 赞赏的日期

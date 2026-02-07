@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{modules/layout :: html(title=${site.title} + ' - 赞赏支持', content=~{::content})}">
+<th:block th:fragment="content">
+  <div class="sponsor-page">
+    <!-- 页面标题 -->
+    <div class="page-header">
+      <h1 class="page-title">赞赏支持</h1>
+      <p class="page-description">感谢您的支持与鼓励</p>
+    </div>
+
+    <!-- 二维码区域 -->
+    <div class="qrcode-section">
+      <div class="qrcode-item" th:if="${theme.config.sponsor.alipay_qrcode}">
+        <h3>支付宝</h3>
+        <img th:src="${theme.config.sponsor.alipay_qrcode}" alt="支付宝收款码" class="qrcode-img">
+      </div>
+      <div class="qrcode-item" th:if="${theme.config.sponsor.wechat_qrcode}">
+        <h3>微信</h3>
+        <img th:src="${theme.config.sponsor.wechat_qrcode}" alt="微信收款码" class="qrcode-img">
+      </div>
+    </div>
+
+    <!-- 赞赏列表 -->
+    <div class="sponsor-list-section" th:if="${theme.config.sponsor.sponsor_list != null and !#lists.isEmpty(theme.config.sponsor.sponsor_list)}">
+      <h2 class="section-title">赞赏名单</h2>
+      <p class="sponsor-thanks">感谢每一位支持者的慷慨赞赏，你们的鼓励是我持续创作的动力！</p>
+      <p class="sponsor-note">排名不分先后，按日期最新排序</p>
+
+      <div class="sponsor-table-wrapper">
+        <table class="sponsor-table" id="sponsor-table">
+          <thead>
+            <tr>
+              <th>名字</th>
+              <th>金额</th>
+              <th>日期</th>
+            </tr>
+          </thead>
+          <tbody id="sponsor-list">
+            <!-- 表格行将通过 JavaScript 动态渲染 -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- 分页 -->
+      <div class="pagination" id="sponsor-pagination">
+        <button class="pagination-btn" id="prev-btn" disabled>上一页</button>
+        <span class="pagination-info">
+          <span id="current-page">1</span> / <span id="total-pages">1</span>
+        </span>
+        <button class="pagination-btn" id="next-btn">下一页</button>
+      </div>
+    </div>
+
+    <!-- 空状态 -->
+    <div class="no-sponsors" th:if="${theme.config.sponsor.sponsor_list == null or #lists.isEmpty(theme.config.sponsor.sponsor_list)}">
+      <p>暂无赞赏记录</p>
+    </div>
+  </div>
+
+  <!-- 赞赏数据 -->
+  <script th:inline="javascript">
+    window.sponsorData = /*[[${theme.config.sponsor.sponsor_list}]]*/ [];
+    console.log('[Sponsor] 原始数据:', window.sponsorData);
+    console.log('[Sponsor] 数据类型:', typeof window.sponsorData);
+    console.log('[Sponsor] 是否数组:', Array.isArray(window.sponsorData));
+    if (window.sponsorData && window.sponsorData.length > 0) {
+      console.log('[Sponsor] 第一条数据:', window.sponsorData[0]);
+    }
+  </script>
+
+  <!-- 分页脚本 -->
+  <script>
+    (function() {
+      let sponsorData = window.sponsorData || [];
+
+      // 检查数据是否有效
+      if (!Array.isArray(sponsorData) || sponsorData.length === 0) {
+        console.log('[Sponsor] 暂无赞赏数据');
+        return;
+      }
+
+      // 提取 realNode 中的实际数据
+      sponsorData = sponsorData.map(item => {
+        if (item.realNode) {
+          return item.realNode;
+        }
+        return item;
+      });
+
+      console.log('[Sponsor] 处理后的数据:', sponsorData);
+
+      const itemsPerPage = 20;
+      let currentPage = 1;
+
+      // 按日期排序（最新的在最前面）
+      sponsorData.sort((a, b) => {
+        const dateA = new Date(a.date || 0);
+        const dateB = new Date(b.date || 0);
+        return dateB - dateA; // 降序：最新的日期在前
+      });
+
+      const totalPages = Math.ceil(sponsorData.length / itemsPerPage);
+
+      function renderList() {
+        const listContainer = document.getElementById('sponsor-list');
+        if (!listContainer) return;
+
+        const startIndex = (currentPage - 1) * itemsPerPage;
+        const endIndex = startIndex + itemsPerPage;
+        const pageData = sponsorData.slice(startIndex, endIndex);
+
+        let html = '';
+        pageData.forEach(item => {
+          // 安全地获取数据
+          const name = item.name || '匿名';
+          const amount = item.amount || 0;
+
+          // 安全地处理日期
+          let dateStr = '';
+          try {
+            const date = new Date(item.date);
+            if (!isNaN(date.getTime())) {
+              dateStr = date.getFullYear() + '-' +
+                       String(date.getMonth() + 1).padStart(2, '0') + '-' +
+                       String(date.getDate()).padStart(2, '0');
+            } else {
+              dateStr = '未知日期';
+            }
+          } catch (e) {
+            dateStr = '未知日期';
+          }
+
+          html += `
+            <tr>
+              <td class="sponsor-name">${name}</td>
+              <td class="sponsor-amount">¥${amount}</td>
+              <td class="sponsor-date">${dateStr}</td>
+            </tr>
+          `;
+        });
+
+        listContainer.innerHTML = html;
+        console.log('[Sponsor] 已渲染', pageData.length, '条记录');
+      }
+
+      function updatePagination() {
+        const currentPageEl = document.getElementById('current-page');
+        const totalPagesEl = document.getElementById('total-pages');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+
+        if (currentPageEl) currentPageEl.textContent = currentPage;
+        if (totalPagesEl) totalPagesEl.textContent = totalPages;
+
+        if (prevBtn) {
+          prevBtn.disabled = currentPage === 1;
+        }
+
+        if (nextBtn) {
+          nextBtn.disabled = currentPage === totalPages;
+        }
+      }
+
+      function init() {
+        if (sponsorData.length === 0) return;
+
+        renderList();
+        updatePagination();
+
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+
+        if (prevBtn) {
+          prevBtn.addEventListener('click', () => {
+            if (currentPage > 1) {
+              currentPage--;
+              renderList();
+              updatePagination();
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+          });
+        }
+
+        if (nextBtn) {
+          nextBtn.addEventListener('click', () => {
+            if (currentPage < totalPages) {
+              currentPage++;
+              renderList();
+              updatePagination();
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+          });
+        }
+
+        console.log('[Sponsor] 初始化完成，共', sponsorData.length, '条记录，', totalPages, '页');
+      }
+
+      // 页面加载完成后初始化
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+      } else {
+        init();
+      }
+    })();
+  </script>
+
+  <!-- 赞赏页面样式 -->
+  <style>
+    .sponsor-page {
+      margin-bottom: 60px;
+    }
+
+    .page-header {
+      text-align: center;
+      margin-bottom: 50px;
+      padding-bottom: 30px;
+    }
+
+    .page-header .page-title {
+      font-size: 2rem;
+      margin-bottom: 15px;
+      font-weight: 700;
+      font-family: "Menlo", "Meslo LG", "Microsoft YaHei", "微软雅黑", monospace, sans-serif;
+    }
+
+    .page-header .page-description {
+      color: var(--text-secondary);
+      font-size: 1rem;
+      font-family: "Menlo", "Meslo LG", "Microsoft YaHei", "微软雅黑", monospace, sans-serif;
+      font-weight: 600;
+    }
+
+    /* 二维码区域 */
+    .qrcode-section {
+      display: flex;
+      justify-content: center;
+      gap: 60px;
+      margin-bottom: 80px;
+      flex-wrap: wrap;
+    }
+
+    .qrcode-item {
+      text-align: center;
+    }
+
+    .qrcode-item h3 {
+      font-size: 1.2rem;
+      margin-bottom: 20px;
+      font-weight: 700;
+      color: var(--text-color);
+      font-family: "Menlo", "Meslo LG", "Microsoft YaHei", "微软雅黑", monospace, sans-serif;
+    }
+
+    .qrcode-img {
+      width: 250px;
+      height: 250px;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      object-fit: contain;
+      background: var(--bg-color);
+    }
+
+    /* 赞赏列表 */
+    .sponsor-list-section {
+      margin-bottom: 60px;
+    }
+
+    .section-title {
+      font-size: 1.5rem;
+      margin-bottom: 20px;
+      font-weight: 700;
+      text-align: center;
+      font-family: "Menlo", "Meslo LG", "Microsoft YaHei", "微软雅黑", monospace, sans-serif;
+    }
+
+    .sponsor-thanks {
+      text-align: center;
+      color: var(--text-color);
+      font-size: 1rem;
+      margin-bottom: 10px;
+      font-family: "Menlo", "Meslo LG", "Microsoft YaHei", "微软雅黑", monospace, sans-serif;
+      font-weight: 600;
+      line-height: 1.6;
+    }
+
+    .sponsor-note {
+      text-align: center;
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      margin-bottom: 30px;
+      font-family: "Menlo", "Meslo LG", "Microsoft YaHei", "微软雅黑", monospace, sans-serif;
+      font-weight: 600;
+      font-style: italic;
+    }
+
+    .sponsor-table-wrapper {
+      overflow-x: auto;
+      margin-bottom: 40px;
+    }
+
+    .sponsor-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: "Menlo", "Meslo LG", "Microsoft YaHei", "微软雅黑", monospace, sans-serif;
+      font-weight: 600;
+    }
+
+    .sponsor-table thead {
+      background: var(--bg-secondary);
+    }
+
+    .sponsor-table th {
+      padding: 15px 20px;
+      text-align: center;
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text-color);
+      border: 1px solid var(--border-color);
+    }
+
+    .sponsor-table td {
+      padding: 15px 20px;
+      border: 1px solid var(--border-color);
+      font-size: 1rem;
+      text-align: center;
+    }
+
+    .sponsor-table tbody tr {
+      transition: background-color 0.2s ease;
+    }
+
+    .sponsor-table tbody tr:hover {
+      background: var(--bg-secondary);
+    }
+
+    .sponsor-table .sponsor-name {
+      color: var(--text-color);
+    }
+
+    .sponsor-table .sponsor-amount {
+      color: var(--link-color);
+      font-weight: 700;
+    }
+
+    .sponsor-table .sponsor-date {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+    }
+
+    /* 空状态 */
+    .no-sponsors {
+      text-align: center;
+      padding: 80px 0;
+      color: var(--text-secondary);
+      font-size: 1rem;
+      font-family: "Menlo", "Meslo LG", "Microsoft YaHei", "微软雅黑", monospace, sans-serif;
+      font-weight: 600;
+    }
+
+    /* 分页按钮样式 - 复用主题样式 */
+    #sponsor-pagination .pagination-btn {
+      padding: 0;
+      background: transparent;
+      border: none;
+      border-radius: 0;
+      font-size: 0.9rem;
+      font-family: "Menlo", "Meslo LG", "Microsoft YaHei", "微软雅黑", monospace, sans-serif;
+      font-weight: 600;
+      box-shadow: none;
+      color: var(--text-secondary);
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    #sponsor-pagination .pagination-btn:hover:not(:disabled) {
+      background: transparent;
+      color: var(--link-color);
+      transform: none;
+    }
+
+    #sponsor-pagination .pagination-btn:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
+
+    /* 响应式 */
+    @media (max-width: 768px) {
+      .page-header .page-title {
+        font-size: 1.5rem;
+      }
+
+      .qrcode-section {
+        gap: 40px;
+        margin-bottom: 60px;
+      }
+
+      .qrcode-img {
+        width: 200px;
+        height: 200px;
+      }
+
+      .sponsor-table th,
+      .sponsor-table td {
+        padding: 10px 12px;
+        font-size: 0.9rem;
+      }
+
+      .sponsor-table .sponsor-date {
+        font-size: 0.8rem;
+      }
+    }
+  </style>
+</th:block>
+</html>
