@@ -363,38 +363,66 @@
     if (!themeToggle) return;
 
     themeToggle.addEventListener('click', (e) => {
-      const configTheme = window.themeConfig?.colorScheme || 'light';
-      
-      // 如果配置是 auto，不允许手动切换（因为会自动跟随系统）
-      if (configTheme === 'auto') {
-        console.log('[Theme] 当前配置为跟随系统，无法手动切换');
-        return;
-      }
-      
-      const currentTheme = document.documentElement.getAttribute('data-theme');
-      
-      // 简单双态切换：light <-> dark
-      const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+      // 获取当前模式
+      const currentMode = themeToggle.getAttribute('data-theme-mode') || 'auto';
 
-      // 添加临时类来触发图标旋转
-      if (newTheme === 'dark') {
-        themeToggle.classList.add('switching-to-dark');
+      // 三态循环：light -> dark -> auto -> light
+      let nextMode;
+      if (currentMode === 'light') {
+        nextMode = 'dark';
+      } else if (currentMode === 'dark') {
+        nextMode = 'auto';
       } else {
-        themeToggle.classList.add('switching-to-light');
+        nextMode = 'light';
       }
 
-      // 保存用户选择
-      localStorage.setItem('theme', newTheme);
+      // 确定实际显示的主题
+      let actualTheme;
+      if (nextMode === 'auto') {
+        // 跟随系统
+        actualTheme = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      } else {
+        actualTheme = nextMode;
+      }
 
-      // 创建扩散动画 - 传入当前主题和目标主题
-      createThemeTransition(e, currentTheme, newTheme);
+      const currentTheme = document.documentElement.getAttribute('data-theme');
 
-      console.log('[Theme] 切换主题: 从', currentTheme, '到', newTheme);
+      // 添加切换动画类
+      themeToggle.classList.add('switching');
+
+      // 保存用户选择的模式
+      localStorage.setItem('themeMode', nextMode);
+
+      // 更新按钮状态
+      setTimeout(() => {
+        themeToggle.setAttribute('data-theme-mode', nextMode);
+        themeToggle.classList.remove('switching');
+      }, 300);
+
+      // 创建扩散动画
+      createThemeTransition(e, currentTheme, actualTheme, nextMode);
+
+      console.log('[Theme] 切换模式:', currentMode, '→', nextMode, '| 实际主题:', actualTheme);
     });
+
+    // 监听系统主题变化（仅在 auto 模式下生效）
+    if (window.matchMedia) {
+      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+        const currentMode = themeToggle.getAttribute('data-theme-mode');
+        if (currentMode === 'auto') {
+          const newTheme = e.matches ? 'dark' : 'light';
+          document.documentElement.setAttribute('data-theme', newTheme);
+          document.documentElement.setAttribute('data-color-scheme', newTheme);
+          document.body.setAttribute('data-color-scheme', newTheme);
+          updateThemeColor(newTheme);
+          console.log('[Theme] 系统主题变化，自动切换到:', newTheme);
+        }
+      });
+    }
   }
 
   // 创建主题切换的扩散动画（使用 clip-path）
-  function createThemeTransition(event, fromTheme, toTheme) {
+  function createThemeTransition(event, fromTheme, toTheme, themeMode) {
     // 移动端直接切换，不使用动画
     if (window.innerWidth <= 768) {
       document.documentElement.setAttribute('data-theme', toTheme);
@@ -402,16 +430,7 @@
       document.body.setAttribute('data-color-scheme', toTheme);
       updateThemeColor(toTheme);
 
-      const themeToggle = document.querySelector('.theme-toggle');
-      if (themeToggle) {
-        if (toTheme === 'dark') {
-          themeToggle.classList.remove('switching-to-dark');
-        } else {
-          themeToggle.classList.remove('switching-to-light');
-        }
-      }
-
-      console.log('[Theme] 移动端直接切换主题:', toTheme);
+      console.log('[Theme] 移动端直接切换主题:', toTheme, '| 模式:', themeMode);
       return;
     }
 
@@ -437,8 +456,6 @@
     // 添加过渡类，防止 TOC 和链接胶囊频闪
     document.body.classList.add('theme-transitioning');
 
-    const themeToggle = document.querySelector('.theme-toggle');
-
     // 判断是切换到暗色还是亮色
     const switchingToDark = toTheme === 'dark';
 
@@ -460,11 +477,6 @@
         document.documentElement.setAttribute('data-color-scheme', toTheme);
         document.body.setAttribute('data-color-scheme', toTheme);
         updateThemeColor(toTheme);
-
-        // 移除临时类
-        if (themeToggle) {
-          themeToggle.classList.remove('switching-to-dark');
-        }
       }, 400);
 
     } else {
@@ -476,11 +488,6 @@
       document.documentElement.setAttribute('data-color-scheme', toTheme);
       document.body.setAttribute('data-color-scheme', toTheme);
       updateThemeColor(toTheme);
-
-      // 移除临时类
-      if (themeToggle) {
-        themeToggle.classList.remove('switching-to-light');
-      }
 
       // 使用双 RAF 确保主题切换已渲染
       requestAnimationFrame(() => {

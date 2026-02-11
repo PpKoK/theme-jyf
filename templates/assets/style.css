@@ -531,62 +531,39 @@ a:hover {
 
 .theme-toggle svg {
   transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
-}
-
-.theme-toggle .sun-icon {
-  transform: rotate(0deg);
-  opacity: 1;
-}
-
-.theme-toggle .moon-icon {
   position: absolute;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%) rotate(180deg);
+  transform: translate(-50%, -50%);
+}
+
+/* 默认隐藏所有图标 */
+.theme-toggle .sun-icon,
+.theme-toggle .moon-icon,
+.theme-toggle .auto-icon {
   opacity: 0;
 }
 
-/* 点击时立即触发图标旋转 - 切换到暗色 */
-.theme-toggle.switching-to-dark .sun-icon {
-  transform: rotate(-180deg);
-  opacity: 0;
-}
-
-.theme-toggle.switching-to-dark .moon-icon {
+/* 根据 data-theme-mode 显示对应图标 */
+.theme-toggle[data-theme-mode="light"] .sun-icon {
+  opacity: 1;
   transform: translate(-50%, -50%) rotate(0deg);
+}
+
+.theme-toggle[data-theme-mode="dark"] .moon-icon {
   opacity: 1;
-}
-
-/* 点击时立即触发图标旋转 - 切换到亮色 */
-.theme-toggle.switching-to-light .sun-icon {
-  transform: rotate(0deg);
-  opacity: 1;
-}
-
-.theme-toggle.switching-to-light .moon-icon {
-  transform: translate(-50%, -50%) rotate(180deg);
-  opacity: 0;
-}
-
-/* 主题切换后的最终状态 - 降低优先级，让临时类能覆盖 */
-/* 暗色主题：显示月亮图标 */
-[data-theme="dark"] .theme-toggle:not(.switching-to-light):not(.switching-to-dark) .sun-icon {
-  transform: rotate(-180deg);
-  opacity: 0;
-}
-
-[data-theme="dark"] .theme-toggle:not(.switching-to-light):not(.switching-to-dark) .moon-icon {
   transform: translate(-50%, -50%) rotate(0deg);
-  opacity: 1;
 }
 
-/* 亮色主题：显示太阳图标 */
-[data-theme="light"] .theme-toggle:not(.switching-to-light):not(.switching-to-dark) .sun-icon {
-  transform: rotate(0deg);
+.theme-toggle[data-theme-mode="auto"] .auto-icon {
   opacity: 1;
+  transform: translate(-50%, -50%) rotate(0deg);
 }
 
-[data-theme="light"] .theme-toggle:not(.switching-to-light):not(.switching-to-dark) .moon-icon {
+/* 切换动画 */
+.theme-toggle.switching .sun-icon,
+.theme-toggle.switching .moon-icon,
+.theme-toggle.switching .auto-icon {
   transform: translate(-50%, -50%) rotate(180deg);
   opacity: 0;
 }
@@ -3393,3 +3370,112 @@ body::before {
 .firefly:nth-child(18) { animation-delay: 2.2s; animation-duration: 16s; }
 .firefly:nth-child(19) { animation-delay: 4.8s; animation-duration: 18s; }
 .firefly:nth-child(20) { animation-delay: 1.2s; animation-duration: 12s; }
+
+/* 瞬间区域样式 */
+.moments-section {
+  margin: 30px 0;
+  padding: 15px 20px;
+  background: var(--bg-secondary);
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+}
+
+.moment-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.moment-content-wrapper {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.moments-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-color);
+  font-family: "Menlo", "Meslo LG", "Microsoft YaHei", "微软雅黑", monospace, sans-serif;
+  margin-bottom: 10px;
+}
+
+.moment-text {
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: var(--text-color);
+  margin: 0;
+  font-family: "Menlo", "Meslo LG", "Microsoft YaHei", "微软雅黑", monospace, sans-serif;
+  font-weight: 600;
+  width: 100%;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: center;
+}
+
+.moment-text p {
+  margin: 0;
+  display: inline;
+}
+
+.moment-media {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  width: 100%;
+  margin-top: 8px;
+}
+
+.moment-photo {
+  max-width: 120px;
+  max-height: 80px;
+  object-fit: cover;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.moment-photo:hover {
+  transform: scale(1.05);
+}
+
+.moment-video,
+.moment-audio {
+  max-width: 200px;
+  width: 100%;
+  border-radius: 4px;
+}
+
+/* 响应式 */
+@media (max-width: 768px) {
+  .moments-section {
+    margin: 20px 0;
+    padding: 12px 15px;
+  }
+
+  .moments-title {
+    font-size: 0.9rem;
+    margin-bottom: 8px;
+  }
+
+  .moment-text {
+    font-size: 0.9rem;
+  }
+
+  .moment-photo {
+    max-width: 100px;
+    max-height: 70px;
+  }
+
+  .moment-video,
+  .moment-audio {
+    max-width: 100%;
+  }
+}

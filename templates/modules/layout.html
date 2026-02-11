@@ -48,7 +48,7 @@
   <!-- 主题配置 -->
   <script th:inline="javascript">
     window.themeConfig = {
-      loadingAnimationType: /*[[${theme.config.basic.loading_animation_type ?: 'progressbar'}]]*/ 'progressbar',
+      loadingAnimationType: /*[[${theme.config.homepage.loading_animation_type ?: 'progressbar'}]]*/ 'progressbar',
       fireflyCount: /*[[${theme.config.style.firefly_count ?: 10}]]*/ 10,
       fireflyColorLight: /*[[${theme.config.style.firefly_color_light ?: '#50E3C2'}]]*/ '#50E3C2',
       fireflyColorDark: /*[[${theme.config.style.firefly_color_dark ?: '#50E3C2'}]]*/ '#50E3C2',
@@ -58,20 +58,33 @@
     // 立即设置主题，防止页面闪烁
     (function() {
       const configTheme = window.themeConfig?.colorScheme || 'light';
+
+      // 优先使用用户手动设置的模式（light/dark/auto）
+      const savedMode = localStorage.getItem('themeMode');
+      const themeMode = savedMode || configTheme;
+
       let currentTheme;
 
-      if (configTheme === 'auto') {
+      if (themeMode === 'auto') {
         // 跟随系统
         currentTheme = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
       } else {
-        // 优先使用用户手动设置
-        const savedTheme = localStorage.getItem('theme');
-        currentTheme = savedTheme || configTheme;
+        // 使用用户选择的固定主题
+        currentTheme = themeMode;
       }
 
       // 立即设置主题属性
       document.documentElement.setAttribute('data-theme', currentTheme);
       document.documentElement.setAttribute('data-color-scheme', currentTheme);
+      document.body.setAttribute('data-color-scheme', currentTheme);
+
+      // 设置按钮状态
+      document.addEventListener('DOMContentLoaded', function() {
+        const themeToggle = document.querySelector('.theme-toggle');
+        if (themeToggle) {
+          themeToggle.setAttribute('data-theme-mode', themeMode);
+        }
+      });
     })();
   </script>
 

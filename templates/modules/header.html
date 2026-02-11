@@ -89,11 +89,12 @@
         </a>
         
         <!-- 暗夜模式切换 -->
-        <button 
+        <button
           class="icon-btn theme-toggle"
           id="theme-toggle"
           title="切换主题"
           aria-label="切换主题"
+          data-theme-mode="auto"
         >
           <svg class="sun-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="12" cy="12" r="5"></circle>
@@ -109,12 +110,26 @@
           <svg class="moon-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
           </svg>
+          <svg class="auto-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <!-- 外圆 -->
+            <circle cx="12" cy="12" r="9" fill="none"/>
+            <!-- 左半边太阳光芒 -->
+            <line x1="12" y1="3" x2="12" y2="5"/>
+            <line x1="5.64" y1="5.64" x2="7.05" y2="7.05"/>
+            <line x1="3" y1="12" x2="5" y2="12"/>
+            <line x1="5.64" y1="18.36" x2="7.05" y2="16.95"/>
+            <line x1="12" y1="21" x2="12" y2="19"/>
+            <!-- 中间分隔线 -->
+            <line x1="12" y1="3" x2="12" y2="21" stroke-width="2"/>
+            <!-- 右半边月牙 -->
+            <path d="M 12 7 A 5 5 0 0 1 12 17 A 3 3 0 0 0 12 7 Z" fill="currentColor" opacity="0.5"/>
+          </svg>
         </button>
         
         <!-- 登录/用户按钮 -->
         <!-- 未登录时显示图标 -->
         <a
-          th:if="${theme.config.basic.show_login}"
+          th:if="${theme.config.homepage.show_login}"
           sec:authorize="isAnonymous()"
           href="/console"
           class="icon-btn login-btn"
@@ -129,7 +144,7 @@
         
         <!-- 已登录时显示头像 -->
         <a
-          th:if="${theme.config.basic.show_login}"
+          th:if="${theme.config.homepage.show_login}"
           sec:authorize="isAuthenticated()"
           th:with="currentUser = ${contributorFinder.getContributor(#authentication.name)}"
           href="/uc"

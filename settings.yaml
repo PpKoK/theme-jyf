@@ -23,18 +23,18 @@ spec:
                 - label: 图片+文字
                   value: both
               help: 选择Logo的显示方式
-            
+
             - $formkit: text
               name: logo_text
               label: Logo文字
               value: "Jyf"
               help: 文字Logo的内容
-            
+
             - $formkit: attachment
               name: logo_image
               label: Logo图片
               help: 上传Logo图片，建议使用透明背景的PNG格式
-            
+
             - $formkit: number
               name: logo_image_height
               label: Logo图片高度（百分比）
@@ -44,20 +44,45 @@ spec:
               step: 5
               suffix: "%"
               help: 输入百分比调整Logo图片大小，范围：0%-100%
-        
+
         - $formkit: text
           name: site_title
           label: 站点标题
           value: ""
           help: 首页显示的标题，留空则使用系统设置的站点标题
-        
+
         - $formkit: textarea
           name: site_description
           label: 站点描述
           value: "欢迎来到我的个人博客！这里记录着我的想法、学习和生活。"
           help: 显示在首页的站点描述，支持HTML，可以使用<br>换行
           rows: 3
-        
+
+    - group: homepage
+      label: 首页设置
+      formSchema:
+        - $formkit: radio
+          name: show_site_intro
+          label: 显示站点描述
+          value: true
+          options:
+            - label: 显示
+              value: true
+            - label: 隐藏
+              value: false
+          help: 在首页显示站点标题和描述
+
+        - $formkit: radio
+          name: show_moments
+          label: 显示瞬间
+          value: true
+          options:
+            - label: 显示
+              value: true
+            - label: 隐藏
+              value: false
+          help: 在首页显示最新的瞬间内容（需要安装瞬间插件）
+
         - $formkit: radio
           name: show_heatmap
           label: 显示文章发布热力图
@@ -68,7 +93,7 @@ spec:
             - label: 隐藏
               value: false
           help: 在首页显示 GitHub 风格的文章发布热力图
-        
+
         - $formkit: radio
           name: show_login
           label: 显示登录按钮
@@ -78,7 +103,7 @@ spec:
               value: true
             - label: 隐藏
               value: false
-        
+
         - $formkit: radio
           name: show_post_toc
           label: 显示文章目录
@@ -89,18 +114,7 @@ spec:
             - label: 隐藏
               value: false
           help: 在文章页面右侧显示目录导航
-        
-        - $formkit: toggle
-          name: post_list_style
-          label: 文章列表样式
-          value: text
-          options:
-            - label: 文字列表
-              value: text
-            - label: 图文列表
-              value: card
-          help: 首页文章列表的显示样式
-        
+
         - $formkit: toggle
           name: loading_animation_type
           label: 页面加载动画类型
@@ -113,6 +127,17 @@ spec:
             - label: 居中圆环
               value: spinner
           help: 选择页面加载时显示的动画类型
+
+        - $formkit: toggle
+          name: post_list_style
+          label: 文章列表样式
+          value: text
+          options:
+            - label: 文字列表
+              value: text
+            - label: 图文列表
+              value: card
+          help: 首页文章列表的显示样式
 
     - group: footer
       label: 页脚设置
