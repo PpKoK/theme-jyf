@@ -73,12 +73,21 @@
         </p>
         
         <!-- 备案信息 -->
-        <p th:if="${theme.config.footer.icp_text != null && !#strings.isEmpty(theme.config.footer.icp_text)}">
+        <p th:if="${(theme.config.footer.icp_text != null && !#strings.isEmpty(theme.config.footer.icp_text)) || (theme.config.footer.police_text != null && !#strings.isEmpty(theme.config.footer.police_text))}">
           <a
+            th:if="${theme.config.footer.icp_text != null && !#strings.isEmpty(theme.config.footer.icp_text)}"
             th:href="${theme.config.footer.icp_link ?: 'https://beian.miit.gov.cn/'}"
             target="_blank"
             rel="noopener"
             th:text="${theme.config.footer.icp_text}"
+          ></a>
+          <span th:if="${(theme.config.footer.icp_text != null && !#strings.isEmpty(theme.config.footer.icp_text)) && (theme.config.footer.police_text != null && !#strings.isEmpty(theme.config.footer.police_text))}"> | </span>
+          <a
+            th:if="${theme.config.footer.police_text != null && !#strings.isEmpty(theme.config.footer.police_text)}"
+            th:href="${theme.config.footer.police_link ?: 'https://beian.mps.gov.cn/'}"
+            target="_blank"
+            rel="noopener"
+            th:text="${theme.config.footer.police_text}"
           ></a>
         </p>
       </div>

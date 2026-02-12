@@ -266,60 +266,34 @@
   // ==================== 暗夜模式 ====================
   function initTheme() {
     const configTheme = window.themeConfig?.colorScheme || 'light';
-    
-    // 如果配置是 auto，则始终跟随系统，忽略 localStorage
-    // 如果配置不是 auto，则使用 localStorage 或配置值
-    let themeMode, currentTheme;
-    
-    if (configTheme === 'auto') {
-      // 配置为 auto 时，始终跟随系统
-      themeMode = 'auto';
+
+    // 优先使用用户手动设置的模式（light/dark/auto）
+    const savedMode = localStorage.getItem('themeMode');
+    const themeMode = savedMode || configTheme;
+
+    let currentTheme;
+
+    if (themeMode === 'auto') {
+      // 跟随系统
       currentTheme = getSystemTheme();
-      // 清除可能存在的手动设置
-      localStorage.removeItem('theme');
-      
-      // 隐藏主题切换按钮
-      const themeToggle = document.querySelector('.theme-toggle');
-      if (themeToggle) {
-        themeToggle.style.display = 'none';
-      }
     } else {
-      // 配置不是 auto 时，优先使用用户手动设置
-      const savedTheme = localStorage.getItem('theme');
-      themeMode = savedTheme || configTheme;
+      // 使用用户选择的固定主题
       currentTheme = themeMode;
-      
-      // 显示主题切换按钮
-      const themeToggle = document.querySelector('.theme-toggle');
-      if (themeToggle) {
-        themeToggle.style.display = '';
-      }
     }
-    
+
     // 设置初始主题
     document.documentElement.setAttribute('data-theme', currentTheme);
     document.documentElement.setAttribute('data-color-scheme', currentTheme);
     document.body.setAttribute('data-color-scheme', currentTheme);
     updateThemeColor(currentTheme);
-    console.log('[Theme] 初始化 - 配置:', configTheme, '模式:', themeMode, '显示:', currentTheme);
-    
-    // 监听系统主题变化
-    if (window.matchMedia) {
-      const darkModeQuery = window.matchMedia('(prefers-color-scheme: dark)');
-      darkModeQuery.addEventListener('change', (e) => {
-        const config = window.themeConfig?.colorScheme || 'light';
-        
-        // 只有配置为 auto 时才自动切换
-        if (config === 'auto') {
-          const newTheme = e.matches ? 'dark' : 'light';
-          document.documentElement.setAttribute('data-theme', newTheme);
-          document.documentElement.setAttribute('data-color-scheme', newTheme);
-          document.body.setAttribute('data-color-scheme', newTheme);
-          updateThemeColor(newTheme);
-          console.log('[Theme] 系统主题已变化，自动切换到:', newTheme);
-        }
-      });
+
+    // 设置按钮状态
+    const themeToggle = document.querySelector('.theme-toggle');
+    if (themeToggle) {
+      themeToggle.setAttribute('data-theme-mode', themeMode);
     }
+
+    console.log('[Theme] 初始化 - 配置:', configTheme, '模式:', themeMode, '显示:', currentTheme);
   }
   
   // 更新浏览器主题颜色

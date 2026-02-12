@@ -206,13 +206,25 @@ spec:
           label: ICP备案号
           value: ""
           help: 留空则不显示
-        
+
         - $formkit: text
           name: icp_link
           label: ICP备案链接
           value: "https://beian.miit.gov.cn/"
-        
-        
+
+        - $formkit: text
+          name: police_text
+          label: 公安备案号
+          value: ""
+          help: 留空则不显示
+
+        - $formkit: text
+          name: police_link
+          label: 公安备案链接
+          value: "https://beian.mps.gov.cn/"
+          help: 公安备案查询链接
+
+
     - group: style
       label: 样式设置
       formSchema:

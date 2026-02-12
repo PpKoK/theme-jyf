@@ -8,7 +8,7 @@
            class="logo logo-text"
            th:text="${theme.config.basic.logo.logo_text ?: site.title}">
         </a>
-        
+
         <!-- 仅图片Logo -->
         <a th:if="${theme.config.basic.logo.logo_type == 'image' && theme.config.basic.logo.logo_image != null}"
            th:href="@{/}"
@@ -18,7 +18,7 @@
                th:style="'height: calc(80px * ' + ${theme.config.basic.logo.logo_image_height ?: 100} + ' / 100);'"
                class="logo-img" />
         </a>
-        
+
         <!-- 图片+文字Logo -->
         <a th:if="${theme.config.basic.logo.logo_type == 'both'}"
            th:href="@{/}"
