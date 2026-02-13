@@ -310,7 +310,7 @@ a:hover {
   margin: 0 auto;
   padding: 0 20px;
   position: relative;
-  z-index: 10;
+  z-index: 1;   
 }
 
 /* Header */
