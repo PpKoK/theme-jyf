@@ -48,7 +48,6 @@
       window.addEventListener('load', completeLoading);
     }
     
-    console.log('[PageLoading] 顶部进度条已初始化');
   }
 
   // ==================== 全屏加载动画 ====================
@@ -78,7 +77,6 @@
       window.addEventListener('load', hideOverlay);
     }
     
-    console.log('[PageLoading] 全屏加载动画已初始化');
   }
 
   // ==================== 居中进度条 ====================
@@ -146,7 +144,6 @@
       window.addEventListener('load', completeLoading);
     }
     
-    console.log('[PageLoading] 居中进度条已初始化');
   }
 
   // ==================== 图片懒加载 ====================
@@ -200,7 +197,6 @@
         subtree: true
       });
       
-      console.log('[LazyLoad] 图片懒加载已初始化');
     } else {
       // 不支持 IntersectionObserver 的浏览器，直接加载所有图片
       const lazyImages = document.querySelectorAll('img[data-src]');
@@ -209,7 +205,6 @@
         img.removeAttribute('data-src');
         img.classList.add('lazy-loaded');
       });
-      console.log('[LazyLoad] 浏览器不支持 IntersectionObserver，直接加载所有图片');
     }
   }
 
@@ -260,7 +255,6 @@
       subtree: true
     });
     
-    console.log('[ImageLoading] 图片加载动画已初始化');
   }
 
   // ==================== 暗夜模式 ====================
@@ -293,7 +287,6 @@
       themeToggle.setAttribute('data-theme-mode', themeMode);
     }
 
-    console.log('[Theme] 初始化 - 配置:', configTheme, '模式:', themeMode, '显示:', currentTheme);
   }
   
   // 更新浏览器主题颜色
@@ -321,7 +314,6 @@
       }
     });
 
-    console.log('[Theme] 更新浏览器主题颜色:', color);
   }
   
   // 获取系统主题
@@ -376,7 +368,6 @@
       // 创建扩散动画
       createThemeTransition(e, currentTheme, actualTheme, nextMode);
 
-      console.log('[Theme] 切换模式:', currentMode, '→', nextMode, '| 实际主题:', actualTheme);
     });
 
     // 监听系统主题变化（仅在 auto 模式下生效）
@@ -389,7 +380,6 @@
           document.documentElement.setAttribute('data-color-scheme', newTheme);
           document.body.setAttribute('data-color-scheme', newTheme);
           updateThemeColor(newTheme);
-          console.log('[Theme] 系统主题变化，自动切换到:', newTheme);
         }
       });
     }
@@ -404,7 +394,6 @@
       document.body.setAttribute('data-color-scheme', toTheme);
       updateThemeColor(toTheme);
 
-      console.log('[Theme] 移动端直接切换主题:', toTheme, '| 模式:', themeMode);
       return;
     }
 
@@ -688,7 +677,6 @@
         daysContainer.appendChild(dayElement);
       });
       
-      console.log('[Heatmap] 已渲染热力图，共', window.postHeatmapData?.allPosts?.length || 0, '篇文章');
     }
 
     /**
@@ -1091,7 +1079,6 @@
           
           // 如果已经点赞，直接返回，不允许取消
           if (isUpvoted) {
-            console.log('[Upvote] 已经点赞过了，不能取消');
             return;
           }
           
@@ -1130,7 +1117,6 @@
                   }
                 });
                 
-                console.log('[Upvote] 点赞成功，最新点赞数:', newUpvoteCount);
               } else {
                 // 如果获取统计信息失败，使用本地计算
                 console.warn('[Upvote] 无法获取最新统计信息，使用本地计算');
@@ -1178,7 +1164,6 @@
       });
     });
     
-    console.log('[Upvote] 点赞功能已初始化，按钮数量:', upvoteBtns.length);
   }
 
   // ==================== 图库功能 ====================
@@ -1190,8 +1175,6 @@
     const photoItems = document.querySelectorAll('.photo-item');
     const noPhotos = document.querySelector('.no-photos');
     
-    console.log('[Photos] 初始化图库功能');
-    console.log('[Photos] 图片数量:', photoItems.length);
     
     // 分类筛选
     filterBtns.forEach(btn => {
@@ -1223,13 +1206,11 @@
           waterfallContainer.style.display = 'block';
         }
         
-        console.log('[Photos] 筛选分类:', targetGroup, '可见图片:', visibleCount);
       });
     });
     
     // 初始化灯箱
     if (typeof lightGallery !== 'undefined' && photoItems.length > 0) {
-      console.log('[Photos] lightGallery 已加载');
       
       // 为每个图片添加点击事件
       photoItems.forEach((item) => {
@@ -1242,7 +1223,6 @@
             return display !== 'none';
           });
           
-          console.log('[Photos] 可见图片数量:', visibleItems.length);
           
           // 创建临时容器
           const galleryContainer = document.createElement('div');
@@ -1301,7 +1281,6 @@
             
             // 找到当前图片在可见图片中的索引
             const currentIndex = visibleItems.indexOf(item);
-            console.log('[Photos] 打开灯箱，索引:', currentIndex);
             
             // 监听关闭事件（在容器元素上监听）
             galleryContainer.addEventListener('lgAfterClose', function() {
@@ -1324,7 +1303,6 @@
         });
       });
       
-      console.log('[Photos] 灯箱功能已初始化');
     } else {
       console.warn('[Photos] lightGallery 未加载或无图片');
     }
@@ -1335,7 +1313,6 @@
     const upvoteBtns = document.querySelectorAll('.moment-upvote-btn');
     if (upvoteBtns.length === 0) return;
     
-    console.log('[Moment Upvote] 初始化瞬间点赞功能');
     
     // 检查本地存储的点赞状态
     const upvotedMoments = JSON.parse(localStorage.getItem('upvoted_moments') || '[]');
@@ -1388,7 +1365,6 @@
             
             localStorage.setItem('upvoted_moments', JSON.stringify(upvotedMoments));
             
-            console.log('[Moment Upvote] 点赞成功:', isUpvoted ? '取消' : '点赞');
           } else {
             console.error('[Moment Upvote] API 响应错误:', response.status);
           }
@@ -1398,7 +1374,6 @@
       });
     });
     
-    console.log('[Moment Upvote] 点赞功能已初始化，共', upvoteBtns.length, '个瞬间');
   }
 
   // ==================== 滚动进度条 ====================
@@ -1436,7 +1411,6 @@
     // 初始更新
     updateProgress();
     
-    console.log('[ScrollProgress] 滚动进度条已初始化');
   }
 
   // ==================== 页面加载速度统计 ====================
@@ -1459,7 +1433,6 @@
               loadTimeElement.textContent = loadTimeSeconds + 's';
             }
             
-            console.log('[PageLoadTime] 页面加载时间:', loadTimeSeconds + 's');
           } else {
             console.warn('[PageLoadTime] 加载时间计算异常:', loadTime);
           }
@@ -1475,13 +1448,11 @@
 
     // 如果数量为0，则不启用萤火虫效果
     if (fireflyCount === 0) {
-      console.log('[Fireflies] 萤火虫效果未启用');
       return;
     }
 
     // 移动端不创建萤火虫容器
     if (window.innerWidth <= 768) {
-      console.log('[Fireflies] 移动端不创建萤火虫效果');
       return;
     }
 
@@ -1508,7 +1479,6 @@
       container.appendChild(firefly);
     }
 
-    console.log('[Fireflies] 背景萤火虫效果已初始化，数量:', fireflyCount);
   }
 
   // ==================== 初始化 ====================
