@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html th:lang="${#locale.toLanguageTag}" th:fragment="layout (title,head,body)"
+      th:attr="data-theme=${theme.config.style.color_scheme ?: 'light'},
+               data-color-scheme=${theme.config.style.color_scheme ?: 'light'}">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light dark">
+
+  <title th:text="${title}"></title>
+
+  <!-- 主题样式 -->
+  <link rel="stylesheet" th:href="@{/assets/style.css?v={version}(version=${theme.spec.version})}">
+
+  <!-- 认证页面样式 -->
+  <link rel="stylesheet" th:href="@{/assets/auth.css?v={version}(version=${theme.spec.version})}">
+
+  <!-- 自定义鼠标指针样式 -->
+  <link th:if="${theme.config.cursor != null and theme.config.cursor.cursor_enabled != null and theme.config.cursor.cursor_enabled}" rel="stylesheet" th:href="@{/assets/cursors.css?v={version}(version=${theme.spec.version})}">
+
+  <!-- 自定义颜色 -->
+  <style th:inline="text">
+    :root {
+      --link-color: [[${theme.config.style.primary_color ?: '#50E3C2'}]] !important;
+      --link-hover: [[${theme.config.style.primary_color ?: '#50E3C2'}]] !important;
+      --text-color: [[${theme.config.style.text_color ?: '#34495e'}]];
+      --bg-color: [[${theme.config.style.background_color ?: '#ffffff'}]];
+      --border-color: #d1d5db;
+      --text-secondary: #7f8c8d;
+      --rounded-base: 0.25em;
+      --rounded-lg: 0.5em;
+      --spacing-xl: 1.25em;
+      --spacing-2xl: 1.5em;
+      --spacing-md: 0.875em;
+      --text-sm: 0.875em;
+      --color-text: #374151;
+    }
+
+    [data-theme="dark"] {
+      --bg-color: #292a2d !important;
+      --text-color: #a9a9b3 !important;
+      --text-secondary: #87888f !important;
+      --border-color: #3b3d42 !important;
+      --code-bg: #2d2d2d !important;
+      --color-text: #d1d5db !important;
+    }
+
+    [data-theme="light"] {
+      --border-color: #d1d5db;
+      --text-secondary: #7f8c8d;
+      --color-text: #374151;
+    }
+  </style>
+
+  <!-- 主题配置 -->
+  <script th:inline="javascript">
+    window.themeConfig = {
+      colorScheme: /*[[${theme.config.style.color_scheme ?: 'light'}]]*/ 'light'
+    };
+
+    // 立即设置主题，防止页面闪烁
+    (function() {
+      const configTheme = window.themeConfig?.colorScheme || 'light';
+      const savedMode = localStorage.getItem('themeMode');
+      const themeMode = savedMode || configTheme;
+      let currentTheme;
+
+      if (themeMode === 'auto') {
+        currentTheme = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      } else {
+        currentTheme = themeMode;
+      }
+
+      document.documentElement.setAttribute('data-theme', currentTheme);
+      document.documentElement.setAttribute('data-color-scheme', currentTheme);
+    })();
+  </script>
+
+  <th:block th:if="${head != null}">
+    <th:block th:replace="${head}" />
+  </th:block>
+
+  <!-- 必须引入的基本资源 -->
+  <th:block th:replace="~{gateway_fragments/common::basicStaticResources}"></th:block>
+</head>
+<body th:attr="data-cursor-style=${theme.config.cursor != null and theme.config.cursor.cursor_enabled != null and theme.config.cursor.cursor_enabled ? (theme.config.cursor.cursor_style ?: 'default') : 'default'}">
+  <div>
+    <th:block th:replace="~{modules/header}" />
+    <main class="container">
+      <th:block th:replace="${body}" />
+    </main>
+    <th:block th:replace="~{modules/footer}" />
+  </div>
+
+  <script th:src="@{/assets/main.js?v={version}(version=${theme.spec.version})}"></script>
+</body>
+</html>

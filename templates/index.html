@@ -27,21 +27,52 @@
     </div>
 
     <!-- 瞬间 -->
-    <div class="moments-section" th:if="${theme.config.homepage.show_moments and momentFinder != null}" th:with="moments = ${momentFinder.list(1, 1)}">
-      <div th:if="${moments.total > 0}" th:each="moment : ${moments.items}" class="moment-container" th:with="content = ${moment.spec.content}">
-        <div class="moment-content-wrapper">
+    <th:block th:if="${theme.config.homepage.show_moments and momentFinder != null}" th:with="moments = ${momentFinder.list(1, 10)}">
+      <th:block th:if="${moments.total > 0}">
+        <th:block th:each="moment, iterStat : ${moments.items}">
+          <th:block th:with="content = ${moment.spec.content}">
+            <!-- 只显示第一个有 html 内容的瞬间 -->
+            <div th:if="${iterStat.index == 0 or (content.html != null and not #strings.isEmpty(content.html))}"
+                 class="moments-section moment-item-candidate">
+              <div class="moment-container">
+                <div class="moment-content-wrapper">
+                  <div class="moment-text" th:if="${content.html != null}" th:utext="${content.html}">无内容</div>
+                  <div class="moment-text" th:unless="${content.html != null}">暂无文字内容</div>
+                  <a th:href="@{/moments}" class="moment-more-link" title="查看更多瞬间">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <circle cx="12" cy="12" r="1"></circle>
+                      <circle cx="19" cy="12" r="1"></circle>
+                      <circle cx="5" cy="12" r="1"></circle>
+                    </svg>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </th:block>
+        </th:block>
+        <script>
+          // 只显示第一个有文字内容的瞬间
+          (function() {
+            const momentItems = document.querySelectorAll('.moment-item-candidate');
+            if (momentItems.length > 0) {
+              // 找到第一个有实际文字内容的
+              let found = false;
+              for (let i = 0; i < momentItems.length; i++) {
+                const textDiv = momentItems[i].querySelector('.moment-text');
+                const hasText = textDiv && textDiv.textContent.trim() !== '' && textDiv.textContent.trim() !== '无内容' && textDiv.textContent.trim() !== '暂无文字内容';
 
-          <div class="moment-text" th:if="${not #strings.isEmpty(content.html)}" th:utext="${content.html}"></div>
-          <div class="moment-media" th:if="${not #lists.isEmpty(content.medium)}">
-            <th:block th:each="momentItem : ${content.medium}">
-              <img th:if="${momentItem.type.name == 'PHOTO'}" th:src="${momentItem.url}" alt="图片" class="moment-photo" />
-              <video th:if="${momentItem.type.name == 'VIDEO'}" th:src="${momentItem.url}" controls class="moment-video"></video>
-              <audio th:if="${momentItem.type.name == 'AUDIO'}" th:src="${momentItem.url}" controls class="moment-audio"></audio>
-            </th:block>
-          </div>
-        </div>
-      </div>
-    </div>
+                if (hasText && !found) {
+                  momentItems[i].style.display = 'block';
+                  found = true;
+                } else {
+                  momentItems[i].remove();
+                }
+              }
+            }
+          })();
+        </script>
+      </th:block>
+    </th:block>
 
     <!-- 热力图 -->
     <div th:if="${theme.config.homepage.show_heatmap}" class="heatmap" id="post-heatmap">

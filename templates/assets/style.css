@@ -2777,7 +2777,7 @@ body {
   background-color: rgba(0, 0, 0, 0.8);
 }
 
-/* ==================== 瞬间页面样式 ==================== */
+/* ==================== 瞬间页面样式 - 微信朋友圈风格 ==================== */
 .moments-page {
   margin-bottom: 60px;
 }
@@ -2787,7 +2787,7 @@ body {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
-  margin-bottom: 40px;
+  margin-bottom: 30px;
   padding: 20px 0;
   border-bottom: 1px solid var(--border-color);
 }
@@ -2821,161 +2821,283 @@ body {
   border-color: var(--link-color);
 }
 
-.tag-count {
-  font-size: 0.8rem;
-  opacity: 0.8;
-}
-
-.moments-list {
+.moments-list.wechat-style {
   margin-bottom: 40px;
 }
 
-/* 瞬间项 - 类似评论区的卡片样式 */
-.moment-item {
+/* 瞬间项 - 微信朋友圈布局 */
+.moments-list.wechat-style .moment-item {
   display: flex;
-  align-items: center;
-  gap: 15px;
+  align-items: flex-start;
+  gap: 12px;
   padding: 25px 0;
   border-bottom: 1px solid var(--border-color);
-  transition: background 0.2s ease;
 }
 
-.moment-item:first-child {
+.moments-list.wechat-style .moment-item:first-child {
   padding-top: 0;
 }
 
-.moment-item:last-child {
+.moments-list.wechat-style .moment-item:last-child {
   border-bottom: none;
 }
 
-.moment-item:hover {
-  background: var(--code-bg);
-  margin: 0 -20px;
-  padding-left: 20px;
-  padding-right: 20px;
-  border-radius: 8px;
-}
-
-/* 头像 */
-.moment-avatar {
+/* 头像 - 左侧固定 */
+.moments-list.wechat-style .moment-avatar {
   flex-shrink: 0;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
+  width: 45px;
+  height: 45px;
+  border-radius: 4px;
   overflow: hidden;
   background: var(--code-bg);
 }
 
-.moment-avatar img {
+.moments-list.wechat-style .moment-avatar img {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
-/* 内容区域 */
-.moment-content-wrapper {
+/* 右侧内容区域 */
+.moments-list.wechat-style .moment-content-area {
   flex: 1;
   min-width: 0;
 }
 
-/* 日期 */
-.moment-date {
-  flex-shrink: 0;
-  min-width: 130px;
-}
-
-.moment-date .moment-time {
-  font-size: 0.85rem;
-  color: var(--text-secondary);
-  font-family: "Menlo", "Meslo LG", "Microsoft YaHei", "微软雅黑", monospace, sans-serif;
+/* 用户名 */
+.moments-list.wechat-style .moment-username {
+  font-size: 0.9rem;
   font-weight: 600;
-  white-space: nowrap;
-}
-
-/* 头部信息 */
-.moment-header {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 12px;
-}
-
-.moment-time {
-  font-size: 0.85rem;
-  color: var(--text-secondary);
+  color: #576b95;
   font-family: "Menlo", "Meslo LG", "Microsoft YaHei", "微软雅黑", monospace, sans-serif;
-  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+[data-theme="dark"] .moments-list.wechat-style .moment-username {
+  color: #7d90b3;
 }
 
 /* 瞬间正文 */
-.moment-text {
+.moments-list.wechat-style .moment-text {
   font-size: 0.95rem;
-  line-height: 1.8;
+  line-height: 1.6;
   color: var(--text-color);
-  margin-bottom: 0;
+  margin-bottom: 10px;
   font-family: "Menlo", "Meslo LG", "Microsoft YaHei", "微软雅黑", monospace, sans-serif;
-  font-weight: 600;
+  font-weight: 500;
   word-wrap: break-word;
-  display: inline;
 }
 
-.moment-text p {
-  margin-bottom: 10px;
+.moments-list.wechat-style .moment-text p {
+  margin: 0 0 8px 0;
 }
 
-.moment-text p:last-child {
+.moments-list.wechat-style .moment-text p:last-child {
   margin-bottom: 0;
 }
 
-/* 隐藏正文中的标签链接和标签span */
-.moment-text a[href*="/moments?tag="],
-.moment-text a[href^="#"],
-.moment-text span.tag,
-.moment-text .tag {
-  display: none;
+/* 隐藏正文中的标签 */
+.moments-list.wechat-style .moment-text a[href*="/moments?tag="],
+.moments-list.wechat-style .moment-text a[href^="#"],
+.moments-list.wechat-style .moment-text span[class*="tag"],
+.moments-list.wechat-style .moment-text .tag {
+  display: none !important;
 }
 
-/* 瞬间媒体 */
-.moment-media {
+/* 瞬间媒体 - 微信朋友圈布局规则 */
+.moments-list.wechat-style .moment-media {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 10px;
-  margin-top: 10px;
+  gap: 4px;
   margin-bottom: 10px;
+  justify-content: start;
 }
 
-.moment-media-item {
+/* 1张图：单独显示，固定 200x200 正方形 */
+.moments-list.wechat-style .moment-media[data-count="1"] {
+  grid-template-columns: 200px;
+}
+
+.moments-list.wechat-style .moment-media[data-count="1"] .moment-media-item {
+  width: 200px;
+  height: 200px;
+}
+
+/* 2张图：横向并排 */
+.moments-list.wechat-style .moment-media[data-count="2"] {
+  grid-template-columns: repeat(2, 200px);
+}
+
+/* 3张图：横向并排 */
+.moments-list.wechat-style .moment-media[data-count="3"] {
+  grid-template-columns: repeat(3, 200px);
+}
+
+/* 4张图：2x2 四宫格 */
+.moments-list.wechat-style .moment-media[data-count="4"] {
+  grid-template-columns: repeat(2, 200px);
+}
+
+/* 5-6张图：3列布局 */
+.moments-list.wechat-style .moment-media[data-count="5"],
+.moments-list.wechat-style .moment-media[data-count="6"] {
+  grid-template-columns: repeat(3, 200px);
+}
+
+/* 7-9张图：3x3 九宫格 */
+.moments-list.wechat-style .moment-media[data-count="7"],
+.moments-list.wechat-style .moment-media[data-count="8"],
+.moments-list.wechat-style .moment-media[data-count="9"] {
+  grid-template-columns: repeat(3, 200px);
+}
+
+.moments-list.wechat-style .moment-media-item {
   position: relative;
   overflow: hidden;
-  border-radius: 8px;
+  border-radius: 4px;
   background: var(--code-bg);
   cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: opacity 0.2s ease;
+  width: 200px;
+  height: 200px;
 }
 
-.moment-media-item:hover {
-  transform: scale(1.02);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+.moments-list.wechat-style .moment-media-item:hover {
+  opacity: 0.9;
 }
 
-.moment-media-item img {
+/* 图片 - 固定 200x200 正方形 */
+.moments-list.wechat-style .moment-media-item img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
-  aspect-ratio: 1;
 }
 
-.moment-media-item video {
+/* 视频 - 固定 200x200 正方形 */
+.moments-list.wechat-style .moment-media-item video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* 音频 - 保持原样 */
+.moments-list.wechat-style .moment-media-item.moment-audio {
   width: 100%;
   height: auto;
-  display: block;
-  max-height: 400px;
 }
 
-.moment-media-item audio {
+.moments-list.wechat-style .moment-media-item audio {
   width: 100%;
   display: block;
+}
+
+/* 瞬间标签 - 在内容下方 */
+.moments-list.wechat-style .moment-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.moments-list.wechat-style .moment-tag {
+  color: var(--link-color);
+  font-size: 0.85rem;
+  font-family: "Menlo", "Meslo LG", "Microsoft YaHei", "微软雅黑", monospace, sans-serif;
+  font-weight: 500;
+  text-decoration: none;
+  transition: opacity 0.2s ease;
+}
+
+.moments-list.wechat-style .moment-tag:hover {
+  opacity: 0.7;
+}
+
+/* 底部信息栏 */
+.moments-list.wechat-style .moment-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 8px;
+}
+
+.moments-list.wechat-style .moment-time {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  font-family: "Menlo", "Meslo LG", "Microsoft YaHei", "微软雅黑", monospace, sans-serif;
+  font-weight: 500;
+}
+
+/* 互动按钮 */
+.moments-list.wechat-style .moment-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.moments-list.wechat-style .moment-upvote-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+  font-family: "Menlo", "Meslo LG", "Microsoft YaHei", "微软雅黑", monospace, sans-serif;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border-radius: 4px;
+}
+
+.moments-list.wechat-style .moment-upvote-btn:hover {
+  background: var(--code-bg);
+  color: var(--link-color);
+}
+
+.moments-list.wechat-style .moment-upvote-btn svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* 响应式 */
+@media (max-width: 768px) {
+  .moments-list.wechat-style .moment-item {
+    gap: 10px;
+    padding: 20px 0;
+  }
+
+  .moments-list.wechat-style .moment-avatar {
+    width: 40px;
+    height: 40px;
+  }
+
+  /* 移动端图片尺寸调整 */
+  .moments-list.wechat-style .moment-media[data-count="1"] {
+    grid-template-columns: 150px;
+  }
+
+  .moments-list.wechat-style .moment-media[data-count="2"],
+  .moments-list.wechat-style .moment-media[data-count="3"],
+  .moments-list.wechat-style .moment-media[data-count="4"],
+  .moments-list.wechat-style .moment-media[data-count="5"],
+  .moments-list.wechat-style .moment-media[data-count="6"],
+  .moments-list.wechat-style .moment-media[data-count="7"],
+  .moments-list.wechat-style .moment-media[data-count="8"],
+  .moments-list.wechat-style .moment-media[data-count="9"] {
+    grid-template-columns: repeat(3, 100px);
+  }
+
+  .moments-list.wechat-style .moment-media-item {
+    width: 100px;
+    height: 100px;
+  }
+
+  .moments-list.wechat-style .moment-media[data-count="1"] .moment-media-item {
+    width: 150px;
+    height: 150px;
+  }
 }
 
 /* 单张图片时显示更大 */
@@ -2987,7 +3109,7 @@ body {
 .moment-media:has(.moment-media-item:only-child) .moment-media-item img {
   aspect-ratio: auto;
   max-height: 500px;
-  object-fit: contain;
+  object-fit: cover;
 }
 
 /* 两张图片 */
@@ -3497,6 +3619,10 @@ body::before {
   border: 1px solid var(--border-color);
 }
 
+.moment-item-candidate {
+  display: none;
+}
+
 .moment-container {
   display: flex;
   justify-content: center;
@@ -3507,10 +3633,11 @@ body::before {
 .moment-content-wrapper {
   width: 100%;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
   justify-content: center;
   text-align: center;
+  gap: 15px;
 }
 
 .moments-title {
@@ -3528,10 +3655,50 @@ body::before {
   margin: 0;
   font-family: "Menlo", "Meslo LG", "Microsoft YaHei", "微软雅黑", monospace, sans-serif;
   font-weight: 600;
-  width: 100%;
-  max-width: 100%;
+  flex: 1;
   overflow: hidden;
   text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  white-space: normal;
+}
+
+.moment-text p {
+  margin: 0;
+  padding: 0;
+  display: inline;
+}
+
+.moment-text p:empty {
+  display: none;
+}
+
+.moment-text p[style] {
+  all: unset;
+  display: inline;
+}
+
+.moment-more-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-secondary);
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+  padding: 5px;
+  border-radius: 4px;
+}
+
+.moment-more-link:hover {
+  color: var(--link-color);
+  background: var(--code-bg);
+  transform: translateX(3px);
+}
+
+.moment-more-link svg {
+  display: block;
+}
   white-space: nowrap;
   text-align: center;
 }
@@ -3551,8 +3718,8 @@ body::before {
 }
 
 .moment-photo {
-  max-width: 120px;
-  max-height: 80px;
+  max-width: 200px;
+  max-height: 200px;
   object-fit: cover;
   border-radius: 4px;
   cursor: pointer;

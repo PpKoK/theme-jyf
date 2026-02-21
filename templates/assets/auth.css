@@ -1,0 +1,582 @@
+/* ==================== 认证页面样式 ==================== */
+
+/* 页面容器 */
+.auth-page-container {
+  max-width: 500px;
+  margin: 80px auto;
+  padding: 0 20px;
+}
+
+/* 页面标题 */
+.auth-page-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--text-color);
+  font-family: "Menlo", "Meslo LG", "Microsoft YaHei", "微软雅黑", monospace, sans-serif;
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+.auth-page-subtitle {
+  font-size: 1rem;
+  color: var(--text-secondary);
+  font-family: "Menlo", "Meslo LG", "Microsoft YaHei", "微软雅黑", monospace, sans-serif;
+  font-weight: 600;
+  text-align: center;
+  margin-bottom: 50px;
+}
+
+/* 表单 */
+.halo-form {
+  width: 100%;
+}
+
+/* 表单项 */
+.halo-form .form-item {
+  margin-bottom: 35px;
+}
+
+/* 表单项组（用户名+名称，邮箱等） */
+.halo-form .form-item-group {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 35px;
+}
+
+.halo-form .form-item-group .form-item {
+  flex: 1;
+  margin-bottom: 0;
+}
+
+.halo-form .form-item label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-color);
+  font-family: "Menlo", "Meslo LG", "Microsoft YaHei", "微软雅黑", monospace, sans-serif;
+  margin-bottom: 10px;
+  display: block;
+}
+
+/* 输入框容器 */
+.halo-form .form-input {
+  width: 100%;
+  border: 2px solid var(--border-color);
+  border-radius: 6px;
+  padding: 10px 16px;
+  background: var(--bg-color);
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+}
+
+.halo-form .form-input:focus-within {
+  border-color: var(--link-color);
+}
+
+/* 输入框 */
+.halo-form .form-input input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  outline: none;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-color);
+  font-family: "Menlo", "Meslo LG", "Microsoft YaHei", "微软雅黑", monospace, sans-serif;
+  padding: 0;
+  height: 36px;
+}
+
+.halo-form .form-input input::placeholder {
+  color: var(--text-secondary);
+  opacity: 0.6;
+}
+
+/* 输入框图标 */
+.halo-form .form-input-stack-icon {
+  color: var(--text-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  margin-left: 8px;
+  font-size: 1.2rem;
+  transition: color 0.2s;
+}
+
+.halo-form .form-input-stack-icon:hover {
+  color: var(--link-color);
+}
+
+/* 标签组（密码 + 忘记密码） */
+.halo-form .form-label-group {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.halo-form .form-label-group label {
+  margin-bottom: 0;
+}
+
+.halo-form .form-item-extra-link {
+  font-size: 0.85rem;
+  color: var(--link-color);
+  font-family: "Menlo", "Meslo LG", "Microsoft YaHei", "微软雅黑", monospace, sans-serif;
+  font-weight: 600;
+  text-decoration: none;
+  transition: opacity 0.2s;
+}
+
+.halo-form .form-item-extra-link:hover {
+  opacity: 0.8;
+}
+
+/* 记住我 */
+.halo-form .form-item-compact {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 30px;
+}
+
+.halo-form .form-item-compact label {
+  font-size: 0.85rem;
+  font-family: "Menlo", "Meslo LG", "Microsoft YaHei", "微软雅黑", monospace, sans-serif;
+  font-weight: 600;
+  color: var(--text-color);
+  margin-bottom: 0;
+  cursor: pointer;
+}
+
+.halo-form .form-item-compact input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--text-secondary);
+  background-color: transparent;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.halo-form .form-item-compact input[type="checkbox"]:checked {
+  background-color: var(--link-color);
+  border-color: var(--link-color);
+}
+
+/* 提交按钮 */
+.halo-form button[type="submit"] {
+  width: 100%;
+  height: 45px;
+  background: var(--link-color);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  font-family: "Menlo", "Meslo LG", "Microsoft YaHei", "微软雅黑", monospace, sans-serif;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-top: 10px;
+}
+
+.halo-form button[type="submit"]:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.halo-form button[type="submit"]:active {
+  transform: translateY(0);
+}
+
+/* 邮箱验证码发送按钮 */
+#emailCodeSendButton {
+  padding: 0 12px;
+  background: var(--link-color);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  font-family: "Menlo", "Meslo LG", "Microsoft YaHei", "微软雅黑", monospace, sans-serif;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+#emailCodeSendButton:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+#emailCodeSendButton:active {
+  transform: translateY(0);
+}
+
+#emailCodeSendButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* 底部链接 */
+.auth-footer-link {
+  text-align: center;
+  margin-top: 40px;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  font-family: "Menlo", "Meslo LG", "Microsoft YaHei", "微软雅黑", monospace, sans-serif;
+  font-weight: 600;
+}
+
+.auth-footer-link a {
+  color: var(--link-color);
+  text-decoration: none;
+  font-weight: 600;
+  transition: opacity 0.2s;
+}
+
+.auth-footer-link a:hover {
+  opacity: 0.8;
+}
+
+/* ==================== 亮色模式优化 ==================== */
+[data-theme="light"] .auth-page-title {
+  color: #2c3e50;
+}
+
+[data-theme="light"] .auth-page-subtitle {
+  color: #7f8c8d;
+}
+
+[data-theme="light"] .halo-form .form-item label {
+  color: #2c3e50;
+}
+
+[data-theme="light"] .halo-form .form-input {
+  border: 2px solid #34495e;
+  border-radius: 6px;
+}
+
+[data-theme="light"] .halo-form .form-input:focus-within {
+  border-color: #2980b9;
+}
+
+[data-theme="light"] .halo-form .form-input input {
+  color: #2c3e50;
+}
+
+[data-theme="light"] .halo-form .form-input-stack-icon {
+  color: #2c3e50;
+}
+
+[data-theme="light"] .halo-form .form-input-stack-icon:hover {
+  color: #7f8c8d;
+}
+
+[data-theme="light"] .halo-form .form-item-compact label {
+  color: #2c3e50;
+}
+
+[data-theme="light"] .halo-form .form-item-compact input[type="checkbox"] {
+  border-color: #2c3e50;
+}
+
+[data-theme="light"] .halo-form button[type="submit"] {
+  background: #2c3e50;
+  color: #ffffff;
+}
+
+[data-theme="light"] .halo-form button[type="submit"]:hover {
+  background: #34495e;
+}
+
+[data-theme="light"] #emailCodeSendButton {
+  background: #2c3e50;
+  color: #ffffff;
+}
+
+[data-theme="light"] #emailCodeSendButton:hover {
+  background: #34495e;
+}
+
+[data-theme="light"] .auth-footer-link {
+  color: #7f8c8d;
+}
+
+
+
+/* ==================== 暗色模式优化 ==================== */
+[data-theme="dark"] .halo-form .form-input {
+  border: 2px solid #f5f5f5;
+  border-radius: 6px;
+  background: #292a2d;
+}
+
+[data-theme="dark"] .halo-form .form-input:focus-within {
+  border-color: #5dade2;
+}
+
+[data-theme="dark"] .halo-form .form-input input {
+  color: #f5f5f5;
+}
+
+[data-theme="dark"] .halo-form .form-input-stack-icon {
+  color: #f5f5f5;
+}
+
+[data-theme="dark"] .halo-form .form-input-stack-icon:hover {
+  color: #a9a9b3;
+}
+
+[data-theme="dark"] .halo-form button[type="submit"] {
+  background: #f5f5f5;
+  color: #2c3e50;
+}
+
+[data-theme="dark"] .halo-form button[type="submit"]:hover {
+  background: #e0e0e0;
+}
+
+[data-theme="dark"] #emailCodeSendButton {
+  background: #f5f5f5;
+  color: #2c3e50;
+}
+
+[data-theme="dark"] #emailCodeSendButton:hover {
+  background: #e0e0e0;
+}
+
+/* ==================== 响应式 ==================== */
+@media (max-width: 768px) {
+  .auth-page-container {
+    margin: 40px auto;
+  }
+
+  .auth-page-title {
+    font-size: 1.5rem;
+  }
+}
+
+/* ==================== Gateway 页面样式覆盖 ==================== */
+.gateway-wrapper {
+  font-family: "Menlo", "Meslo LG", "Microsoft YaHei", "微软雅黑", monospace, sans-serif !important;
+}
+
+.halo-form-wrapper {
+  background: var(--bg-color) !important;
+  border: 2px solid var(--border-color) !important;
+  border-radius: 8px !important;
+  padding: var(--spacing-2xl) !important;
+}
+
+.form-title {
+  font-family: "Menlo", "Meslo LG", "Microsoft YaHei", "微软雅黑", monospace, sans-serif !important;
+  color: var(--text-color) !important;
+  font-weight: 700 !important;
+}
+
+.gateway-wrapper .halo-form .form-item label {
+  font-family: "Menlo", "Meslo LG", "Microsoft YaHei", "微软雅黑", monospace, sans-serif !important;
+  color: var(--text-color) !important;
+  font-weight: 600 !important;
+}
+
+.gateway-wrapper .halo-form .form-input {
+  border: 2px solid var(--border-color) !important;
+  border-radius: 6px !important;
+  padding: 10px 16px !important;
+  background: var(--bg-color) !important;
+  transition: all 0.3s ease !important;
+  height: auto !important;
+}
+
+.gateway-wrapper .halo-form .form-input:focus-within {
+  border-color: var(--link-color) !important;
+}
+
+.gateway-wrapper .halo-form .form-item input {
+  font-size: 16px !important;
+  font-weight: 600 !important;
+  color: var(--text-color) !important;
+  font-family: "Menlo", "Meslo LG", "Microsoft YaHei", "微软雅黑", monospace, sans-serif !important;
+}
+
+.gateway-wrapper .halo-form button[type="submit"] {
+  width: 100% !important;
+  height: 45px !important;
+  background: var(--link-color) !important;
+  color: #fff !important;
+  border: none !important;
+  border-radius: 8px !important;
+  font-size: 0.95rem !important;
+  font-weight: 600 !important;
+  font-family: "Menlo", "Meslo LG", "Microsoft YaHei", "微软雅黑", monospace, sans-serif !important;
+  cursor: pointer !important;
+  transition: all 0.2s !important;
+  margin-top: 10px !important;
+}
+
+.gateway-wrapper .halo-form button[type="submit"]:hover {
+  opacity: 0.9 !important;
+  transform: translateY(-1px) !important;
+}
+
+.gateway-wrapper .halo-form button[type="submit"]:active {
+  transform: translateY(0) !important;
+}
+
+/* 语言切换器 */
+.language-switcher {
+  font-family: "Menlo", "Meslo LG", "Microsoft YaHei", "微软雅黑", monospace, sans-serif !important;
+}
+
+.language-switcher label {
+  color: var(--text-color) !important;
+}
+
+.language-switcher select {
+  color: var(--text-color) !important;
+  border-color: var(--border-color) !important;
+  background-color: var(--bg-color) !important;
+  font-family: "Menlo", "Meslo LG", "Microsoft YaHei", "微软雅黑", monospace, sans-serif !important;
+  font-weight: 600 !important;
+}
+
+.language-switcher select:focus {
+  border-color: var(--link-color) !important;
+}
+
+/* 亮色模式 Gateway */
+[data-theme="light"] .halo-form-wrapper {
+  background: #ffffff !important;
+  border-color: #34495e !important;
+}
+
+[data-theme="light"] .gateway-wrapper .halo-form .form-input {
+  border-color: #34495e !important;
+  background: #ffffff !important;
+}
+
+[data-theme="light"] .gateway-wrapper .halo-form .form-input:focus-within {
+  border-color: #2980b9 !important;
+}
+
+[data-theme="light"] .gateway-wrapper .halo-form button[type="submit"] {
+  background: #2c3e50 !important;
+  color: #ffffff !important;
+}
+
+[data-theme="light"] .gateway-wrapper .halo-form button[type="submit"]:hover {
+  background: #34495e !important;
+}
+
+[data-theme="light"] .language-switcher select {
+  border-color: #34495e !important;
+}
+
+/* 暗色模式 Gateway */
+[data-theme="dark"] .halo-form-wrapper {
+  background: #292a2d !important;
+  border-color: #f5f5f5 !important;
+}
+
+[data-theme="dark"] .gateway-wrapper .halo-form .form-input {
+  border-color: #f5f5f5 !important;
+  background: #292a2d !important;
+}
+
+[data-theme="dark"] .gateway-wrapper .halo-form .form-input:focus-within {
+  border-color: #5dade2 !important;
+}
+
+[data-theme="dark"] .gateway-wrapper .halo-form .form-item input {
+  color: #f5f5f5 !important;
+}
+
+[data-theme="dark"] .gateway-wrapper .halo-form button[type="submit"] {
+  background: #f5f5f5 !important;
+  color: #2c3e50 !important;
+}
+
+[data-theme="dark"] .gateway-wrapper .halo-form button[type="submit"]:hover {
+  background: #e0e0e0 !important;
+}
+
+[data-theme="dark"] .language-switcher select {
+  border-color: #f5f5f5 !important;
+}
+
+/* ==================== Alert 通知样式 ==================== */
+.alert {
+  border-radius: var(--rounded-base) !important;
+  margin-bottom: var(--spacing-xl) !important;
+  padding: var(--spacing-md) var(--spacing-xl) !important;
+  font-size: var(--text-sm) !important;
+  color: var(--color-text) !important;
+  overflow: hidden !important;
+  border: none !important;
+  position: static !important;
+}
+
+.alert:before {
+  display: none !important;
+}
+
+.alert-warning {
+  color: #ea580c !important;
+}
+
+.alert-error {
+  color: #dc2626 !important;
+}
+
+.alert-success {
+  color: #16a34a !important;
+}
+
+.alert-info {
+  color: #0284c7 !important;
+}
+
+/* 暗色模式 Alert */
+[data-theme="dark"] .alert {
+  color: #d1d5db !important;
+}
+
+[data-theme="dark"] .alert-success {
+  color: #86efac !important;
+}
+
+[data-theme="dark"] .alert-error {
+  color: #fca5a5 !important;
+}
+
+[data-theme="dark"] .alert-warning {
+  color: #fde047 !important;
+}
+
+[data-theme="dark"] .alert-info {
+  color: #7dd3fc !important;
+}
+
+/* 亮色模式 Alert */
+[data-theme="light"] .alert {
+  color: #374151 !important;
+}
+
+[data-theme="light"] .alert-success {
+  color: #16a34a !important;
+}
+
+[data-theme="light"] .alert-error {
+  color: #dc2626 !important;
+}
+
+[data-theme="light"] .alert-warning {
+  color: #ea580c !important;
+}
+
+[data-theme="light"] .alert-info {
+  color: #0284c7 !important;
+}
+

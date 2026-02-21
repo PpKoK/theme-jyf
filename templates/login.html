@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{gateway_fragments/layout :: layout(title='登录 - ' + ${site.title}, head=~{::head}, body=~{::body})}">
+<head>
+  <link rel="stylesheet" th:href="@{/assets/auth.css?v={version}(version=${theme.spec.version})}">
+</head>
+<body>
+  <div class="auth-page-container">
+    <h1 class="auth-page-title">登录</h1>
+    <p class="auth-page-subtitle">欢迎回来</p>
+
+    <th:block th:replace="~{gateway_fragments/login::form}"></th:block>
+
+    <div class="auth-footer-link">
+      还没有账号？<a th:href="@{/signup}">立即注册</a>
+    </div>
+  </div>
+</body>
+</html>

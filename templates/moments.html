@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html 
+<html
   xmlns:th="https://www.thymeleaf.org"
   th:replace="~{modules/layout :: html(title = '瞬间 - ' + ${site.title}, content = ~{::content})}"
 >
@@ -10,18 +10,18 @@
         <h1 class="page-title">瞬间</h1>
         <p class="page-description">记录生活中的点点滴滴</p>
       </div>
-      
+
       <!-- 标签筛选 -->
       <div class="moment-tags-filter" th:if="${not #lists.isEmpty(tags)}">
-        <a 
-          href="/moments" 
+        <a
+          href="/moments"
           class="tag-filter-btn"
           th:classappend="${#lists.isEmpty(param.tag) ? 'active' : ''}"
         >
           全部
         </a>
         <th:block th:each="tag : ${tags}">
-          <a 
+          <a
             th:href="|/moments?tag=${tag.name}|"
             class="tag-filter-btn"
             th:classappend="${#lists.contains(param.tag, tag.name) ? 'active' : ''}"
@@ -30,12 +30,12 @@
           </a>
         </th:block>
       </div>
-      
-      <!-- 瞬间列表 -->
-      <div class="moments-list">
+
+      <!-- 瞬间列表 - 微信朋友圈风格 -->
+      <div class="moments-list wechat-style">
         <th:block th:each="moment : ${moments.items}" th:with="content=${moment.spec.content}">
           <div class="moment-item">
-            <!-- 头像 -->
+            <!-- 左侧头像 -->
             <div class="moment-avatar">
               <img
                 th:src="${moment.owner.avatar ?: '/assets/default-avatar.png'}"
@@ -43,14 +43,12 @@
               >
             </div>
 
-            <!-- 日期 -->
-            <div class="moment-date">
-              <span class="moment-time" th:text="${#dates.format(moment.spec.releaseTime, 'yyyy-MM-dd HH:mm')}"></span>
-            </div>
+            <!-- 右侧内容区 -->
+            <div class="moment-content-area">
+              <!-- 用户名 -->
+              <div class="moment-username" th:text="${moment.owner.displayName}"></div>
 
-            <!-- 瞬间内容 -->
-            <div class="moment-content-wrapper">
-              <!-- 瞬间正文（移除标签） -->
+              <!-- 瞬间正文 -->
               <div
                 class="moment-text"
                 th:if="${not #strings.isEmpty(content.html)}"
@@ -58,7 +56,7 @@
               ></div>
 
               <!-- 瞬间媒体（图片/视频/音频） -->
-              <div class="moment-media" th:if="${not #lists.isEmpty(content.medium)}">
+              <div class="moment-media" th:if="${not #lists.isEmpty(content.medium)}" th:attr="data-count=${content.medium.size()}">
                 <th:block th:each="mediaItem : ${content.medium}">
                   <!-- 图片 -->
                   <div class="moment-media-item moment-photo" th:if="${mediaItem.type.name() == 'PHOTO'}">
@@ -96,33 +94,36 @@
                   ></a>
                 </th:block>
               </div>
-            </div>
 
-            <!-- 瞬间互动 - 点赞 -->
-            <div class="moment-actions">
-              <button
-                class="moment-upvote-btn"
-                th:data-name="${moment.metadata.name}"
-                th:data-upvote="${moment.stats.upvote ?: 0}"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-                </svg>
-                <span class="upvote-count" th:text="${moment.stats.upvote ?: 0}"></span>
-              </button>
+              <!-- 时间和互动 -->
+              <div class="moment-footer">
+                <span class="moment-time" th:text="${#dates.format(moment.spec.releaseTime, 'MM-dd HH:mm')}"></span>
+                <div class="moment-actions">
+                  <button
+                    class="moment-upvote-btn"
+                    th:data-name="${moment.metadata.name}"
+                    th:data-upvote="${moment.stats.upvote ?: 0}"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                    </svg>
+                    <span class="upvote-count" th:text="${moment.stats.upvote ?: 0}"></span>
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </th:block>
       </div>
-      
+
       <!-- 分页 -->
-      <div 
-        class="pagination" 
+      <div
+        class="pagination"
         th:if="${moments.hasPrevious()} or ${moments.hasNext()}"
       >
-        <a 
-          th:if="${moments.hasPrevious()}" 
-          th:href="@{${moments.prevUrl}}" 
+        <a
+          th:if="${moments.hasPrevious()}"
+          th:href="@{${moments.prevUrl}}"
           class="pagination-btn"
         >
           ← 上一页
@@ -130,15 +131,15 @@
         <span class="pagination-info">
           第 <span th:text="${moments.page}"></span> 页
         </span>
-        <a 
-          th:if="${moments.hasNext()}" 
-          th:href="@{${moments.nextUrl}}" 
+        <a
+          th:if="${moments.hasNext()}"
+          th:href="@{${moments.nextUrl}}"
           class="pagination-btn"
         >
           下一页 →
         </a>
       </div>
-      
+
       <!-- 空状态 -->
       <div class="no-moments" th:if="${#lists.isEmpty(moments.items)}">
         <p>还没有发布任何瞬间</p>
