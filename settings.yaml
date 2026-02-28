@@ -143,6 +143,12 @@ spec:
       label: 页脚设置
       formSchema:
         - $formkit: checkbox
+          name: enable_random_friends
+          label: 启用随机友链
+          value: true
+          help: 是否在页脚启用随机友链展示功能
+
+        - $formkit: checkbox
           name: show_social_icons
           label: 显示社交图标
           value: false

@@ -18,7 +18,7 @@
       </th:block>
       
       <!-- 友情链接（每5秒随机切换5个） -->
-      <th:block th:if="${pluginFinder.available('PluginLinks')}">
+      <th:block th:if="${pluginFinder.available('PluginLinks') && (theme.config.footer.enable_random_friends == null || theme.config.footer.enable_random_friends)}">
         <th:block th:with="allGroups = ${linkFinder.groupBy()}">
           <div th:if="${not #lists.isEmpty(allGroups)}" class="friend-links">
             <span th:text="#{common.friendLinks}">友情链接：</span>
