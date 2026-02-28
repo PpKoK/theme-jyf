@@ -45,7 +45,7 @@
       <div class="footer-info">
         <p>
           <span>© </span>
-          <th:block th:if="${theme.config.footer.copyright_start_year != null && !#strings.isEmpty(theme.config.footer.copyright_start_year)}">
+          <th:block th:if="${theme.config.footer.copyright_start_year != null && !#strings.isEmpty(theme.config.footer.copyright_start_year) && #strings.toString(theme.config.footer.copyright_start_year) != #strings.toString(#temporals.year(#temporals.createNow()))}">
             <span th:text="${theme.config.footer.copyright_start_year}">2024</span>
             <span>-</span>
           </th:block>

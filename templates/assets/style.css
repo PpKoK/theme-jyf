@@ -3142,8 +3142,6 @@ body {
   text-decoration: none;
   font-family: "Menlo", "Meslo LG", "Microsoft YaHei", "微软雅黑", monospace, sans-serif;
   font-weight: 600;
-}
-  font-weight: 600;
   transition: opacity 0.2s;
 }
 
@@ -3688,6 +3686,7 @@ body::before {
   flex-shrink: 0;
   padding: 5px;
   border-radius: 4px;
+  white-space: nowrap;
 }
 
 .moment-more-link:hover {
@@ -3698,14 +3697,6 @@ body::before {
 
 .moment-more-link svg {
   display: block;
-}
-  white-space: nowrap;
-  text-align: center;
-}
-
-.moment-text p {
-  margin: 0;
-  display: inline;
 }
 
 .moment-media {
