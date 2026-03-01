@@ -31,6 +31,71 @@
       <div th:if="${#lists.isEmpty(groups)}" class="no-content">
         <p>暂无友情链接</p>
       </div>
+
+      <style>
+        /* 友链申请部分样式 - 内联以确保生效 */
+        .link-submission {
+          margin-top: 60px;
+          padding: 40px 30px;
+          background: var(--code-bg);
+          border-radius: 16px;
+          text-align: center;
+          border: 1px solid var(--border-color);
+          box-shadow: var(--shadow);
+          transition: all 0.3s ease;
+        }
+
+        .link-submission:hover {
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+          transform: translateY(-2px);
+        }
+
+        .link-submission .group-title {
+          font-size: 1.5rem;
+          margin-bottom: 16px;
+          color: var(--text-color);
+          font-weight: 700;
+          border-left: none;
+          padding-left: 0;
+        }
+
+        .link-submission > p {
+          margin-bottom: 24px;
+          color: var(--text-secondary);
+          font-size: 0.95rem;
+        }
+
+        .submission-example {
+          background: var(--bg-color);
+          padding: 20px;
+          border-radius: 12px;
+          border: 1px dashed var(--link-color);
+          font-family: monospace;
+          font-size: 0.9em;
+          color: var(--text-color);
+          line-height: 1.8;
+          display: inline-block;
+          text-align: left;
+          min-width: 300px;
+          max-width: 100%;
+        }
+
+        .submission-example p {
+          margin: 4px 0;
+          color: var(--text-color);
+        }
+      </style>
+
+      <div class="link-submission">
+        <h2 class="group-title">友链申请</h2>
+        <p>在下方留言申请加入我的友链，按如下格式提供信息：</p>
+        <div class="submission-example">
+          <p>博客名：taoの碎碎念</p>
+          <p>简介：tao的日常记录与技术分享blog</p>
+          <p>链接：https://blog.tao2006.cn</p>
+          <p>图片：https://blog.tao2006.cn/img/icon.png</p>
+        </div>
+      </div>
     </div>
   </th:block>
 </html>
