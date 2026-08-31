@@ -963,6 +963,22 @@
   }
 
   // ==================== 文章目录 ====================
+  // ==================== 文章表格 ====================
+  function initPostTables() {
+    const tables = document.querySelectorAll('.post-content table');
+
+    tables.forEach((table) => {
+      if (table.parentElement.classList.contains('post-table-wrapper')) {
+        return;
+      }
+
+      const wrapper = document.createElement('div');
+      wrapper.className = 'post-table-wrapper';
+      table.parentNode.insertBefore(wrapper, table);
+      wrapper.appendChild(table);
+    });
+  }
+
   function initPostTOC() {
     const tocContainer = document.getElementById('post-toc');
     const postContent = document.querySelector('.post-content');
@@ -1494,6 +1510,7 @@
     initLightGallery();
     initHighlight();
     initFriendLinks();
+    initPostTables();
     initPostTOC();
     initPostUpvote();
     initPhotoGallery();
